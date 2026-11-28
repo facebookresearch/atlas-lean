@@ -10,7 +10,7 @@ solution* of $(h, g)$ is an infinite word $\omega = a_1 a_2 \cdots \in A^\omega$
 every finite prefix $u$ of $\omega$; one then writes $h(\omega) = g(\omega)$.
 
 The *infinite Post correspondence problem* ($\omega\mathrm{PCP}$) is the decision problem: given an instance $(h, g)$, does it
-have an infinite solution? An infinite word is *ultimately periodic* if it equals $u v v v \cdots$ for finite words $u$ and
+have an infinite solution? The source does not require the morphisms to be nonerasing: a letter may be mapped to the empty word, and if $h(a) = g(a) = \varepsilon$ for some letter $a$, then $a a a \cdots$ is an infinite solution. An infinite word is *ultimately periodic* if it equals $u v v v \cdots$ for finite words $u$ and
 $v$ with $v$ nonempty.
 
 The instances are those of the Post correspondence problem written as pairs of morphisms: the list of pairs

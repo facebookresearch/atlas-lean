@@ -16,12 +16,15 @@ $0 < p < 1$. In the *time-bounded* version, $T$ must be visited within a given n
 1. The quantitative reachability problem is undecidable for $1\tfrac12$-player STGs with at least $4$ clocks.
 2. The time-bounded quantitative reachability problem is undecidable for $2\tfrac12$-player STGs with at least $5$ clocks.
 
-In contrast, quantitative reachability is decidable for initialized $1\tfrac12$-player and $2\tfrac12$-player STGs with a single clock. Item 2 is notable because time-boundedness restores decidability for
+(Theorems 3 and 6 of the source.) Both hold for finite instances: in the reductions every stochastic state has a bounded set $I(s)$ of allowed delays and draws its delay from the uniform distribution on it, so an instance is given by the timed automaton with integer constants, the integer weights and the threshold $p = 1/2$.
+
+In contrast, quantitative reachability is decidable for $1\tfrac12$-player and $2\tfrac12$-player STGs with a single clock under the source's hypotheses: the underlying timed automaton is structurally non-Zeno, delays in stochastic locations are exponentially distributed with rates depending only on the location, and the game is initialized. Item 2 is notable because time-boundedness restores decidability for
 several classical problems on timed automata, such as language inclusion.
 
 ## Depends on
 
 - [Timed automata over finite timed words](decision-problems-for-timed-languages/timed-automata-over-finite-timed-words.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -36,4 +39,4 @@ spent below $\Delta = 5$; the reduction is from the halting problem.
 
 ## Sources
 
-- S. Akshay, P. Bouyer, S. N. Krishna, L. Manasa and A. Trivedi, "Stochastic timed games revisited", in *41st International Symposium on Mathematical Foundations of Computer Science (MFCS 2016)*, LIPIcs 58, paper 8, 2016, doi:10.4230/LIPIcs.MFCS.2016.8; read in arXiv:1607.05671v1: the summary theorem and the definitions of Section 2 (stochastic timed games, strategies, reachability problems), the undecidability theorems of Section 3 for $1\tfrac12$-player STGs with four clocks and time-bounded $2\tfrac12$-player STGs with five clocks, and the decidability theorem for one clock in Section 4.
+- S. Akshay, P. Bouyer, S. N. Krishna, L. Manasa and A. Trivedi, "Stochastic timed games revisited", in *41st International Symposium on Mathematical Foundations of Computer Science (MFCS 2016)*, LIPIcs 58, paper 8, 2016, doi:10.4230/LIPIcs.MFCS.2016.8; read in arXiv:1607.05671v1: Theorem 2 and Definition 1 in Section 2 (stochastic timed games, strategies, reachability problems), Theorem 3 (Section 3.1, $1\tfrac12$-player STGs with four clocks) and Theorem 6 (Section 3.2, time-bounded $2\tfrac12$-player STGs with five clocks), and Theorem 8 and Corollary 9 for one clock under the hypotheses $(\star)$ of Section 4, with the numbering of that version.

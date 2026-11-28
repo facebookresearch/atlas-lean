@@ -16,6 +16,7 @@ problem, which needs three more domain letters in the
 ## Depends on
 
 - [The infinite Post correspondence problem](the-infinite-post-correspondence-problem.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

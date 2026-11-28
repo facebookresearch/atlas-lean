@@ -4,13 +4,14 @@ No algorithm decides whether the nondeterminism of a given finite automaton can 
 
 **Stochastic resolvers.** Let $\mathcal{A}$ be a nondeterministic finite automaton with state set $Q$, alphabet $\Sigma$ and transition set $\Delta$. A (memoryless) *stochastic resolver* for $\mathcal{A}$ is a map $\mathcal{R} \colon \Delta \to [0, 1]$ such that $\sum_{q} \mathcal{R}(p, \sigma, q) = 1$ for every state $p$ and letter $\sigma$. It turns $\mathcal{A}$ into a probabilistic automaton $\mathcal{P}^{\mathcal{A}}_{\mathcal{R}}$ on the same states, which accepts each word with some probability; for a threshold $\lambda$, let $L(\mathcal{P}_{\ge \lambda})$ be the set of words accepted with probability at least $\lambda$. Since every run with positive probability is a run of $\mathcal{A}$, $L(\mathcal{P}_{\ge \lambda}) \subseteq L(\mathcal{A})$ for $\lambda > 0$. The automaton $\mathcal{A}$ is *$\lambda$-resolvable* (memoryless stochastically resolvable with threshold $\lambda$) if some resolver gives $L(\mathcal{P}_{\ge \lambda}) = L(\mathcal{A})$.
 
-**Theorem (Paul, Purser, Schewe, Tang, Totzke and Yen).** The *$\lambda$-resolvability problem* for NFAs, which asks whether a given NFA is $\lambda$-resolvable, is undecidable; the reduction uses the fixed threshold $\lambda = 1/4$.
+**Theorem (Paul, Purser, Schewe, Tang, Totzke and Yen).** The *$\lambda$-resolvability problem* for NFAs, which asks whether a given NFA is $\lambda$-resolvable, is undecidable (Theorem 3.2 of the source); the reduction uses the fixed threshold $\lambda = 1/4$.
 
 The problem is decidable for finitely ambiguous automata, and the undecidability carries over to automata on infinite words, as the source shows. For $\lambda = 1$ resolvability coincides with history-determinism on finite words.
 
 ## Depends on
 
 - [Probabilistic automata and cut-point languages](../probabilistic-automata-and-cut-point-languages.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

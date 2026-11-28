@@ -6,7 +6,7 @@ $(u v^n)^{2^n}$ with probability tending to $1$.
 Let $\mathcal{A}$ range over [probabilistic automata](../probabilistic-automata-and-cut-point-languages.md)
 with acceptance probabilities $P_{\mathcal{A}}(w)$.
 
-**Theorem.** The following problem is undecidable: given a probabilistic automaton $\mathcal{A}$, are there finite words $u, v$
+**Theorem.** The following problem is undecidable: given a probabilistic automaton $\mathcal{A}$ whose transition probabilities are rational numbers, given as fractions of integers, are there finite words $u, v$ (the empty word allowed)
 such that
 
 $$
@@ -22,6 +22,7 @@ algorithm.
 ## Depends on
 
 - [Probabilistic automata and cut-point languages](../probabilistic-automata-and-cut-point-languages.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -38,4 +39,4 @@ undecidable (Paz).
 
 ## Sources
 
-- N. Fijalkow, "Profinite techniques for probabilistic automata and the Markov Monoid algorithm", *Theoretical Computer Science* 680:1–14, 2017, doi:10.1016/j.tcs.2017.04.006; Section 5 of the version arXiv:1501.02997v4: the theorem "Undecidability of the two-tier value 1 problem" with its proof, and the discussion of its significance in the conclusion.
+- N. Fijalkow, "Profinite techniques for probabilistic automata and the Markov Monoid algorithm", *Theoretical Computer Science* 680:1–14, 2017, doi:10.1016/j.tcs.2017.04.006; Section 5 of the version arXiv:1501.02997v4: Theorem 7, "Undecidability of the two-tier value 1 problem", with its proof, and the discussion of its significance in the conclusion.

@@ -10,6 +10,7 @@ No algorithm decides whether an integer weighted automaton accepts every infinit
 ## Depends on
 
 - [Integer weighted automata on infinite words](integer-weighted-automata-on-infinite-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ The reduction is from the infinite Post correspondence problem, undecidable for 
 
 ## Sources
 
-- Vesa Halava, Tero Harju, Reino Niskanen and Igor Potapov, "Weighted automata on infinite words in the context of Attacker–Defender games", *Information and Computation* 255, 2017, pp. 27–44, doi:[10.1016/j.ic.2017.05.001](https://doi.org/10.1016/j.ic.2017.05.001); read in arXiv:1411.4796v3 ([arXiv](https://arxiv.org/abs/1411.4796v3)), cited by section because its theorem counters are not recoverable: Section 3: the lemmas relating solutions to the language, the universality theorem, its corollary on non-universality and the theorem on reverse acceptance; Section 2 for the infinite Post correspondence problem.
+- Vesa Halava, Tero Harju, Reino Niskanen and Igor Potapov, "Weighted automata on infinite words in the context of Attacker–Defender games", *Information and Computation* 255, 2017, pp. 27–44, doi:[10.1016/j.ic.2017.05.001](https://doi.org/10.1016/j.ic.2017.05.001); read in arXiv:1411.4796v3 ([arXiv](https://arxiv.org/abs/1411.4796v3)), whose numbering is used: Section 3: Lemma 1 (solutions and the language), Theorem 2 (universality), Corollary 3 and Theorem 4 (reverse acceptance); Section 2 for the infinite Post correspondence problem.

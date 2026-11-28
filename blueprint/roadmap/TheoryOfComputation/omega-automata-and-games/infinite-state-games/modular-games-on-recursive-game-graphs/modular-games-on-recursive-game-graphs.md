@@ -23,12 +23,12 @@ $f_m$ applied to the local memory. Each new activation of a module starts with f
 
 **Modular games.** A *modular game* $\langle G, L \rangle$ adds a winning condition $L \subseteq \Sigma^\omega$. A modular strategy of player 0 is winning if
 the word of every play conforming to it lies in $L$, and the *modular game problem* asks whether player 0 has a winning modular strategy. In a
-*pushdown modular game* $L$ is the language of a pushdown automaton over $\Sigma$, whose stack is not synchronized with the calls and returns
-of $G$; in the *deterministic* version the automaton is deterministic.
+*pushdown modular game* $L$ is the language of a pushdown automaton $P = (Q, q_0, \Sigma, \Gamma, \delta, \gamma_\bot, F)$ over $\Sigma$, with finite sets of states and stack symbols, $\varepsilon$-moves allowed and a set $F \subseteq Q$ defining its acceptance condition; its stack is not synchronized with the calls and returns
+of $G$. In the *deterministic* version each $\delta(q, \alpha, \gamma)$ has at most one element, and no state and stack symbol with an $\varepsilon$-move has a move on a letter.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

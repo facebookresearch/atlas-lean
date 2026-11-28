@@ -12,6 +12,8 @@ Consequently $\omega\mathrm{PCP}$ is co-recursively enumerable but not recursive
 
 - [The infinite Post correspondence problem](the-infinite-post-correspondence-problem.md)
 - [The arithmetical class $\Pi_n$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Co-recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

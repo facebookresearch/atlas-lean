@@ -4,13 +4,14 @@ No algorithm decides whether some integer value of a single parameter makes the 
 
 In a [parametric timed automaton](parametric-timed-automata.md), guards and invariants compare clocks with integer constants or with parameters; here parameter valuations are *nonnegative integers*, while clocks take nonnegative real values (continuous time) or integer values (discrete time). A clock is *parametric* if it is compared with a parameter somewhere, and *nonparametric* otherwise. The *reachability problem* asks whether some parameter valuation makes the language of the resulting timed automaton nonempty; the *safety problem* asks whether some parameter valuation makes it empty.
 
-**Theorem.** The reachability and safety problems are undecidable for parametric timed automata with one integer parameter, three parametric clocks and no further nonparametric clocks, both in the continuous-time and in the discrete-time semantics.
+**Theorem.** The reachability and safety problems are undecidable for parametric timed automata with one integer parameter, three parametric clocks and no further nonparametric clocks, both in the continuous-time and in the discrete-time semantics (Theorem 1 of the source).
 
 This tightens the undecidability for three parametric clocks and six parameters of Alur, Henzinger and Vardi. By contrast, for one parametric clock with any number of integer parameters and nonparametric clocks both problems are decidable in continuous time (reachability in NEXPTIME), extending the discrete-time decidability of Alur, Henzinger and Vardi; with real-valued parameters, a single parameter already gives undecidability (Miller).
 
 ## Depends on
 
 - [Parametric timed automata](parametric-timed-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ Reachability is reduced from halting of two-counter Minsky machines and safety f
 
 ## Sources
 
-- Nikola Beneš, Peter Bezděk, Kim G. Larsen and Jiří Srba, "Language Emptiness of Continuous-Time Parametric Timed Automata", in *Automata, Languages, and Programming (ICALP 2015)*, Lecture Notes in Computer Science 9135, 2015, pp. 69–81, doi:[10.1007/978-3-662-47666-6_6](https://doi.org/10.1007/978-3-662-47666-6_6); read in arXiv:1504.07838v1 ([arXiv](https://arxiv.org/abs/1504.07838v1)), cited by section: Section 1 (Table 1), Section 2 (parametric timed automata, reachability and safety), Section 3 (the reduction from Minsky machines and the undecidability theorem) and Section 4 (decidability for one parametric clock).
+- Nikola Beneš, Peter Bezděk, Kim G. Larsen and Jiří Srba, "Language Emptiness of Continuous-Time Parametric Timed Automata", in *Automata, Languages, and Programming (ICALP 2015)*, Lecture Notes in Computer Science 9135, 2015, pp. 69–81, doi:[10.1007/978-3-662-47666-6_6](https://doi.org/10.1007/978-3-662-47666-6_6); read in arXiv:1504.07838v1 ([arXiv](https://arxiv.org/abs/1504.07838v1)), whose numbering is used: Section 1 (Table 1), Section 2 (parametric timed automata, reachability and safety), Section 3 (the reduction from Minsky machines and Theorem 1) and Section 4 (decidability for one parametric clock).

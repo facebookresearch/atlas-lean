@@ -13,6 +13,7 @@ recalls that universality, equivalence and inclusion of infinitary rational rela
 
 - [Infinitary rational relations and ω-rational functions](infinitary-rational-relations-and-omega-rational.md)
 - [Analytical hierarchy](../../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

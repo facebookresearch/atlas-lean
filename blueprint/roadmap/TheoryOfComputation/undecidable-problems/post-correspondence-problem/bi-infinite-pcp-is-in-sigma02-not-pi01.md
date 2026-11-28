@@ -4,7 +4,9 @@ Deciding whether two morphisms agree, up to a shift, on some bi-infinite word is
 
 A *bi-infinite word* over $A$ is a sequence $w=(w(i))_{i\in\mathbb Z}$ of letters of $A$, and a morphism $h:A^*\to B^*$ extends to bi-infinite words by concatenating the images $h(w(i))$ in order. Two bi-infinite words $x$ and $y$ are *equal* if they agree up to a shift: there is $s\in\mathbb Z$ with $x(i)=y(i+s)$ for all $i\in\mathbb Z$.
 
-**Theorem.** The *bi-infinite Post correspondence problem* ($\mathbb Z\mathrm{PCP}$) asks, given morphisms $h,g:A^*\to B^*$, whether some bi-infinite word $w$ over $A$ satisfies $h(w)=g(w)$. The set of instances with a solution, coded as a set of natural numbers, lies in $\Sigma^0_2\setminus\Pi^0_1$.
+**Theorem.** The *bi-infinite Post correspondence problem* ($\mathbb Z\mathrm{PCP}$) asks, given morphisms $h,g:A^*\to B^*$, whether some bi-infinite word $w$ over $A$ satisfies $h(w)=g(w)$. The set of instances with a solution, coded as a set of natural numbers, lies in $\Sigma^0_2\setminus\Pi^0_1$ (Theorem 2 of the source).
+
+An instance is given by the finite lists of images $h(a), g(a) \in B^*$, $a \in A$, coded by a natural number. The source places no nonerasing condition on $h$ and $g$ and does not discuss the case where $h(w)$ or $g(w)$ fails to be a bi-infinite word.
 
 In particular $\mathbb Z\mathrm{PCP}$ is not co-recursively enumerable, unlike the [infinite Post correspondence problem](infinite-pcp-is-pi01-complete.md), which is $\Pi^0_1$-complete. Whether it is $\Sigma^0_2$-complete is left open by the source.
 
@@ -12,6 +14,8 @@ In particular $\mathbb Z\mathrm{PCP}$ is not co-recursively enumerable, unlike t
 
 - [The arithmetical class $\Sigma_n$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 - [The arithmetical class $\Pi_n$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Co-recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -2,7 +2,7 @@
 
 A Parikh automaton is a finite automaton whose transitions also carry vectors of natural numbers; over infinite words, a run is accepting when accepting states and prefix sums in a semilinear set occur together according to a safety, reachability, Büchi or co-Büchi condition.
 
-**Definition.** Let $\Sigma$ be an alphabet, $d \ge 1$ and $D \subseteq \mathbb N^d$ finite. A *Parikh automaton* (PA) is a pair $(\mathcal A, C)$ where $\mathcal A = (Q, \Sigma \times D, q_I, \Delta, F)$ is a nondeterministic finite automaton over $\Sigma \times D$ and $C \subseteq \mathbb N^d$ is [semilinear](../../../context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md). It is *deterministic* if for each state $q$ and letter $a \in \Sigma$ there is at most one pair $(q', \vec v)$ with $(q, (a, \vec v), q') \in \Delta$. An infinite run $(q_0, w_0, q_1)(q_1, w_1, q_2) \cdots$ of $\mathcal A$ with $q_0 = q_I$ processes the projection to $\Sigma$ of $w_0 w_1 \cdots$; write $\Phi_n$ for the sum of the vectors of $w_0 \cdots w_{n-1}$. The run is
+**Definition.** Let $\Sigma$ be a finite alphabet, $d \ge 1$ and $D \subseteq \mathbb N^d$ finite (the source writes $d > 1$; a one-dimensional automaton is a two-dimensional one with a zero second coordinate). A *Parikh automaton* (PA) is a pair $(\mathcal A, C)$ where $\mathcal A = (Q, \Sigma \times D, q_I, \Delta, F)$ is a nondeterministic finite automaton over $\Sigma \times D$ and $C \subseteq \mathbb N^d$ is [semilinear](../../../context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md). As an input, the vectors are written in binary and $C$ is given as a finite union of linear sets $\{\vec v_0+c_1\vec v_1+\cdots+c_k\vec v_k : c_i\in\mathbb N\}$, each by the list $(\vec v_0,\dots,\vec v_k)$. It is *deterministic* if for each state $q$ and letter $a \in \Sigma$ there is at most one pair $(q', \vec v)$ with $(q, (a, \vec v), q') \in \Delta$. An infinite run $(q_0, w_0, q_1)(q_1, w_1, q_2) \cdots$ of $\mathcal A$ with $q_0 = q_I$ processes the projection to $\Sigma$ of $w_0 w_1 \cdots$; write $\Phi_n$ for the sum of the vectors of $w_0 \cdots w_{n-1}$. The run is
 
 - *safety accepting* if $\Phi_n \in C$ and $q_n \in F$ for all $n \ge 1$;
 - *synchronous reachability accepting* if $\Phi_n \in C$ and $q_n \in F$ for some $n \ge 1$;
@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-All these acceptance conditions are conjunctive: acceptance needs accepting states and prefix sums in $C$ together; a disjunctive variant is equivalent, since whether a prefix ends in an accepting state can be recorded in the vectors and folded into $C$. For example, with one state, the letters $a$ and $b$ counted in two coordinates and $C = \{(n, n)\}$, the safety automaton accepts no word and the reachability automaton every word, since the empty prefix is balanced and every odd-length prefix is not.
+All these acceptance conditions are conjunctive: acceptance needs accepting states and prefix sums in $C$ together; a disjunctive variant is equivalent, since whether a prefix ends in an accepting state can be recorded in the vectors and folded into $C$. For example, with one accepting state, the letters $a$ and $b$ counted in two coordinates and $C = \{(n, n) : n \in \mathbb N\}$, the safety automaton accepts no word, since the prefix of length $1$ is unbalanced (only nonempty prefixes count), and the synchronous reachability automaton accepts exactly the words with a nonempty prefix containing as many $a$'s as $b$'s, so not $a^\omega$.
 
 ## Sources
 

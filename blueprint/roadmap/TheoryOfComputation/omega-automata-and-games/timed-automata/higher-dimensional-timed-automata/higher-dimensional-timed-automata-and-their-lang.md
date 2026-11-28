@@ -13,7 +13,7 @@ the cell before the events of $A$ start and the upper face $\delta^1_A(x)$ the c
 one-dimensional HDA whose initial and accepting cells have no events.
 
 **HDTAs.** A *higher-dimensional timed automaton* (HDTA) $(\Sigma, C, Q, \bot, \top, \mathrm{inv}, \mathrm{exit})$ is a finite HDA
-$(\Sigma, Q, \bot, \top)$ with a finite set $C$ of clocks, an *invariant* $\mathrm{inv}(q)$, a clock constraint, and an *exit set*
+$(\Sigma, Q, \bot, \top)$ with a finite set $C$ of clocks, an *invariant* $\mathrm{inv}(q)$, a clock constraint (a conjunction of comparisons $c \bowtie k$ with $c \in C$, $k \in \mathbb{N}$ and ${\bowtie} \in \{<, \le, \ge, >\}$), and an *exit set*
 $\mathrm{exit}(q) \subseteq C$ for each cell $q$. Its operational semantics has configurations $(q, v)$ with $v \in \mathbb{R}_{\ge 0}^C$
 satisfying $\mathrm{inv}(q)$, initial configurations $(q, 0)$ with $q \in \bot$ and accepting configurations with $q \in \top$, and three kinds of
 moves: a *delay* by $d \ge 0$ inside a cell, allowed when the invariant stays satisfied throughout; *starting* the events $A \subseteq \mathrm{ev}(q)$ from

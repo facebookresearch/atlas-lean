@@ -9,6 +9,7 @@ Nonemptiness is NP-complete for reachability and for Büchi Parikh automata (The
 ## Depends on
 
 - [Parikh automata over infinite words](parikh-automata-over-infinite-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

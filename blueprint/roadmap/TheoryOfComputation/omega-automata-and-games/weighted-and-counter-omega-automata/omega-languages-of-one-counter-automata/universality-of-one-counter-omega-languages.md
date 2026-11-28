@@ -10,6 +10,7 @@ The same holds for the cofiniteness problem ($\Omega^\omega\setminus L(\mathcal 
 
 - [Real-time Büchi one-counter automata](real-time-buchi-one-counter-automata.md)
 - [Analytical hierarchy](../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

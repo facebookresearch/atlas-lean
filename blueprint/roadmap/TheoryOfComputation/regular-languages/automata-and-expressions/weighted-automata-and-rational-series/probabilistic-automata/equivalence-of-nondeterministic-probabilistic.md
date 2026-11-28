@@ -4,13 +4,14 @@ Under either of the two convex language semantics that extend the expected-weigh
 
 **Nondeterministic probabilistic automata.** A *nondeterministic probabilistic automaton* (NPA) over a finite alphabet $A$ is a tuple $(S, s_0, \gamma, \{\tau_a\}_{a \in A})$ with a finite set $S$ of states, an initial state $s_0$, an output function $\gamma \colon S \to [0, 1]$, and transition functions $\tau_a$ that map each state to a nonempty finitely generated convex set of probability distributions on $S$. On each letter the automaton chooses a distribution from the offered convex set and then moves probabilistically. Reading a word letter by letter from $s_0$, applying the transitions to every distribution reached and taking convex hulls, yields a finitely generated convex set of distributions on states; mapping each of these to its expected output weight gives a set of numbers in $[0, 1]$. The *max semantics* assigns to the word the maximum of this set, the *min semantics* its minimum. These are the only two semantics, defined through algebras for the convex powerset of distributions monad on $[0, 1]$, that agree with the expected weight of a deterministic probabilistic automaton when no nondeterministic choice is made.
 
-**Theorem (van Heerdt, Hsu, Ouaknine and Silva).** If $|A| \ge 2$, then under the max semantics and under the min semantics there is no algorithm that decides, given two NPAs over $A$, whether they assign the same weight to every word.
+**Theorem (van Heerdt, Hsu, Ouaknine and Silva).** If $|A| \ge 2$, then under the max semantics and under the min semantics there is no algorithm that decides, given two NPAs over $A$, with rational output weights and each convex set given by finitely many rational generating distributions, whether they assign the same weight to every word (Theorem 5 of the source, with Corollary 1).
 
 The same paper shows that NPAs are strictly more expressive than deterministic probabilistic automata, and that a discounted distance between their languages can be approximated to any precision.
 
 ## Depends on
 
 - [Probabilistic automata and cut-point languages](../probabilistic-automata-and-cut-point-languages.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

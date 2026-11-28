@@ -18,6 +18,7 @@ closure of deterministic mean-payoff automata under $\max$, $\min$, sum and comp
 ## Depends on
 
 - [Mean-payoff automata and their quantitative decision problems](mean-payoff-automata-and-their-quantitative-deci.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -36,4 +37,4 @@ automata.
 
 ## Sources
 
-- K. Chatterjee, L. Doyen, H. Edelsbrunner, T. A. Henzinger and P. Rannou, "Mean-payoff automaton expressions", in *CONCUR 2010 – Concurrency Theory*, Lecture Notes in Computer Science 6269, pp. 269–283, Springer, 2010, doi:10.1007/978-3-642-15375-4_19; Section 5 of the version arXiv:1006.1492v1: the undecidability theorem stated after the decidability theorem for expressions, with its proof sketch in the appendix.
+- K. Chatterjee, L. Doyen, H. Edelsbrunner, T. A. Henzinger and P. Rannou, "Mean-payoff automaton expressions", in *CONCUR 2010 – Concurrency Theory*, Lecture Notes in Computer Science 6269, pp. 269–283, Springer, 2010, doi:10.1007/978-3-642-15375-4_19; Section 5 of the version arXiv:1006.1492v1: Theorem 5, stated after Theorem 4 (decidability for expressions), with its proof in the appendix.

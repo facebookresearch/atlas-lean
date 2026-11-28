@@ -7,7 +7,7 @@ constants in guards and invariants. Each parameter valuation turns it into an or
 *parameters*. A *parameter valuation* is a map $v : P \to \mathbb{Q}_{\ge 0}$; it is *integer* if all its values are in
 $\mathbb{N}$. A clock valuation is a map $\mu : X \to \mathbb{R}_{\ge 0}$. A *parametric guard* is a conjunction of
 inequalities $x \bowtie \sum_{p \in P} \beta_p\, p + d$ with $x \in X$, $\beta_p \in \{0, 1\}$, $d \in \mathbb{Z}$ and
-${\bowtie} \in \{<, \le, \ge, >\}$.
+${\bowtie} \in \{<, \le, \ge, >\}$ (the syntax of André, Lime and Roux, arXiv:2004.09171v4). The survey arXiv:1807.07091v3 uses instead conjunctions of atomic constraints $x \bowtie p + c$, $x \bowtie c$ and $p \bowtie c$ with $p \in P$, $c \in \mathbb{Z}$ and ${\bowtie} \in \{<, \le, =, \ge, >\}$ (Section 2.1 of that survey); the results cited from the survey are stated for that syntax.
 
 **Automata.** A *parametric timed automaton* (PTA) is a tuple $\mathcal{A} = (\Sigma, L, \ell_0, X, P, I, E)$ with a finite
 set $\Sigma$ of actions, a finite set $L$ of locations, an initial location $\ell_0$, an *invariant* $I(\ell)$ (a parametric

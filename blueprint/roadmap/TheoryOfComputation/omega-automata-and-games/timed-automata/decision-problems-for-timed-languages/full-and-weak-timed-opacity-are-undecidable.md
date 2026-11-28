@@ -8,11 +8,12 @@ Whether an attacker who observes the timed traces of a timed automaton can never
 2. timed automata with one clock (Theorem 5.4);
 3. timed automata with at least two clocks, with or without $\varepsilon$-transitions (Theorem 5.7).
 
-For one-clock timed automata without $\varepsilon$-transitions both problems are decidable, with non-primitive recursive complexity (Theorem 5.5); for observable event-recording automata they are PSPACE-complete (Theorem 5.16); and the weaker $\exists$-opacity problem, whether some trace is produced by both a private and a public run, is inter-reducible with reachability for timed automata (Theorem 4.6), hence decidable.
+For one-clock timed automata without $\varepsilon$-transitions both problems are decidable, with non-primitive recursive complexity (Theorem 5.5); for observable event-recording automata they are [PSPACE](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)-complete (Theorem 5.16); and the weaker $\exists$-opacity problem, whether some trace is produced by both a private and a public run, is inter-reducible with reachability for timed automata (Theorem 4.6), hence decidable.
 
 ## Depends on
 
 - [Timed automata over finite timed words](timed-automata-over-finite-timed-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

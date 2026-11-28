@@ -2,19 +2,22 @@
 
 No algorithm decides whether some policy of a priced probabilistic timed automaton reaches a goal location with probability at least $p$ while accumulating cost at most $\kappa$; this holds with three clocks and stopwatch or strictly positive cost rates, and with two clocks when cost rates may be negative.
 
-**Priced probabilistic timed automata.** A *priced probabilistic timed automaton* (PPTA) is a tuple $(L, l_{\mathrm{init}}, X, \mathit{edges}, r)$ with a finite set $L$ of locations, an initial location $l_{\mathrm{init}}$, a finite set $X$ of clocks, a finite set $\mathit{edges} \subseteq L \times \mathrm{Zones}(X) \times \mathrm{Dist}(2^X \times L)$ of edges, each with a guard (a zone) and a probability distribution over pairs of a set of clocks to reset and a target location, and a cost-rate function $r \colon L \to \mathbb{Z}$. Its semantics is the Markov decision process whose states are triples $(l, v, c)$ of a location, a clock valuation and the accumulated cost, starting from $(l_{\mathrm{init}}, \mathbf{0}, 0)$: a time transition of duration $d > 0$ leads to $(l, v + d, c + r(l)\, d)$, and a discrete transition takes an edge whose guard holds, resetting the drawn clocks and moving to the drawn location. A *policy* maps finite runs to the next transition. The PPTA is *simple* if the clocks reset by an edge do not depend on the probabilistic outcome.
+**Priced probabilistic timed automata.** A *priced probabilistic timed automaton* (PPTA) is a tuple $(L, l_{\mathrm{init}}, X, \mathit{edges}, r)$ with a finite set $L$ of locations, an initial location $l_{\mathrm{init}}$, a finite set $X$ of clocks, a finite set $\mathit{edges} \subseteq L \times \mathrm{Zones}(X) \times \mathrm{Dist}(2^X \times L)$ of edges, each with a guard (a zone) and a probability distribution, with rational probabilities, over pairs of a set of clocks to reset and a target location, and a cost-rate function $r \colon L \to \mathbb{Z}$. Its semantics is the Markov decision process whose states are triples $(l, v, c)$ of a location, a clock valuation and the accumulated cost, starting from $(l_{\mathrm{init}}, \mathbf{0}, 0)$: a time transition of duration $d > 0$ leads to $(l, v + d, c + r(l)\, d)$, and a discrete transition takes an edge whose guard holds, resetting the drawn clocks and moving to the drawn location. A *policy* maps finite runs to the next transition. The PPTA is *simple* if the clocks reset by an edge do not depend on the probabilistic outcome.
 
-**Theorem (Berendsen, Chen and Jansen).** *Cost-bounded probabilistic reachability* asks, given a PPTA, a goal location $l_G$, a probability $p \in (0, 1]$ and a cost bound $\kappa \in \mathbb{N}$, whether some policy reaches a state $(l_G, v, c)$ with $c \le \kappa$ with probability at least $p$. This problem is undecidable for simple PPTA in each of the following cases:
+**Theorem (Berendsen, Chen and Jansen).** *Cost-bounded probabilistic reachability* asks, given a PPTA, a goal location $l_G$, a rational probability $p \in (0, 1]$ and a cost bound $\kappa \in \mathbb{N}$, whether some policy reaches a state $(l_G, v, c)$ with $c \le \kappa$ with probability at least $p$. This problem is undecidable for simple PPTA in each of the following cases:
 
 1. three clocks and cost rates in $\{0, 1\}$ (stopwatch cost);
 2. two clocks and arbitrary integer cost rates;
 3. three clocks and strictly positive integer cost rates.
+
+(Theorems 1, 2 and 3 of the source, one per case.)
 
 The source notes that the results also hold for classes of policies that contain the deterministic policies used in the proofs.
 
 ## Depends on
 
 - [Timed automata over finite timed words](../decision-problems-for-timed-languages/timed-automata-over-finite-timed-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

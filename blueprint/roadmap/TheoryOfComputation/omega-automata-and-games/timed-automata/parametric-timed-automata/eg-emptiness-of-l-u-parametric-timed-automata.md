@@ -15,10 +15,12 @@ AF-universality.
 ## Depends on
 
 - [Parametric timed automata](parametric-timed-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -31,4 +33,4 @@ decidable closed bounded case uses the monotonicity of L/U-PTAs in their lower- 
 
 ## Sources
 
-- É. André, D. Lime, O. H. Roux, "Reachability and liveness in parametric timed automata", *Logical Methods in Computer Science* 18(1), article 31, 2022, doi:[10.46298/lmcs-18(1:31)2022](https://doi.org/10.46298/lmcs-18(1:31)2022). Numbering of the version read, arXiv:2004.09171v4: Theorem 5.13 (L/U-PTAs), Theorem 5.11 (open bounded L/U-PTAs), Corollary 5.17 (PTAs) and Theorem 5.10 (the decidable closed bounded case).
+- É. André, D. Lime, O. H. Roux, "Reachability and liveness in parametric timed automata", *Logical Methods in Computer Science* 18(1), article 31, 2022, doi:[10.46298/lmcs-18(1:31)2022](https://doi.org/10.46298/lmcs-18(1:31)2022). Numbering of the version read, arXiv:2004.09171v4: Theorem 5.13 (L/U-PTAs), Theorem 5.11 (open bounded L/U-PTAs), Corollary 5.15 (PTAs) and Theorem 5.10 (the decidable closed bounded case).

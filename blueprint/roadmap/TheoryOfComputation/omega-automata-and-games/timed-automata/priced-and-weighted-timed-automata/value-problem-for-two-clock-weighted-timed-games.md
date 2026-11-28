@@ -11,6 +11,7 @@ The value problem is decidable for one-clock weighted timed games, and it was kn
 ## Depends on
 
 - [Weighted timed games](weighted-timed-games.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ The reduction is from the halting problem for deterministic two-counter machines
 
 ## Sources
 
-- Quentin Guilmant, Joël Ouaknine and Isa Vialard, "The Value Problem for Weighted Timed Games with Two Clocks is Undecidable", in *Foundations of Software Science and Computation Structures (FoSSaCS 2026)*, Lecture Notes in Computer Science, Springer, 2026, pp. 616–635, doi:10.1007/978-3-032-22730-0_29; read as arXiv:2507.10550v2, <https://arxiv.org/abs/2507.10550v2>, which carries the title and authors of the conference paper: Theorem 1 (the undecidability theorem, stated in the introduction and proved in the section on two-clock games) with the reduction proposition and the definitions of weighted timed games and the value problem, in the numbering of that version. The later arXiv version, Quentin Guilmant, Joël Ouaknine, Isa Vialard and Angel Wuttke, "(Un)Decidability of Two-Clock Weighted Timed Games", arXiv:2507.10550v3, <https://arxiv.org/abs/2507.10550v3>, extends it: Theorem 3.1, Proposition 3.2 (the value gap) and the decidability result for almost divergent games, in the numbering of that version.
+- Quentin Guilmant, Joël Ouaknine and Isa Vialard, "The Value Problem for Weighted Timed Games with Two Clocks is Undecidable", in *Foundations of Software Science and Computation Structures (FoSSaCS 2026)*, Lecture Notes in Computer Science, Springer, 2026, pp. 616–635, doi:10.1007/978-3-032-22730-0_29; read as arXiv:2507.10550v2, <https://arxiv.org/abs/2507.10550v2>, which carries the title and authors of the conference paper: Theorem 1 (the undecidability theorem, stated in the introduction and proved in the section on two-clock games) with Proposition 1 (the reduction) and Definitions 1 and 2 (weighted timed games and the value problem), in the numbering of that version. The later arXiv version, Quentin Guilmant, Joël Ouaknine, Isa Vialard and Angel Wuttke, "(Un)Decidability of Two-Clock Weighted Timed Games", arXiv:2507.10550v3, <https://arxiv.org/abs/2507.10550v3>, extends it: Theorem 3, Proposition 4 (the value gap) and Theorem 20 (decidability for almost divergent games, with the complexity analysis after it), in the numbering of that version.

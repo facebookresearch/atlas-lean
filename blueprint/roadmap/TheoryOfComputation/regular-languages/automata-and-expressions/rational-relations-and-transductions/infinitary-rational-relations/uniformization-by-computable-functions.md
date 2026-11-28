@@ -13,10 +13,12 @@ The source shows that synthesis of a computable uniformizer becomes decidable fo
 ## Depends on
 
 - [Infinitary rational relations and ω-rational functions](infinitary-rational-relations-and-omega-rational.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [The Post correspondence problem is undecidable](../../../../undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [Halting is undecidable](../../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -24,4 +26,4 @@ Item 1 is proved by a reduction from Post's correspondence problem. Item 2, and 
 
 ## Sources
 
-- Emmanuel Filiot and Sarah Winter, "Synthesizing Computable Functions from Rational Specifications Over Infinite Words", *International Journal of Foundations of Computer Science* 35(01n02), 2024, pp. 179–214, doi:[10.1142/S012905412348009X](https://doi.org/10.1142/S012905412348009X), and in *FSTTCS 2021*, LIPIcs 213, 2021, pp. 43:1–43:16, doi:[10.4230/LIPIcs.FSTTCS.2021.43](https://doi.org/10.4230/LIPIcs.FSTTCS.2021.43); read in arXiv:2103.05674v4 ([arXiv](https://arxiv.org/abs/2103.05674v4)), cited by section because its counters are not recoverable: the problem statement and the undecidability proposition with its proof sketch (preliminaries), and the proposition on sequential and letter-to-letter sequential uniformizers with its proof (discussion section).
+- Emmanuel Filiot and Sarah Winter, "Synthesizing Computable Functions from Rational Specifications Over Infinite Words", *International Journal of Foundations of Computer Science* 35(01n02), 2024, pp. 179–214, doi:[10.1142/S012905412348009X](https://doi.org/10.1142/S012905412348009X), and in *FSTTCS 2021*, LIPIcs 213, 2021, pp. 43:1–43:16, doi:[10.4230/LIPIcs.FSTTCS.2021.43](https://doi.org/10.4230/LIPIcs.FSTTCS.2021.43); read in arXiv:2103.05674v4 ([arXiv](https://arxiv.org/abs/2103.05674v4)), whose numbering is used: the problem statement and Proposition 5 with its proof sketch in Section 2 (Preliminaries), and Proposition 31 with its proof in Section 6 (Discussion).

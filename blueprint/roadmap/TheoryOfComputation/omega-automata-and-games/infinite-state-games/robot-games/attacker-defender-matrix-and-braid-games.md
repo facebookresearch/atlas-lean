@@ -2,7 +2,7 @@
 
 In two-player games where Defender and Attacker alternately apply their own integer matrices to a vector, or concatenate their own braids, no algorithm decides whether Attacker can force a return to the start; this holds for $4\times4$ matrices and for braids on three or five strands.
 
-In an *Attacker–Defender game* two players move alternately from an initial position, Defender first in each round; Attacker wins if he can force reaching the target position, and Defender tries to prevent it.
+In an *Attacker–Defender game* two players move alternately from an initial position, Defender first in each round; Attacker wins if, whatever Defender plays, he reaches the target position after finitely many rounds (at least one move having been made, so a target equal to the start is not reached at time $0$), and Defender tries to prevent it. Matrices and vectors have integer entries; braids are given as words in the Artin generators $\sigma_i^{\pm1}$, and free group words as words over the group alphabet.
 
 **Theorem (Halava, Harju, Niskanen and Potapov).**
 1. *Matrix games.* Given finite sets of matrices in $\mathbb Z^{4\times4}$ for Attacker and for Defender and an initial vector $x_0\in\mathbb Z^4$, where each move multiplies the current vector by a matrix of the moving player, it is undecidable whether Attacker has a strategy to return to $x_0$.
@@ -12,6 +12,7 @@ In an *Attacker–Defender game* two players move alternately from an initial po
 ## Depends on
 
 - [Braid group on n strands](../../../../GroupTheory/presentations-and-decision-problems/braid-and-artin/endomorphisms-of-braid-groups/braid-group.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ Defender supplies the letters of an infinite word one at a time and Attacker fol
 
 ## Sources
 
-- Vesa Halava, Tero Harju, Reino Niskanen and Igor Potapov, "Weighted automata on infinite words in the context of Attacker–Defender games", *Information and Computation* 255, 2017, pp. 27–44, doi:[10.1016/j.ic.2017.05.001](https://doi.org/10.1016/j.ic.2017.05.001); read in arXiv:1411.4796v3 ([arXiv](https://arxiv.org/abs/1411.4796v3)), cited by section because its theorem counters are not recoverable: Section 4: the weighted word game theorem, the word game on pairs of group words, the matrix game theorem, the definition of braid groups and the braid game theorem, with the proofs in the appendices.
+- Vesa Halava, Tero Harju, Reino Niskanen and Igor Potapov, "Weighted automata on infinite words in the context of Attacker–Defender games", *Information and Computation* 255, 2017, pp. 27–44, doi:[10.1016/j.ic.2017.05.001](https://doi.org/10.1016/j.ic.2017.05.001); read in arXiv:1411.4796v3 ([arXiv](https://arxiv.org/abs/1411.4796v3)), whose numbering is used: Section 4: Theorem 6 (weighted word game), Theorem 7 (word game on pairs of group words), Theorem 8 (matrix game), Definition 9 (braid groups) and Theorem 10 (braid game), with the proofs in the appendices.

@@ -7,11 +7,12 @@ $(h, g)$ with $h, g : A^* \to B^*$ and $|A| = 9$ is undecidable. The size of the
 instances built by the proof the target alphabet $B$ has four letters.
 
 The problem is undecidable in general (Ruohonen), was known to be undecidable for size $105$ (Blondel and Canterini), and is
-decidable for binary instances, $|A| = 2$. The source states that the cases $3 \le |A| \le 8$ are open.
+decidable for binary instances, $|A| = 2$. The source states that the cases $3 \le |A| \le 8$ are open; Dong and Liu later announced undecidability for instances of size $8$ ("Undecidability of infinite Post correspondence problem for instances of size 8", RAIRO – Theoretical Informatics and Applications 46(3):451–457, 2012, doi:10.1051/ita/2012015; not read here, cited from its title).
 
 ## Depends on
 
 - [The infinite Post correspondence problem](the-infinite-post-correspondence-problem.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

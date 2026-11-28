@@ -13,14 +13,16 @@ $$
 
 The *average-value problem* (resp. *regular average-value problem*) asks, given $\mathcal{V}$, $f$ and a rational $\lambda$, whether some computation (resp. some regular computation) $\pi$ has $\mathrm{LimAvg}(f(\pi)) \le \lambda$.
 
-**Theorem.** For vector addition systems with states over $\mathbb{N}$ and general cost functions, the average-value problem and the regular average-value problem are undecidable.
+An instance gives the dimension $k$, the finite sets $Q$, $Q_0$ and $\delta$ with integer transition vectors, the labeling $l$ and $\lambda$, all numbers in binary.
 
-In contrast, with uniform cost functions whose coefficients are nonzero both problems are decidable, being inter-reducible with configuration reachability; whether some regular computation has finite long-run average is decidable; and over $\mathbb{Z}$, without the nonnegativity
+**Theorem (Chatterjee, Henzinger and Otop).** For vector addition systems with states over $\mathbb{N}$ and general cost functions, the average-value problem and the regular average-value problem are undecidable (Theorem 26 of the source); the proof reduces the halting problem for two-counter (Minsky) machines.
+
+In contrast, with uniform cost functions whose coefficients are nonzero both problems are decidable, being inter-reducible with configuration reachability (Theorem 4); whether some regular computation has finite long-run average is decidable; and over $\mathbb{Z}$, without the nonnegativity
 constraint, the regular average-value problem with general costs is NP-complete and both problems with uniform costs are in polynomial time. For two-player games on such systems the average-value problem is undecidable already with uniform costs.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

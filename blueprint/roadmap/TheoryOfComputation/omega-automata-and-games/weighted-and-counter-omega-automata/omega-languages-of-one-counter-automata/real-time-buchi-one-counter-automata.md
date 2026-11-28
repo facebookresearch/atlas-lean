@@ -2,7 +2,7 @@
 
 A real-time Büchi one-counter automaton reads an infinite word one letter per step, with finitely many states and a nonnegative counter that it can test for zero and change by one, and accepts when some run visits an accepting state infinitely often.
 
-Let $k\ge1$. A *$k$-counter machine* is a tuple $(K,\Sigma,\Delta,q_0)$ with a finite set $K$ of states, a finite input alphabet $\Sigma$, an initial state $q_0$ and a transition relation $\Delta\subseteq K\times(\Sigma\cup\{\lambda\})\times\{0,1\}^k\times K\times\{0,1,-1\}^k$; a configuration is $(q,c_1,\dots,c_k)$ with $c_i\in\mathbb N$. A transition $(q,a,i_1,\dots,i_k,q',j_1,\dots,j_k)$ applies when each $c_m$ is zero exactly if $i_m=0$, and it adds $j_m$ to $c_m$; a counter tested zero is never decremented. The machine is *real time* if it has no $\lambda$-transitions, so that it reads one letter per step.
+Let $k\ge1$. A *$k$-counter machine* is a tuple $(K,\Sigma,\Delta,q_0)$ with a finite set $K$ of states, a finite input alphabet $\Sigma$, an initial state $q_0$ and a transition relation $\Delta\subseteq K\times(\Sigma\cup\{\lambda\})\times\{0,1\}^k\times K\times\{0,1,-1\}^k$; a configuration is $(q,c_1,\dots,c_k)$ with $c_i\in\mathbb N$. A transition $(q,a,i_1,\dots,i_k,q',j_1,\dots,j_k)$ applies when each $c_m$ is zero exactly if $i_m=0$, and it adds $j_m$ to $c_m$; a counter tested zero is never decremented. The machine is *real time* if none of its transitions reads $\lambda$, so that it reads one letter per step.
 
 A *Büchi $k$-counter automaton* is $(K,\Sigma,\Delta,q_0,F)$ with $F\subseteq K$. A run on $\sigma\in\Sigma^\omega$ starts in $(q_0,0,\dots,0)$ and reads all of $\sigma$; it is accepting if some state of $F$ occurs infinitely often, and $L(\mathcal M)\subseteq\Sigma^\omega$ is the set of infinite words with an accepting run. One-counter automata are pushdown automata with stack alphabet $\{Z_0,A\}$, $Z_0$ marking the bottom, so their $\omega$-languages are context-free $\omega$-languages (accepted by Büchi pushdown automata).
 
@@ -11,6 +11,7 @@ A *Büchi $k$-counter automaton* is $(K,\Sigma,\Delta,q_0,F)$ with $F\subseteq K
 ## Depends on
 
 - [Analytical hierarchy](../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
 
 ## Proof depends on
 

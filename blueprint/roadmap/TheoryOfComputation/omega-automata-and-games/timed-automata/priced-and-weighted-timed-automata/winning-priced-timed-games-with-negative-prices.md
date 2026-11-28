@@ -7,7 +7,7 @@ reachability or repeated reachability objectives, already with few clocks.
 for Player 1 is undecidable for each of the following objectives:
 
 1. $\mathrm{Reach}({\bowtie} K)$, for priced timed games with two or more clocks and arbitrary prices;
-2. $\mathrm{BReach}(K, T)$, for priced timed games with five or more clocks and prices $0$ and $1$;
+2. $\mathrm{BReach}(K, T)$, for priced timed games with five or more clocks, location price rates in $\{0, 1\}$ and label prices $0$;
 3. $\mathrm{RReach}(\eta)$, for priced timed games with three or more clocks and arbitrary prices.
 
 Undecidability for $\mathrm{Reach}({\le} K)$ with two clocks and arbitrary price rates had been shown earlier; the source
@@ -18,6 +18,7 @@ reachability-cost game is computable.
 ## Depends on
 
 - [Priced timed games with constrained-price, bounded-time and repeated reachability objectives](priced-timed-games-with-constrained-price-bounde.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -34,4 +35,4 @@ For $\mathrm{RReach}(\eta)$ three clocks encode $1 / (5^{c_1} 7^{c_2})$ as for t
 
 ## Sources
 
-- T. Brihaye, G. Geeraerts, S. N. Krishna, L. Manasa, B. Monmege and A. Trivedi, "Adding negative prices to priced timed games", in *CONCUR 2014 – Concurrency Theory*, Lecture Notes in Computer Science 8704, pp. 560–575, Springer, 2014, doi:10.1007/978-3-662-44584-6_38; numbering of the version arXiv:1404.5894v6: the first theorem of Section 3 (undecidability for the three objectives), its proof sketch in Section 4, and the decidability theorem for one-clock bi-valued games in Section 3.
+- T. Brihaye, G. Geeraerts, S. N. Krishna, L. Manasa, B. Monmege and A. Trivedi, "Adding negative prices to priced timed games", in *CONCUR 2014 – Concurrency Theory*, Lecture Notes in Computer Science 8704, pp. 560–575, Springer, 2014, doi:10.1007/978-3-662-44584-6_38; numbering of the version arXiv:1404.5894v6: Theorem 2 (undecidability for the three objectives), its proof sketch in Section 4, and Theorem 3 (decidability for one-clock bi-valued games), both in Section 3.

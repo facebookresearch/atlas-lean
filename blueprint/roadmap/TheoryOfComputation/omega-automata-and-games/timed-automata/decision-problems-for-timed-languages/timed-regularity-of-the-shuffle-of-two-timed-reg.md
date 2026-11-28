@@ -17,6 +17,7 @@ with fewer than $n$ clocks for a given $n \ge 1$, or by some deterministic timed
 ## Depends on
 
 - [Timed automata over finite timed words](timed-automata-over-finite-timed-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

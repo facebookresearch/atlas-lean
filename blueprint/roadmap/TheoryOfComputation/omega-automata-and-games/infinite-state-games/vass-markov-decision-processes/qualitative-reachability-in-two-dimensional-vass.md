@@ -16,6 +16,7 @@ decidable in every dimension.
 ## Depends on
 
 - [VASS Markov decision processes and qualitative reachability](vass-markov-decision-processes-and-qualitative-r.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +31,4 @@ reachability questions are equivalent to reaching the final state; since the onl
 
 ## Sources
 
-- P. A. Abdulla, R. Ciobanu, R. Mayr, A. Sangnier and J. Sproston, "Qualitative analysis of VASS-induced MDPs", in *Foundations of Software Science and Computation Structures (FoSSaCS 2016)*, Lecture Notes in Computer Science 9634, pp. 319–334, Springer, 2016, doi:10.1007/978-3-662-49630-5_19; read in arXiv:1512.08824v2: the undecidability theorem of Section 2.4 (Undecidability in the general case), the two undecidability theorems for P-VASS-MDPs in Section 3, and the decidability theorems for 1-VASS-MDPs in Section 4.
+- P. A. Abdulla, R. Ciobanu, R. Mayr, A. Sangnier and J. Sproston, "Qualitative analysis of VASS-induced MDPs", in *Foundations of Software Science and Computation Structures (FoSSaCS 2016)*, Lecture Notes in Computer Science 9634, pp. 319–334, Springer, 2016, doi:10.1007/978-3-662-49630-5_19; read in arXiv:1512.08824v2: Theorem 1 in Section 2.4 ("Undecidability in the general case") and the remark after it, Theorems 3 and 5 for P-VASS-MDPs in Section 3, and Theorems 6–9 for 1-VASS-MDPs in Section 4, with the numbering of that version.

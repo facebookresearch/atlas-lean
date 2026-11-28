@@ -8,13 +8,14 @@ $$
 d(\pi_1, \pi_2) = \max_{W \subseteq \Sigma^*} \bigl(\pi_1(W) - \pi_2(W)\bigr) = \frac12 \sum_{w \in \Sigma^*} |\pi_1(w) - \pi_2(w)| .
 $$
 
-**Theorem (Kiefer).** The *strict threshold-distance problem*, which asks, given a labeled Markov chain, two initial distributions $\pi_1, \pi_2$ and a rational $\tau \in [0, 1]$, whether $d(\pi_1, \pi_2) > \tau$, is undecidable.
+**Theorem (Kiefer).** The *strict threshold-distance problem*, which asks, given a labeled Markov chain with rational transition matrices and end-of-word vector, two rational initial distributions $\pi_1, \pi_2$ and a rational $\tau \in [0, 1]$, whether $d(\pi_1, \pi_2) > \tau$, is undecidable (Theorem 3 of the source).
 
 Decidability of the non-strict version ($d(\pi_1, \pi_2) \ge \tau$) is open, as the source states. The distance can nevertheless be approximated to any given precision, and for acyclic chains both threshold problems are PP-complete.
 
 ## Depends on
 
 - [Discrete-time Markov chains](../../../../../Logic/temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -26,4 +27,4 @@ The proof reduces the emptiness problem for probabilistic automata: from a proba
 
 ## Sources
 
-- S. Kiefer, "On Computing the Total Variation Distance of Hidden Markov Models", in *45th International Colloquium on Automata, Languages, and Programming (ICALP 2018)*, Leibniz International Proceedings in Informatics (LIPIcs) 107, 2018, paper 130, doi:10.4230/LIPIcs.ICALP.2018.130; read as arXiv:1804.06170v1, <https://arxiv.org/abs/1804.06170v1>: Theorem 3.1 (the strict threshold-distance problem is undecidable) with its proof, the definition of labeled Markov chains and Proposition 2.2 (the two expressions for the distance) in Section 2, the definition of the threshold problems, the open non-strict case and the PP-completeness for acyclic chains in Section 3, and the approximation results of Section 4, in the numbering of that version.
+- S. Kiefer, "On Computing the Total Variation Distance of Hidden Markov Models", in *45th International Colloquium on Automata, Languages, and Programming (ICALP 2018)*, Leibniz International Proceedings in Informatics (LIPIcs) 107, 2018, paper 130, doi:10.4230/LIPIcs.ICALP.2018.130; read as arXiv:1804.06170v1, <https://arxiv.org/abs/1804.06170v1>: Theorem 3 (the strict threshold-distance problem is undecidable) with its proof, Definition 1 (labeled Markov chains) and Proposition 2 (the two expressions for the distance) in Section 2, the definition of the threshold problems, the open non-strict case and the PP-completeness for acyclic chains (Theorem 7) in Section 3, and the approximation results of Section 4, in the numbering of that version.

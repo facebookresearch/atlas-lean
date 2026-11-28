@@ -13,6 +13,7 @@ For properties given by deterministic timed Muller automata, strong and weak mon
 ## Depends on
 
 - [Timed Büchi automata](../timed-buchi-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,7 +21,7 @@ For properties given by deterministic timed Muller automata, strong and weak mon
 
 ## Expansion
 
-For every property, $V_\varphi(\varepsilon, 0) = \top$ iff $\varphi$ contains every infinite timed word, so computing the monitoring function would decide universality of timed Büchi automata, which is undecidable. For monitorability, the source adapts the reduction of Diekert, Muscholl and Walukiewicz for untimed Büchi automata: from a complete nondeterministic timed automaton $\mathcal A$ over finite words one builds, with a fresh letter $\#$ and three new locations, a timed Büchi automaton whose language is strongly monitorable iff $\mathcal A$ accepts every finite timed word. Weak monitorability is handled by reducing universality of timed Büchi automata to weak $\top$-monitorability, the variant that only asks for the verdict $\top$, and then to weak monitorability.
+For every property, $V_\varphi(\varepsilon, 0) = \top$ iff $\varphi$ contains every infinite timed word, so computing the monitoring function would decide universality of timed Büchi automata, which is undecidable. For monitorability, the source adapts the reduction of Diekert, Muscholl and Walukiewicz for untimed Büchi automata: from a complete nondeterministic timed automaton $\mathcal A$ over finite words one builds, with a fresh letter $\#$ and three new locations, a timed Büchi automaton whose language is strongly monitorable iff $\mathcal A$ accepts every finite timed word. Weak monitorability is handled by reducing universality of timed Büchi automata to weak $\top$-monitorability, the variant that only asks for the verdict $\top$, and then to weak monitorability. A good expansion also links a page for the undecidability of universality of timed automata over finite timed words (Alur and Dill), which the strong-monitorability reduction uses; the linked page treats timed Büchi automata.
 
 ## Sources
 

@@ -4,7 +4,7 @@ No algorithm decides whether a probabilistic automaton whose number of accepting
 
 **Probabilistic automata and ambiguity.** A *probabilistic automaton* $\mathcal{A} = (\Sigma, Q, \delta, \iota, F)$ has a finite alphabet $\Sigma$, a finite set $Q$ of states, a transition function $\delta$ assigning to each state and letter a distribution on $Q$ (nonnegative rationals with sum at most $1$), an initial distribution $\iota$ on $Q$ and a set $F \subseteq Q$ of final states. A run over $a_1 \cdots a_n$ is a sequence of transitions $(q_{i-1}, a_i, q_i)$ of positive probability; it is accepting if $\iota(q_0) > 0$ and $q_n \in F$, and its probability is $\iota(q_0) \prod_i \delta(q_{i-1}, a_i, q_i)$. The automaton maps each word $w$ to the sum $\mathcal{A}(w)$ of the probabilities of its accepting runs on $w$. It is *finitely ambiguous* if some $k$ bounds the number of accepting runs on every word, and *linearly ambiguous* if some polynomial $P$ of degree at most $1$ bounds the number of accepting runs on every word $w$ by $P(|w|)$.
 
-The *emptiness problem* asks, given $\mathcal{A}$, whether some word $w$ has $\mathcal{A}(w) > \frac12$. The *containment problem* asks, given $\mathcal{A}$ and $\mathcal{B}$, whether $\mathcal{A}(w) \le \mathcal{B}(w)$ for all words $w$.
+This differs from the model of [probabilistic automata and cut-point languages](../probabilistic-automata-and-cut-point-languages.md) in two conventions of the source: transition rows and the initial distribution may sum to less than $1$, and the start is an initial distribution rather than a single state; all entries are rational, so an instance is a finite table. The *emptiness problem* asks, given $\mathcal{A}$, whether some word $w$ has $\mathcal{A}(w) > \frac12$. The *containment problem* asks, given $\mathcal{A}$ and $\mathcal{B}$, whether $\mathcal{A}(w) \le \mathcal{B}(w)$ for all words $w$.
 
 **Theorem (Daviaud, Jurdziński, Lazić, Mazowiecki, Pérez and Worrell).** The emptiness and containment problems are undecidable for the class of linearly ambiguous probabilistic automata.
 
@@ -12,7 +12,8 @@ This strengthens undecidability for quadratically ambiguous automata (Fijalkow, 
 
 ## Depends on
 
-None.
+- [Probabilistic automata and cut-point languages](../probabilistic-automata-and-cut-point-languages.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

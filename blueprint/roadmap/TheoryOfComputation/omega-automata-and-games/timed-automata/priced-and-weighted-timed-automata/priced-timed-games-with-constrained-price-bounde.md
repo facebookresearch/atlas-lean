@@ -25,7 +25,7 @@ satisfies the objective.
    a target with a price $p$ satisfying $p \bowtie K$.
 2. *Bounded-time reachability* $\mathrm{BReach}(K, T)$, for $K, T \in \mathbb{N}$: reach a target with price at most $K$ while the total
    elapsed time stays within $T$.
-3. *Repeated reachability* $\mathrm{RReach}(\eta)$, for $\eta \ge 0$: in plays that continue forever, visit target locations infinitely
+3. *Repeated reachability* $\mathrm{RReach}(\eta)$, for a nonnegative rational $\eta$ given as a fraction of integers (the source lets $\eta$ range over the nonnegative reals; a decision problem needs a finite input): in plays that continue forever, visit target locations infinitely
    often, each time with a payoff in $[-\eta, \eta]$.
 
 PTGs refine [timed games](../timed-games.md): forgetting the prices leaves a timed reachability game.

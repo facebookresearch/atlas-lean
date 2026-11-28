@@ -27,6 +27,7 @@ Decision problems about these objects take Büchi transducers as input, coded by
 ## Depends on
 
 - [Büchi acceptance condition](../../../../omega-automata-and-games/emptiness-of-b-chi-automata/mem-language-iff.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

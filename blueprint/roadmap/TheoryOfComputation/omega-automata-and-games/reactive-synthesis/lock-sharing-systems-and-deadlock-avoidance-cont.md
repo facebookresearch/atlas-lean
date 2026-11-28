@@ -22,14 +22,14 @@ contains every possible uncontrollable action. A *control strategy* is a tuple $
 only from its own local run. A global run *respects* $\sigma$ if every action of each process was allowed by its strategy at that
 point. A $\sigma$-run *leads to a deadlock* if it cannot be prolonged to a longer $\sigma$-run, and $\sigma$ is *winning* if no
 $\sigma$-run leads to a deadlock. The *deadlock avoidance control problem* asks whether a given system has a winning control
-strategy.
+strategy; an instance is a system with finitely many processes, each with finite sets $S_p$, $\Sigma_p$ and $T_p$, given by the tables of the $\delta_p$ and the partition of the actions. A process that tries to acquire a lock it owns, or to release one it does not own, blocks.
 
 The dining philosophers form such a system: forks are locks, becoming hungry is uncontrollable, and the order in which a
 philosopher takes the two forks is controllable.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

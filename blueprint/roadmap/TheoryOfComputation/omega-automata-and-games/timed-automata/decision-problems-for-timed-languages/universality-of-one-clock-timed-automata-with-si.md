@@ -18,6 +18,7 @@ holds for universality of one-clock nondeterministic timed automata.
 
 - [Timed automata over finite timed words](timed-automata-over-finite-timed-words.md)
 - [Timed Büchi automata and timed regular languages](../timed-buchi-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -29,8 +30,8 @@ For item 1, the proof reduces reachability for perfect channel systems, which is
 the target configuration. For item 2, the proof
 reduces the halting problem of a deterministic Turing machine started on the empty tape, modified so that after accepting it clears its tape and restarts; the
 machine halts exactly when it has an infinite, repeatedly accepting computation, which is encoded as a timed $\omega$-word, and a one-clock Büchi automaton accepts
-exactly the timed $\omega$-words that do not encode such a computation.
+exactly the timed $\omega$-words that do not encode such a computation. A complete expansion links a page for the undecidability of reachability in perfect channel systems over at least two letters (Brand and Zafiropulo; Theorem 6 as cited in the source), the result item 1 starts from.
 
 ## Sources
 
-- S. Lasota and I. Walukiewicz, "Alternating timed automata", *ACM Transactions on Computational Logic* 9(2), article 10, 27 pages, 2008, doi:10.1145/1342991.1342994; conference version in *Foundations of Software Science and Computation Structures (FoSSaCS 2005)*, Lecture Notes in Computer Science 3441, pp. 250–265, 2005, doi:10.1007/978-3-540-31982-5_16. Read in arXiv:cs/0512031v2: the undecidability theorem of the section "Silent transitions" with its definitions and the cited theorem on perfect channel systems, the theorem of the section "Infinite words" with its corollary, and the decidability theorem and lower bound of the sections "Decidability" and "Lower Bound".
+- S. Lasota and I. Walukiewicz, "Alternating timed automata", *ACM Transactions on Computational Logic* 9(2), article 10, 27 pages, 2008, doi:10.1145/1342991.1342994; conference version in *Foundations of Software Science and Computation Structures (FoSSaCS 2005)*, Lecture Notes in Computer Science 3441, pp. 250–265, 2005, doi:10.1007/978-3-540-31982-5_16. Read in arXiv:cs/0512031v2: Theorem 5 in Section 5 ("Silent transitions") with Definitions 11 and 12 and the cited Theorem 6 on perfect channel systems, Theorem 7 in Section 6 ("Infinite words") with the remark after it, and Theorem 2, Theorem 3 and Corollary 2 of Sections 3 ("Decidability") and 4 ("Lower Bound"), with the numbering of that version.

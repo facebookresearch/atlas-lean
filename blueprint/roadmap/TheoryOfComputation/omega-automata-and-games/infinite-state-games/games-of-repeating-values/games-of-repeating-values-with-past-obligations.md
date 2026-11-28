@@ -11,11 +11,12 @@ is $|j|$.
 environment and one data variable of the system, and every local test has distance at most $3$ (Theorem 4.1).
 
 In contrast, the problem becomes decidable when the formula contains no data variable of the environment (*single-sided* games), by a reduction to single-sided games on vector addition systems with states, and
-even with nested past formulas; single-sided games with future obligations, $\mathrm{LRV}[\top, \approx, \rightarrow]$, are undecidable again.
+even with nested formulas that use only past modalities (with nested formulas that use future modalities they are undecidable again); single-sided games with future obligations, $\mathrm{LRV}[\top, \approx, \rightarrow]$, are undecidable again.
 
 ## Depends on
 
 - [The logic of repeating values and its games](logic-of-repeating-values-and-its-games.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

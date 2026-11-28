@@ -13,6 +13,7 @@ Since non-strict containment reduces to equivalence (compare $\mathcal A$ with t
 ## Depends on
 
 - [Discounted-sum automata with multiple discount factors](discounted-sum-automata-with-multiple-discount.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

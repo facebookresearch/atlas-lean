@@ -22,6 +22,7 @@ cycles.
 ## Depends on
 
 - [Parametric timed automata](parametric-timed-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

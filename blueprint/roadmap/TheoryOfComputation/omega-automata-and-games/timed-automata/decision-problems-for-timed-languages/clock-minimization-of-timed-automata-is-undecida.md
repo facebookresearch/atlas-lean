@@ -16,6 +16,7 @@ source states the analogous problem, for $n \ge 2$, to be $\Pi^1_1$-hard.
 ## Depends on
 
 - [Timed automata over finite timed words](timed-automata-over-finite-timed-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

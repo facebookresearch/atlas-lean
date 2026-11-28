@@ -33,7 +33,7 @@ problems are decidable, and quantitative emptiness is decidable for nondetermini
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

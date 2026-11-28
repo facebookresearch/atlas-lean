@@ -2,13 +2,14 @@
 
 No algorithm decides, for priced timed automata whose waiting prices are nonlinear functions of the clocks and the delay, whether a target location is reachable with optimal cost within a given budget.
 
-**Theorem.** The cost-optimal reachability problem for [priced timed automata with nonlinear prices](priced-timed-automata-with-nonlinear-prices.md) is undecidable: no algorithm decides, given such an automaton, locations $\ell,\ell'$ and a budget $B$, whether $\mathrm{OptCost}(\ell,\ell')\le B$.
+**Theorem.** The cost-optimal reachability problem for [priced timed automata with nonlinear prices](priced-timed-automata-with-nonlinear-prices.md) is undecidable (Theorem 2.1 of the source). Since a general price function is not a finite object, the statement is meant for the prices of the reduction: no algorithm decides, given a priced timed automaton with four clocks whose waiting prices are polynomials with rational coefficients in the clock values and the delay, given by their coefficients, together with locations $\ell,\ell'$, whether $\mathrm{OptCost}(\ell,\ell')\le 0$.
 
-The reduction uses four clocks, budget $B=0$ and waiting prices that are squares of affine expressions in one clock and the delay, such as $(1-x-2t)^2$ and $(1-x-t/2)^2$. For linear and piecewise-linear prices the problem is PSPACE-complete.
+The prices of the reduction are squares of affine expressions in one clock and the delay, such as $(1-x-2t)^2$ and $(1-x-t/2)^2$. For linear and piecewise-linear prices the problem is PSPACE-complete.
 
 ## Depends on
 
 - [Priced timed automata with nonlinear prices](priced-timed-automata-with-nonlinear-prices.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The proof reduces the halting problem of two-counter machines. Clocks $x$ and $y
 
 ## Sources
 
-- Devendra Bhave, Shankara Narayanan Krishna and Ashutosh Trivedi, "On Nonlinear Prices in Timed Automata", Electronic Proceedings in Theoretical Computer Science 232, 2016, pp. 65–78, doi:[10.4204/EPTCS.232.9](https://doi.org/10.4204/EPTCS.232.9); numbering of arXiv:1612.04976v1 ([arXiv](https://arxiv.org/abs/1612.04976v1)): Section 2, the first theorem of the summary of results (undecidability for nonlinearly priced timed automata), and its proof in Section 3.
+- Devendra Bhave, Shankara Narayanan Krishna and Ashutosh Trivedi, "On Nonlinear Prices in Timed Automata", Electronic Proceedings in Theoretical Computer Science 232, 2016, pp. 65–78, doi:[10.4204/EPTCS.232.9](https://doi.org/10.4204/EPTCS.232.9); numbering of arXiv:1612.04976v1 ([arXiv](https://arxiv.org/abs/1612.04976v1)): Section 2, Theorem 2.1 (undecidability for nonlinearly priced timed automata), and its proof in Section 3.

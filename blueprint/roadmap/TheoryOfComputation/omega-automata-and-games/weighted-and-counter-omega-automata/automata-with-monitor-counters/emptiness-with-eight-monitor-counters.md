@@ -9,6 +9,7 @@ This completes the classification of emptiness for deterministic automata with m
 ## Depends on
 
 - [Automata with monitor counters](automata-with-monitor-counters.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

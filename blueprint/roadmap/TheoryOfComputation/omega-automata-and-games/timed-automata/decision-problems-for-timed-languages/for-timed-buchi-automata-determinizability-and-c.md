@@ -22,7 +22,8 @@ timed words are the ones linked above.
 - [Timed Büchi automata and timed regular languages](../timed-buchi-automata.md)
 - [Timed words and timed languages](../timed-words-and-timed-languages.md)
 - [Deterministic timed automata](../deterministic-timed-automata.md)
-- [None](../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Analytical hierarchy](../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

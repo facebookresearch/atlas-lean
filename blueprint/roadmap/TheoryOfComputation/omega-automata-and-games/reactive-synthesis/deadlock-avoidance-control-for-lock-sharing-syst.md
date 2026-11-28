@@ -5,7 +5,7 @@ even when the numbers of processes and locks are fixed.
 
 **Theorem.** The deadlock avoidance control problem for arbitrary
 [lock-sharing systems](lock-sharing-systems-and-deadlock-avoidance-cont.md) is undecidable, even when the number of locks and the
-number of processes are fixed.
+number of processes are fixed (Theorem 2.5 of the source).
 
 The undecidability comes from the purely local information of the strategies: processes communicate only through the locks they
 take. The problem becomes decidable when every process uses at most two locks, and when locks are used in a nested fashion
@@ -17,6 +17,7 @@ locks per process open.
 ## Depends on
 
 - [Lock-sharing systems and deadlock avoidance control](lock-sharing-systems-and-deadlock-avoidance-cont.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ send an infinite solution.
 
 ## Sources
 
-- H. Gimbert, C. Mascle, A. Muscholl and I. Walukiewicz, "Distributed controller synthesis for deadlock avoidance", *Logical Methods in Computer Science* 21(3), paper 24, 2025, doi:10.46298/lmcs-21(3:24)2025; version arXiv:2204.12409v6: the undecidability theorem stated at the end of the Preliminaries section, and its proof in the section "Undecidability in the general case" (the theorem for systems with an initial configuration and at most seven locks per process, and the lemma removing initial locks).
+- H. Gimbert, C. Mascle, A. Muscholl and I. Walukiewicz, "Distributed controller synthesis for deadlock avoidance", *Logical Methods in Computer Science* 21(3), paper 24, 2025, doi:10.46298/lmcs-21(3:24)2025; version arXiv:2204.12409v6: Theorem 2.5, and its proof in Section 5, "Undecidability in the general case" (Theorem 5.1, for systems with an initial configuration and at most seven locks per process, and Lemma 5.4, removing initial locks); the decidable cases are Sections 3 and 4.

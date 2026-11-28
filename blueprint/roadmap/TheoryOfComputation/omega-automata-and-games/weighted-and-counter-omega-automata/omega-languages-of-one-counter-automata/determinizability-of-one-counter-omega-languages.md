@@ -15,11 +15,11 @@ Both problems are also $\Pi^1_2$-complete for Büchi pushdown automata (Corollar
 
 ## Proof depends on
 
-None.
+- [Regularity of real-time Büchi one-counter ω-languages is Π¹₂-complete](regularity-of-one-counter-omega-languages.md)
 
 ## Expansion
 
-Membership: each property is a number quantifier over indices $y$ in front of a $\Pi^1_2$ equality of $\omega$-languages. Hardness uses the reduction $H\circ\varphi$ of the regularity proof: in the first case the automaton accepts $\Omega^\omega$, which is deterministic and has empty, hence accepted, complement; in the second case its complement is accepted by no Turing machine, so by no one-counter automaton, and the language is not deterministic, since a deterministic one would lie in the arithmetical class $\Pi_2$ and have a complement accepted by a Turing machine.
+Membership: each property is a number quantifier over indices $y$ in front of a $\Pi^1_2$ equality of $\omega$-languages. Hardness uses the reduction $H\circ\varphi$ of the regularity proof: in the first case the automaton accepts $\Omega^\omega$, which is deterministic and has empty, hence accepted, complement; in the second case its complement is accepted by no Turing machine, so by no one-counter automaton, and the language is not deterministic, since a deterministic one would lie in the arithmetical class $\Pi_2$ and have a complement accepted by a Turing machine. A good expansion links pages for the $\Pi^1_2$-completeness results of Castro and Cucker for nondeterministic Turing machines on infinite words, on which the regularity proof rests.
 
 ## Sources
 

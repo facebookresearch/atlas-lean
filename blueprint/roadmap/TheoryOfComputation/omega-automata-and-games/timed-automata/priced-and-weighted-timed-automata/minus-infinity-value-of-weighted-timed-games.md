@@ -2,13 +2,14 @@
 
 No algorithm decides, given a weighted timed game and an initial location, whether the value of the game from that location with all clocks at zero is $-\infty$.
 
-**Theorem.** It is undecidable, given a [weighted timed game](weighted-timed-games.md) $\mathcal{G}$ and an initial location $\ell_I$, whether $\mathrm{Val}_{\mathcal{G}}(\ell_I, \mathbf{0}) = -\infty$, where $\mathbf{0}$ is the valuation with all clocks equal to $0$.
+**Theorem.** It is undecidable, given a [weighted timed game](weighted-timed-games.md) $\mathcal{G}$ and an initial location $\ell_I$, whether $\mathrm{Val}_{\mathcal{G}}(\ell_I, \mathbf{0}) = -\infty$, where $\mathbf{0}$ is the valuation with all clocks equal to $0$ (Proposition 3.12 of the source). This holds already when every final weight is $0$: the proof adds to a game without final weights an edge of weight $-\alpha$ from its target back to the initial location and a new target of final weight $0$, reducing the undecidable problem whether Min can guarantee reaching the target with weight $< \alpha$.
 
 The problem becomes decidable, and $\mathbf{EXP}$-complete, for almost-divergent weighted timed games, in which every play following a cycle of the region abstraction has weight at most $-1$, exactly $0$ or at least $1$, with a further condition on cycles of weight $0$ (Proposition 3.11 of the source); this decidable case is what lets the source compute the configurations of value $-\infty$ before approximating the other values.
 
 ## Depends on
 
 - [Weighted timed games](weighted-timed-games.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

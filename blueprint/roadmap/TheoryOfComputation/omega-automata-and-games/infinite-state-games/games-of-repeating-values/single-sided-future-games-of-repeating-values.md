@@ -9,6 +9,7 @@ This contrasts with the decidability of single-sided games with only past obliga
 ## Depends on
 
 - [The logic of repeating values and its games](logic-of-repeating-values-and-its-games.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

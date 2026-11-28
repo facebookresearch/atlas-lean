@@ -10,12 +10,12 @@ $$
 
 where $*$ is the convolution of timing distributions (the [convolution of probability measures](../../../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/conv.md)); write $P_{\mathcal{M}}(s, w, t)$ for its value at $t$. A *Markov process* $(S, A, \Delta)$ is the same without timing: $P_{\mathcal{M}}(s, \varepsilon) = 1$ and $P_{\mathcal{M}}(s, aw) = \sum_{s'} \Delta(s)(s', a) P_{\mathcal{M}}(s', w)$.
 
-**The faster-than problem.** A state $s$ is *faster than* a state $s'$, written $s \preceq s'$, if $P_{\mathcal{M}}(s, w, t) \ge P_{\mathcal{M}}(s', w, t)$ for every word $w$ and every time $t$; for a Markov process, if $P_{\mathcal{M}}(s, w) \ge P_{\mathcal{M}}(s', w)$ for every word $w$. The *faster-than problem* asks, given a process and two states $s, s'$, whether $s \preceq s'$.
+**The faster-than problem.** A state $s$ is *faster than* a state $s'$, written $s \preceq s'$, if $P_{\mathcal{M}}(s, w, t) \ge P_{\mathcal{M}}(s', w, t)$ for every word $w$ and every time $t$; for a Markov process, if $P_{\mathcal{M}}(s, w) \ge P_{\mathcal{M}}(s', w)$ for every word $w$. The *faster-than problem* asks, given a process and two states $s, s'$, whether $s \preceq s'$. As inputs, transition probabilities are rational, and for semi-Markov processes the timing distributions are taken from a fixed class $C$ whose members are described by finitely many rational parameters.
 
 **Theorem (Pedersen, Fijalkow, Bacci, Larsen and Mardare).**
 
-1. The faster-than problem is undecidable for Markov processes.
-2. For semi-Markov processes, with any class of timing distributions, the faster-than problem is undecidable.
+1. The faster-than problem is undecidable for Markov processes (Theorem 1 of the source); the proof reduces from universality of probabilistic automata.
+2. For semi-Markov processes whose timing distributions come from a fixed nonempty class $C$, the faster-than problem is undecidable, whatever $C$ is (Corollary 1): when all states share one timing distribution, $s \preceq s'$ holds exactly when it holds in the underlying Markov process (Lemma 2).
 
 The source also shows that the problem cannot be approximated up to a multiplicative factor and that with a single output label it is as hard as the Positivity problem for linear recurrence sequences, whose decidability is open.
 
@@ -24,6 +24,7 @@ The source also shows that the problem cannot be approximated up to a multiplica
 - [Probabilistic automata and cut-point languages](../probabilistic-automata-and-cut-point-languages.md)
 - [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 - [Convolution of probability measures](../../../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/conv.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

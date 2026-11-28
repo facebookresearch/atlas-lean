@@ -13,6 +13,7 @@ contrast, whether an ω-rational function is continuous (on its whole domain) is
 
 - [Infinitary rational relations and ω-rational functions](infinitary-rational-relations-and-omega-rational.md)
 - [Analytical hierarchy](../../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -13,6 +13,7 @@ Hence these problems lie at the first and second levels of the [analytical hiera
 ## Depends on
 
 - [Analytical hierarchy](../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

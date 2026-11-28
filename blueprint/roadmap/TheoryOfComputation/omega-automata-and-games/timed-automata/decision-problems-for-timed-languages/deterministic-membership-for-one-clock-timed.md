@@ -11,6 +11,8 @@ This strengthens the undecidability of DTA membership for timed automata with tw
 ## Depends on
 
 - [Timed automata over finite timed words](timed-automata-over-finite-timed-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Deterministic timed automata](../deterministic-timed-automata.md)
 
 ## Proof depends on
 
@@ -22,5 +24,5 @@ As for register automata, the proof reduces the finiteness problem for lossy cou
 
 ## Sources
 
-- Lorenzo Clemente, Sławomir Lasota and Radosław Piórkowski, "Determinisability of register and timed automata", *Logical Methods in Computer Science* 18(2), 2022, paper 9, doi:[10.46298/lmcs-18(2:9)2022](https://doi.org/10.46298/lmcs-18(2:9)2022); numbering of arXiv:2104.03690v4 ([arXiv](https://arxiv.org/abs/2104.03690v4)): Theorem 1.3 (Section 1.3) and its proof in the section on undecidability of DTA membership for one-clock automata; Theorems 1.1 and 1.5.
+- Lorenzo Clemente, Sławomir Lasota and Radosław Piórkowski, "Determinisability of register and timed automata", *Logical Methods in Computer Science* 18(2), 2022, paper 9, doi:[10.46298/lmcs-18(2:9)2022](https://doi.org/10.46298/lmcs-18(2:9)2022); numbering of arXiv:2104.03690v4 ([arXiv](https://arxiv.org/abs/2104.03690v4)): Theorem 1.3 (Section 1.3) and its proof in Section 8.3 (Lemma 8.5); Theorems 1.1 and 1.5.
 - Olivier Finkel, "Undecidable Problems About Timed Automata", in *Formal Modeling and Analysis of Timed Systems (FORMATS 2006)*, Lecture Notes in Computer Science 4202, Springer, 2006, pp. 187–199, doi:[10.1007/11867340_14](https://doi.org/10.1007/11867340_14); numbering of arXiv:0712.1363v1 ([arXiv](https://arxiv.org/abs/0712.1363v1)): Theorem 1 (determinizability, the result improved).

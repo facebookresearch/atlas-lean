@@ -13,7 +13,7 @@ x_{i_1} x_{i_2} x_{i_3} \cdots = y_{i_1} y_{i_2} y_{i_3} \cdots .
 $$
 
 Without the automaton (or with $L(\mathcal{A}) = \{1, \dots, n\}^\omega$) this is the
-[infinite Post correspondence problem](the-infinite-post-correspondence-problem.md).
+[infinite Post correspondence problem](the-infinite-post-correspondence-problem.md) restricted to nonerasing instances: since all $x_i, y_i$ are nonempty, the two infinite products are equal exactly when $x_{i_1} \cdots x_{i_k}$ and $y_{i_1} \cdots y_{i_k}$ are comparable for every $k$.
 
 **Theorem.** The set of (codes of) instances of $\omega$-PCP(Reg) that have a solution is
 [$\Sigma^1_1$-complete](../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md).
@@ -27,6 +27,7 @@ source does not fix the size of $\Gamma$ in the instances produced by the reduct
 - [The infinite Post correspondence problem](the-infinite-post-correspondence-problem.md)
 - [Büchi acceptance condition](../../omega-automata-and-games/emptiness-of-b-chi-automata/mem-language-iff.md)
 - [Analytical hierarchy](../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
