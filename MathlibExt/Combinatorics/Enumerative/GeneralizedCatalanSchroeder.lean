@@ -108,10 +108,11 @@ public theorem generalizedCatalanSchroeder_recurrence_functionalEquation
             PowerSeries.C t * PowerSeries.X * (PowerSeries.mk a - 1) ^ 2 := by
       ring
 
-/-- Let `R` be a commutative ring and let `C` be the formal power series whose coefficients are
-Catalan numbers cast to `R`. Then `C = 1 + X * C ^ 2`. -/
-public theorem generalizedCatalanSchroeder_catalan_equation
-    (R : Type) [CommRing R] :
+/-- **The Catalan functional equation.** Let $R$ be a commutative ring and let
+$C_R(X) = \sum_{n \ge 0} C_n X^n$ be the formal power series whose coefficients are the
+Catalan numbers cast to $R$. Then $C_R(X) = 1 + X C_R(X)^2$. -/
+public theorem mk_catalan_eq_one_add_X_mul_sq
+    (R : Type*) [CommRing R] :
     PowerSeries.mk (fun n => (catalan n : R)) =
       1 + PowerSeries.X * PowerSeries.mk (fun n => (catalan n : R)) ^ 2 := by
   let castHom : ℕ →+* R := Nat.castRingHom R
@@ -127,6 +128,15 @@ public theorem generalizedCatalanSchroeder_catalan_equation
     PowerSeries.mk (fun n => (catalan n : R)) =
         PowerSeries.mk (fun n => (catalan n : R)) ^ 2 * PowerSeries.X + 1 := h.symm
     _ = 1 + PowerSeries.X * PowerSeries.mk (fun n => (catalan n : R)) ^ 2 := by ring
+
+/-- **Coefficients of the square of the Catalan series.** Let $R$ be a commutative ring and
+let $C_R(X) = \sum_{n \ge 0} C_n X^n$ be the formal Catalan series over $R$. For every natural
+number $n$, the coefficient of $X^n$ in $C_R(X)^2$ is $C_{n+1}$ cast to $R$. -/
+public theorem coeff_mk_catalan_sq (R : Type*) [CommRing R] (n : ℕ) :
+    PowerSeries.coeff n (PowerSeries.mk (fun k => (catalan k : R)) ^ 2) =
+      (catalan (n + 1) : R) := by
+  have h := congrArg (PowerSeries.coeff (n + 1)) (mk_catalan_eq_one_add_X_mul_sq R)
+  simpa [PowerSeries.coeff_one, PowerSeries.coeff_succ_X_mul] using h.symm
 
 private theorem generalizedCatalanSchroeder_constantCoeff_f
     {R : Type} [CommRing R] (s t p : R) (f : PowerSeries R)
@@ -147,7 +157,7 @@ private theorem generalizedCatalanSchroeder_subst_catalan_equation
   rw [← PowerSeries.coe_substAlgHom hs]
   simpa only [map_add, map_mul, map_pow, map_one, PowerSeries.substAlgHom_X] using
     congrArg (PowerSeries.substAlgHom hs)
-      (generalizedCatalanSchroeder_catalan_equation R)
+      (mk_catalan_eq_one_add_X_mul_sq R)
 
 private theorem generalizedCatalanSchroeder_key_identity
     {R : Type} [CommRing R] (s t p : R) (g f y : PowerSeries R)

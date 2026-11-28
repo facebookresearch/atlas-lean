@@ -41,10 +41,9 @@ consecutive differences starting at `C₁ - C₀` and at `C₂ - C₁`.
   A026674 (the generating functions used in the paper's equations (12) and (16)).
 * The reduction to positive composition blocks follows `toeplitzHessenbergDet_fussCatalan` in
   `MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetFussCatalan.lean`.
-* The Catalan equation uses `generalizedCatalanSchroeder_catalan_equation` from
+* The Catalan equation `mk_catalan_eq_one_add_X_mul_sq` and coefficient shift
+  `coeff_mk_catalan_sq` are from
   `MathlibExt/Combinatorics/Enumerative/GeneralizedCatalanSchroeder.lean`.
-  The coefficient shift uses `coeff_catalanSeries_rat_sq` from
-  `MathlibExt/Combinatorics/Enumerative/TrudiFussCatalan.lean`.
 -/
 
 namespace MetaMathlibExt
@@ -119,7 +118,7 @@ private lemma odd_entries :
   have hF : E (positiveSeries (toeplitzHessenbergDet a)) * (1 - A) = A := by
     simpa only [map_mul, map_sub, map_one, hA] using
       congrArg E (positive_det_mul a (by simp [a]))
-  have cat_eq : cat = 1 + X * cat ^ 2 := generalizedCatalanSchroeder_catalan_equation ℚ
+  have cat_eq : cat = 1 + X * cat ^ 2 := mk_catalan_eq_one_add_X_mul_sq ℚ
   have hd : d = 1 - X * d ^ 2 := by
     simpa [d, rescale_neg_one_X, sub_eq_add_neg] using congrArg (rescale (-1 : ℚ)) cat_eq
   have hcInv : cat * (1 - X * cat) = 1 := by linear_combination cat_eq
@@ -153,16 +152,12 @@ private lemma consecutive_entries :
   let a : ℕ → ℚ := fun i => if i = 0 then -1 else (catalan (i + 1) : ℚ)
   have hA : positiveSeries a = cat ^ 2 - 1 := by
     ext n
-    rw [map_sub, coeff_catalanSeries_rat_sq]
+    rw [map_sub, coeff_mk_catalan_sq ℚ]
     cases n <;> simp [positiveSeries, a, coeff_one, catalan_one]
   have hFull : mk (toeplitzHessenbergDet a) = 1 + positiveSeries (toeplitzHessenbergDet a) := by
     ext n
     cases n with
-    | zero =>
-      simp only [coeff_mk, map_add, coeff_one, ite_true, positiveSeries, add_zero]
-      rw [toeplitzHessenbergDet_eq_sum_compositions]
-      have hlen (c : Composition 0) : c.length = 0 := c.length_eq_zero.mpr rfl
-      simp [hlen, composition_card]
+    | zero => simp [positiveSeries, toeplitzHessenbergDet_zero]
     | succ n => simp [positiveSeries, coeff_one]
   change mk (toeplitzHessenbergDet a) * (2 - cat ^ 2) = 1
   rw [hFull]
@@ -177,9 +172,9 @@ private lemma difference_entries :
   let a : ℕ → ℚ := fun i => if i = 0 then -1 else (catalan (i + 1) : ℚ) - catalan i
   have hA : positiveSeries a = cat ^ 2 - cat := by
     ext n
-    rw [map_sub, coeff_catalanSeries_rat_sq]
+    rw [map_sub, coeff_mk_catalan_sq ℚ]
     cases n <;> simp [positiveSeries, cat, a, catalan_zero, catalan_one]
-  have cat_eq : cat = 1 + X * cat ^ 2 := generalizedCatalanSchroeder_catalan_equation ℚ
+  have cat_eq : cat = 1 + X * cat ^ 2 := mk_catalan_eq_one_add_X_mul_sq ℚ
   have hcube : cat ^ 2 - cat = X * cat ^ 3 := by linear_combination cat * cat_eq
   rw [hcube] at hA
   simpa only [hA] using positive_det_mul a (by simp [a])

@@ -35,10 +35,6 @@ namespace toeplitzHessenbergDet_genFun
 
 variable {R : Type*} [CommRing R] (a : ℕ → R)
 
--- The empty determinant.
-private lemma det_zero : toeplitzHessenbergDet a 0 = 1 := by
-  simp [toeplitzHessenbergDet]
-
 -- The minor of the Toeplitz–Hessenberg matrix of size `n + 1` that deletes row `i` and column `0`:
 -- its rows above `i` are lower triangular with `a 0` on the diagonal and vanish from column `i`
 -- on, and its rows from `i` on form the Toeplitz–Hessenberg matrix of size `n - i`.
@@ -144,13 +140,13 @@ public theorem toeplitzHessenbergDet_genFun {R : Type*} [CommRing R] (a : ℕ �
   have hf : PowerSeries.mk (fun n => if n = 0 then 0 else toeplitzHessenbergDet a n) = F - 1 := by
     ext n
     rcases n with _ | n
-    · simp [F, det_zero]
+    · simp [F, toeplitzHessenbergDet_zero]
     · simp [F, PowerSeries.coeff_one]
   -- With `D 0 = 1`, the recurrence `det_succ` reads `F = 1 + H F` coefficientwise.
   have hF : F = 1 + H * F := by
     ext n
     rcases n with _ | n
-    · simp [F, H, det_zero]
+    · simp [F, H, toeplitzHessenbergDet_zero]
     · rw [map_add, PowerSeries.coeff_one, ite_eq_right n.succ_ne_zero, zero_add,
         PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_succ,
         Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]

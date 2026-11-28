@@ -68,9 +68,7 @@ private noncomputable def consecutiveDet : PowerSeries ℚ :=
 example : coeff 0 (consecutiveDet * (2 - cat ^ 2)) = 1 ∧
     coeff 2 (consecutiveDet * (2 - cat ^ 2)) = 0 := by
   have hzero : coeff 0 consecutiveDet = 1 := by
-    rw [consecutiveDet, coeff_mk, toeplitzHessenbergDet_eq_sum_compositions]
-    have hlen (c : Composition 0) : c.length = 0 := c.length_eq_zero.mpr rfl
-    simp [hlen, composition_card]
+    rw [consecutiveDet, coeff_mk, toeplitzHessenbergDet_zero]
   have hcoeff (n : ℕ) : coeff n (2 - cat ^ 2) =
       (if n = 0 then 2 else 0) - coeff n (cat ^ 2) := by
     rw [map_sub]

@@ -18,7 +18,7 @@ import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
-import all MathlibExt.Combinatorics.Enumerative.GeneralizedCatalanSchroeder
+import MathlibExt.Combinatorics.Enumerative.GeneralizedCatalanSchroeder
 import all MathlibExt.Combinatorics.Enumerative.TouchardCatalanIdentity
 import all MathlibExt.NumberTheory.Recurrences.LucasAlternatingSquaredBinomialSum
 
@@ -42,7 +42,7 @@ published normalization of the right-hand side.
   Article 25.8.8, 1–17, Proposition 1 (Lucas addition) and Theorem 2 (symmetric weights).
 * The formal proof reuses `sum_mul_lucasU_mul_lucasV_of_symm` from
   `MathlibExt.NumberTheory.Recurrences.LucasAlternatingSquaredBinomialSum`,
-  `generalizedCatalanSchroeder_catalan_equation` from
+  `mk_catalan_eq_one_add_X_mul_sq` from
   `MathlibExt.Combinatorics.Enumerative.GeneralizedCatalanSchroeder`, and `touchard_catalan_rec`
   from `MathlibExt.Combinatorics.Enumerative.TouchardCatalanIdentity`.
 -/
@@ -62,7 +62,7 @@ private theorem sum_catalan_even_mul (n : ℕ) :
   let E := ex A
   let O := P - E
   let Q := ex (rescale 4 P)
-  have hP : P = 1 + X * P ^ 2 := generalizedCatalanSchroeder_catalan_equation ℚ
+  have hP : P = 1 + X * P ^ 2 := mk_catalan_eq_one_add_X_mul_sq ℚ
   have hEven : P + rescale (-1) P = 2 * E := by
     apply PowerSeries.ext
     intro j
