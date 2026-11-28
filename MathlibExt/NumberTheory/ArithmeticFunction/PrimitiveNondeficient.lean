@@ -32,9 +32,9 @@ alone would make $0$ non-deficient. -/
 def IsNondeficient (n : ℕ) : Prop :=
   n ≠ 0 ∧ 2 * n ≤ ∑ d ∈ Nat.divisors n, d
 
-/-- **Primitive non-deficient number.** A natural number $n$ is primitive non-deficient when it is
-non-deficient and every proper divisor $m$ of $n$ (a divisor with $m < n$) is deficient, that is,
-$\sigma(m) < 2m$. -/
+/-- **Primitive non-deficient number.** A natural number $n$ is primitive non-deficient when it
+is non-deficient and every proper divisor $m$ of $n$ (a divisor with $m < n$) is deficient, that
+is, $\sigma(m) < 2m$, where $\sigma(m)$ is the sum of the positive divisors of $m$. -/
 def IsPrimitiveNondeficient (n : ℕ) : Prop :=
   IsNondeficient n ∧
     ∀ m ∈ Nat.divisors n, m < n → ∑ d ∈ Nat.divisors m, d < 2 * m
@@ -62,7 +62,8 @@ $0 < m < 1/(k(k+1))$, we have $1/(1 - km) < 1 + (k+1)m$.
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma (label `KMlemma`). -/
 theorem one_div_one_sub_mul_lt_add
-    (k m : ℝ) (hk : 2 ≤ k) (hm0 : 0 < m) (hm : m < 1 / (k * (k + 1))) :
+    (k m : ℝ) (hk : 2 ≤ k) (hm0 : 0 < m)
+    (hm : m < 1 / (k * (k + 1))) :
     1 / (1 - k * m) < 1 + (k + 1) * m := by
   have hk0 : 0 < k := by linarith
   have hbound : m * (k * (k + 1)) < 1 :=
