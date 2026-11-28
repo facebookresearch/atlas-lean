@@ -84,12 +84,11 @@ coefficient is `1`. -/
 private theorem exists_logSeries_eq_X_mul :
     ∃ g h : PowerSeries 𝔸ₚ, logSeries p = PowerSeries.X * g ∧ g = 1 + PowerSeries.X * h := by
   have h0 : PowerSeries.constantCoeff (logSeries p) = 0 := by
-    rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, logSeries, PowerSeries.coeff_mk,
-      ite_eq_left rfl]
+    rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, coeff_logSeries, ite_eq_left rfl]
   obtain ⟨g, hg⟩ := PowerSeries.X_dvd_iff.mpr h0
   have h1 : PowerSeries.constantCoeff g = 1 := by
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, ← PowerSeries.coeff_succ_X_mul, ← hg,
-      logSeries, PowerSeries.coeff_mk, ite_eq_right (by omega)]
+      coeff_logSeries, ite_eq_right (by omega)]
     norm_num
   obtain ⟨h, hh⟩ := PowerSeries.X_dvd_iff.mpr
     (show PowerSeries.constantCoeff (g - 1) = 0 by rw [map_sub, h1, map_one, sub_self])
