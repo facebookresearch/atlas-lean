@@ -23,11 +23,19 @@ where $(\mathbb{E}_\pi \Delta Q)(y) = \sum_b \pi(b \mid y) \Delta Q(y,b)$; the s
 
 ## Expansion
 
-Since $\mathcal{R}Q^\pi = Q^\pi$ and $\mathcal{R}$ is affine with the rewards cancelling,
+Since $\mathcal{R}Q^\pi = Q^\pi$, subtracting the two absolutely convergent series that define $\mathcal{R}Q(x,a)$ and $\mathcal{R}Q^\pi(x,a)$ term by term, the rewards cancel and
 
 $$\mathcal{R}Q(x,a) - Q^\pi(x,a) = \Delta Q(x,a) + \sum_{t \ge 0} \gamma^t\, \mathbb{E}^\mu_{x,a}\Bigl[\Bigl(\prod_{s=1}^t c_s\Bigr)\bigl(\gamma (\mathbb{E}_\pi \Delta Q)(x_{t+1}) - \Delta Q(x_t,a_t)\bigr)\Bigr].$$
 
-Both parts of the bracket give series whose terms are at most $\|\Delta Q\|\, \gamma^t\, \mathbb{E}[\prod_{s \le t} c_s]$, summable by finite trace mass, so they may be split. The $t = 0$ term of the second part is $-\Delta Q(x,a)$, which cancels the first term; shifting the index of the first part by one and collecting the terms with the same $t \ge 1$ gives the identity. Absolute convergence of the result: its bracket is at most $(1 + c_t)\|\Delta Q\|$, and $\sum_{t \ge 1} \gamma^t (\prod_{i<t} c_i)(1 + c_t)$ splits into $\gamma \sum_{t \ge 0} \gamma^t \prod_{i \le t} c_i$ and $\sum_{t \ge 1} \gamma^t \prod_{i \le t} c_i$ (in expectation), both summable by finite trace mass. The source proves the identity by first regrouping the rewards; it states the lemma without a summability hypothesis.
+Write $W_t = \prod_{s=1}^t c_s \ge 0$, so $W_0 = 1$ and $W_t = W_{t-1} c_t$. Each expectation is a finite sum over histories, so the triangle inequality and $W_t \ge 0$ give, with $|(\mathbb{E}_\pi \Delta Q)(y)| \le \|\Delta Q\|$,
+
+$$\bigl|\mathbb{E}[W_t\, \gamma (\mathbb{E}_\pi \Delta Q)(x_{t+1})]\bigr| \le \gamma \|\Delta Q\|\, \mathbb{E}[W_t], \qquad \bigl|\mathbb{E}[W_t\, \Delta Q(x_t,a_t)]\bigr| \le \|\Delta Q\|\, \mathbb{E}[W_t] .$$
+
+Multiplied by $\gamma^t$ and summed, both bounds are at most $\|\Delta Q\|\, C(x,a) < \infty$, so the series above is the sum of two absolutely convergent series and may be split into them. The $t = 0$ term of the second is $-\Delta Q(x,a)$, because $W_0 = 1$ and $(x_0,a_0) = (x,a)$; it cancels the first term. Shifting the index of the first series by one, which an absolutely convergent series allows, gives $\sum_{t \ge 1} \gamma^t\, \mathbb{E}[W_{t-1} (\mathbb{E}_\pi \Delta Q)(x_t)]$; the second series without its $t = 0$ term is $\sum_{t \ge 1} \gamma^t\, \mathbb{E}[W_{t-1} c_t\, \Delta Q(x_t,a_t)]$, which is subtracted. Combining these two absolutely convergent series term by term gives the identity. Its series is absolutely convergent: the bracket satisfies $|(\mathbb{E}_\pi \Delta Q)(x_t) - c_t\, \Delta Q(x_t,a_t)| \le (1 + c_t)\|\Delta Q\|$, so, with the nonnegative weight $W_{t-1}$,
+
+$$\Bigl|\mathbb{E}\bigl[W_{t-1}\bigl((\mathbb{E}_\pi \Delta Q)(x_t) - c_t\, \Delta Q(x_t,a_t)\bigr)\bigr]\Bigr| \le \|\Delta Q\|\, \bigl(\mathbb{E}[W_{t-1}] + \mathbb{E}[W_t]\bigr),$$
+
+and $\sum_{t \ge 1} \gamma^t (\mathbb{E}[W_{t-1}] + \mathbb{E}[W_t]) = \gamma C(x,a) + C(x,a) - 1 < \infty$. The source proves the identity by first regrouping the rewards; it states the lemma without a summability hypothesis.
 
 ## Sources
 

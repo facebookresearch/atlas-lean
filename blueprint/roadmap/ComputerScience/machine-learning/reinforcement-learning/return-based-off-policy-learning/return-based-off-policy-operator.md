@@ -28,7 +28,7 @@ The source defines $\mathcal{R}$ for arbitrary nonnegative coefficients; without
 
 ## Expansion
 
-A definition. The forced first action is a history-dependent randomized policy: the point mass at $a$ on the history $(x)$ and $\mu(\cdot \mid x_t)$ on longer histories. Under its law, for $t \ge 1$, $\mathbb{P}(a_t = b \mid h_t) = \mu(b \mid x_t)$, and for $t \ge 0$, $\mathbb{P}(x_{t+1} = y \mid h_t, a_t) = P(y \mid x_t, a_t)$, read off the product of policy and transition kernels. Absolute convergence: the $t$-th term is at most $\gamma^t (\|r\| + (1+\gamma)\|Q\|)\, \mathbb{E}[\prod_{s \le t} c_s]$, summable by $C < \infty$. $C \ge 1$ because the $t = 0$ term is $1$.
+A definition. The forced first action is a history-dependent randomized policy: the point mass at $a$ on the history $(x)$ and $\mu(\cdot \mid x_t)$ on longer histories. Under its law, for $t \ge 1$, $\mathbb{P}(a_t = b \mid h_t) = \mu(b \mid x_t)$, and for $t \ge 0$, $\mathbb{P}(x_{t+1} = y \mid h_t, a_t) = P(y \mid x_t, a_t)$, read off the product of policy and transition kernels. Absolute convergence: write $W_t = \prod_{s=1}^t c_s \ge 0$. The $t$-th expectation is a finite sum over histories, so the triangle inequality and $W_t \ge 0$ give $|\mathbb{E}[W_t \delta_t]| \le \mathbb{E}[W_t |\delta_t|] \le (\|r\| + (1+\gamma)\|Q\|)\, \mathbb{E}[W_t]$, using $|\delta_t| \le \|r\| + (1+\gamma)\|Q\|$. Hence $\sum_t \gamma^t |\mathbb{E}[W_t \delta_t]| \le (\|r\| + (1+\gamma)\|Q\|)\, C(x,a) < \infty$. $C \ge 1$ because the $t = 0$ term is $1$.
 
 ## Sources
 
