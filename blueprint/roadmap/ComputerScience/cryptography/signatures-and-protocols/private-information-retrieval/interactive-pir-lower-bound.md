@@ -1,10 +1,10 @@
 # Interaction does not help single-server PIR
 
-Let a single-server PIR protocol of arbitrary many rounds (a protocol tree with independent user and server coins) be perfectly correct and perfectly private for $n$-bit databases over an alphabet $\beta$. Then for fixed coins the transcript determines the database, every index has at least $|\beta|^n$ possible transcripts, and the protocol tree has depth at least $n \log_2|\beta|$, i.e. at least $n$ bits are exchanged in the worst case (and $n\ell$ bits for $\ell$-bit blocks). The same bound holds for adaptive multi-round $k$-server protocols with isolated channels when all servers may collude ($|S| \le t$).
+Let a single-server PIR protocol for $n$-bit databases, possibly with many rounds of interaction between the user and the server, be perfectly correct and perfectly (information-theoretically) private. Then for every index $i$ at least $2^n$ distinct communications are possible, so at least $n$ bits must be exchanged in the worst case: the trivial protocol that sends the whole database is optimal (Chor, Goldreich, Kushilevitz and Sudan, Section 5.1).
 
 ## Proof sketch
 
-If two databases reached the same leaf with the same coins, the rectangle property of communication protocols would give the same transcript on a mixed input, and privacy together with correctness would then force equal entries at every index. Counting leaves gives the depth bound.
+Fix $i$. If fewer than $2^n$ communications were possible for $i$, some communication $C$ would have positive probability on two databases $x \ne y$ with index $i$. By privacy, $C$ then has positive probability on $(x, j)$ and on $(y, j)$ for every index $j$, in particular for one with $x_j \ne y_j$; but on communication $C$ the user outputs a single bit, which cannot equal both $x_j$ and $y_j$. Distinguishing $2^n$ communications takes at least $n$ bits.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ If two databases reached the same leaf with the same coins, the rectangle proper
 
 ## Sources
 
-- Benny Chor, Oded Goldreich, Eyal Kushilevitz and Madhu Sudan, "Private Information Retrieval", Journal of the ACM, 1998.
+- Benny Chor, Oded Goldreich, Eyal Kushilevitz and Madhu Sudan, "Private Information Retrieval", Journal of the ACM 45(6), 1998, Section 5.1.

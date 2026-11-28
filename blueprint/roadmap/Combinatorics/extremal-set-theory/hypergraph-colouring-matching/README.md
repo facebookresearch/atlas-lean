@@ -17,3 +17,7 @@ Property B and hypergraph colouring, Erdős–Faber–Lovász, Kneser hypergraph
 - [Baranyai's theorem](baranyai-theorem.md)
 - [Property B for families of finite sets](has-property-b.md)
 - [Scottish Book Problem 9 (a common element of small finite sets)](finite-sets-common-element.md)
+- [Balanced Ryser counterexamples at prime orders](balanced-ryser-counterexamples-at-prime-orders.md)
+- [Ryser counterexamples for one prime and all large prime extension degrees](fixed-prime-extension-ryser-counterexamples.md)
+- [Ryser counterexamples in odd extension degrees](odd-extension-ryser-counterexamples.md)
+- [Infinitely many ranks admit intersecting Ryser counterexamples](infinitely-many-ryser-counterexample-ranks.md)

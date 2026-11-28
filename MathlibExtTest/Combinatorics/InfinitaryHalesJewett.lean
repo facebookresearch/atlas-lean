@@ -128,4 +128,68 @@ example {D : Set (FreeSemigroup Bool)} (hD : IsCSet D) :
   simpa [List.ofFn_succ] using
     hw 1 _ (Fin.cons a fun _ => b) hm (fun _ _ => Finset.mem_univ _)
 
+-- The same words give both the C-set product for independent assignments and an ordered pattern
+-- product, even when an intermediate level is skipped.
+example {C : Set (FreeSemigroup Bool)} (hC : IsCSet C) :
+    ∃ w : ℕ → FreeSemigroup (Bool ⊕ Fin 3), (∀ m i, Sum.inr i ∈ (w m).head :: (w m).tail) ∧
+      (∀ a b : Fin 3 → Bool,
+        FreeSemigroup.map (Sum.elim id a) (w 0) * FreeSemigroup.map (Sum.elim id b) (w 2) ∈ C) ∧
+      ∃ (r : ℕ) (t : Fin (r + 1) → ℕ), StrictMono t ∧
+        firstTwo (w 0) ++ firstTwo (w 2) = (List.ofFn fun j => runs (t j)).flatten := by
+  have hy : ∀ i : Fin 2, i ∈ [1, 0] := by decide
+  obtain ⟨w, hvars, hw⟩ := exists_variableWords_prod_mem_prod_pattern_mem_finiteProducts_of_isCSet
+    (fun _ => Finset.univ) monotone_const (fun x => ⟨0, Finset.mem_univ x⟩)
+    (k := 2) (n := 3) (by decide) (by decide) runs (fun _ i => List.mem_append_left _ (hy i)) hC
+  have hm : StrictMono (fun j : Fin 2 => 2 * j.val) :=
+    fun _ _ h => Nat.mul_lt_mul_of_pos_left h (by decide)
+  obtain ⟨hmem, r, t, ht, hpat⟩ := hw 1 _ hm
+  refine ⟨w, hvars, fun a b => ?_, r, t, ht, ?_⟩
+  · simpa [List.ofFn_succ] using hmem (Fin.cons a fun _ => b) (fun _ _ => Finset.mem_univ _)
+  · change (List.ofFn fun j : Fin 2 => firstTwo (w (2 * j.val))).flatten = _ at hpat
+    simpa [List.ofFn_succ] using hpat
+
+-- Even at the empty initial alphabet level, a singleton stage realizes a nonempty pattern block.
+example {C : Set (FreeSemigroup ℕ)} (hC : IsCSet C) :
+    ∃ w : FreeSemigroup (ℕ ⊕ Fin 2),
+      2 ≤ ((w.head :: w.tail).filterMap (Sum.elim (fun _ => none) fun i : Fin 2 =>
+        if h : (i : ℕ) < 1 then some (⟨i, h⟩ : Fin 1) else none)).length := by
+  obtain ⟨w, _, hw⟩ := exists_variableWords_prod_mem_prod_pattern_mem_finiteProducts_of_isCSet
+    Finset.range Finset.range_mono (fun x => ⟨x + 1, Finset.mem_range.mpr (Nat.lt_succ_self x)⟩)
+    (k := 1) (n := 2) (by decide) (by decide) (fun _ => [0, 0])
+    (fun _ i => by simp [Subsingleton.elim i 0]) hC
+  obtain ⟨_, r, _, _, hpat⟩ := hw 0 (fun _ => 0) (Fin.strictMono_iff_lt_succ.mpr fun i => i.elim0)
+  refine ⟨w 0, ?_⟩
+  have hlength := congrArg List.length hpat
+  simp only [List.ofFn_succ, List.ofFn_zero, List.flatten_cons, List.flatten_nil, List.append_nil,
+    List.length_append, List.length_cons, List.length_nil] at hlength
+  omega
+
+-- The same two nonconsecutive words give both the product and the sum, with independent letters.
+example {D : Set (FreeSemigroup Bool)} (hD : IsCSet D) :
+    ∃ w : ℕ → FreeSemigroup (Bool ⊕ Fin 1),
+      (∀ a b : Bool, FreeSemigroup.map (Sum.elim id fun _ => a) (w 0) *
+        FreeSemigroup.map (Sum.elim id fun _ => b) (w 2) ∈ D) ∧
+      ∃ H : Finset ℕ, H.Nonempty ∧
+        ((w 0).head :: (w 0).tail).countP Sum.isRight +
+          ((w 2).head :: (w 2).tail).countP Sum.isRight = ∑ j ∈ H, 3 ^ j := by
+  obtain ⟨w, _, hw, hsum⟩ := exists_variableWords_prod_mem_sum_count_mem_finiteSums_of_isCSet
+    (fun _ => Finset.univ) monotone_const (fun a => ⟨0, Finset.mem_univ a⟩) hD
+    (fun j => 3 ^ j) (fun _ => Nat.pow_pos (by decide))
+  have hm : StrictMono (fun j : Fin 2 => 2 * j.val) :=
+    fun _ _ h => Nat.mul_lt_mul_of_pos_left h (by decide)
+  refine ⟨w, fun a b => ?_, ?_⟩
+  · simpa [List.ofFn_succ] using hw 1 _ (Fin.cons a fun _ => b) hm (fun _ => Finset.mem_univ _)
+  · simpa using hsum {0, 2} (by simp)
+
+-- An empty first level imposes no substitution constraint, but still has a nonempty count sum.
+example {D : Set (FreeSemigroup ℕ)} (hD : IsCSet D) :
+    ∃ w : FreeSemigroup (ℕ ⊕ Fin 1), 2 ≤ (w.head :: w.tail).countP Sum.isRight := by
+  obtain ⟨w, _, _, hsum⟩ := exists_variableWords_prod_mem_sum_count_mem_finiteSums_of_isCSet
+    Finset.range Finset.range_mono (fun a => ⟨a + 1, Finset.mem_range.mpr (Nat.lt_succ_self a)⟩)
+    hD (fun _ => 2) (fun _ => by decide)
+  obtain ⟨H, hH, he⟩ := hsum {0} (Finset.singleton_nonempty _)
+  have he' : ((w 0).head :: (w 0).tail).countP Sum.isRight = H.card * 2 := by simpa using he
+  have := Finset.card_pos.mpr hH
+  exact ⟨w 0, by omega⟩
+
 end MetaMathlibExt.InfinitaryHalesJewettTest

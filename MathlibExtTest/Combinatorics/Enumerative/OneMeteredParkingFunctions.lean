@@ -54,6 +54,14 @@ example : binetRHS 4 3 = 55 := by
   rw [← count_eq_binetRHS (m := 4) (n := 3) (by norm_num) (by norm_num)]
   norm_num [show meteredParkingCount 1 4 3 = 55 by decide]
 
+-- The three-car count includes the boundary `n = 2`, which the Binet formula excludes.
+example : meteredParkingCount 1 3 2 = 4 :=
+  meteredParkingCount_one_three (n := 2) (by decide)
+
+-- The three-spot count agrees with the preceding finite enumeration.
+example : meteredParkingCount 1 3 3 = 21 :=
+  meteredParkingCount_one_three (n := 3) (by decide)
+
 -- Test section: the bound `m ≤ n + 1` is sharp. For `n = 3` the right-hand side at `m = 5` is
 -- `3 * 55 - 21 = 144`, but there are 145 1-metered `(5, 3)`-parking functions.
 example : binetRHS 5 3 = 144 ∧ meteredParkingCount 1 5 3 = 145 := by
@@ -78,5 +86,23 @@ example (m : ℕ) : binetRHS m 2 = 0 := by
 example : (meteredParkingCount 1 0 2 : ℝ) ≠ binetRHS 0 2 := by
   rw [show meteredParkingCount 1 0 2 = 1 by decide]
   norm_num [binetRHS]
+
+-- With no spots, only the empty preference list can park.
+example : meteredParkingCount 1 1 0 = 0 ∧ meteredParkingCount 1 0 0 = 1 :=
+  ⟨(meteredParkingCount_one_recursion 0).1, (meteredParkingCount_one_recursion 0).2.1⟩
+
+-- At m = n = 1, the second car cannot park.
+example : meteredParkingCount 1 2 1 = 0 := by
+  have h := meteredParkingCount_one_recursion 1
+  have hstep := h.2.2 1 (by decide) (by decide)
+  norm_num [h.1, h.2.1] at hstep
+  exact hstep
+
+-- At m = n = 2, extend the directly computed two-car count using the recurrence.
+example : (meteredParkingCount 1 3 2 : ℤ) = 4 := by
+  have h := meteredParkingCount_one_recursion 2
+  have hstep := h.2.2 2 (by decide) (by decide)
+  norm_num [show meteredParkingCount 1 2 2 = 3 by decide, h.1] at hstep
+  exact hstep
 
 end MathlibExtTest.OneMeteredParkingFunctions
