@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 import MathlibExt.Combinatorics.SimpleGraph.RamseyThreeFive
 import MathlibExt.Combinatorics.SimpleGraph.RamseyErdosLowerBound
 
@@ -36,3 +37,21 @@ example : ∃ G : SimpleGraph (Fin 13), G.CliqueFree 3 ∧ G.IndepSetFree 5 := b
   simpa [classicalRamsey, ← not_cliqueFree_iff_top_isContained] using h
 
 end MathlibExtTest.RamseyThreeFive
+
+namespace MathlibExtTest.RamseyThreeThree
+
+open SimpleGraph
+
+example : graphRamsey 3 3 = 6 := graphRamsey_three_three
+
+-- The five-cycle and its complement both have zero triangles, checked independently of R(3,3).
+example : (cycleGraph 5).cliqueFinset 3 = ∅ ∧ (cycleGraph 5)ᶜ.cliqueFinset 3 = ∅ := by
+  constructor <;> decide +kernel
+
+-- On six vertices, the cycle is triangle-free, but the even vertices form a triangle
+-- in the complement. Swapping the graph and its complement gives the other branch.
+example : (cycleGraph 6).CliqueFree 3 ∧
+    (cycleGraph 6)ᶜ.IsNClique 3 ({0, 2, 4} : Finset (Fin 6)) := by
+  exact ⟨cliqueFinset_eq_empty_iff.mp (by decide +kernel), by decide +kernel⟩
+
+end MathlibExtTest.RamseyThreeThree
