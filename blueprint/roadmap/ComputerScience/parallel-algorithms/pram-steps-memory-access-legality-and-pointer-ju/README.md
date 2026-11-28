@@ -1,0 +1,16 @@
+# PRAM steps: memory-access legality and pointer jumping
+
+- [PRAM program step](pram-prog.md)
+- [Writers of a memory cell in a PRAM step](writers.md)
+- [Value written by a PRAM processor](write-val.md)
+- [Priority CRCW step function](step-crcw.md)
+- [EREW legality of a PRAM step](erew.md)
+- [CREW legality of a PRAM step](crew.md)
+- [CRCW-Common legality of a PRAM step](common-legal.md)
+- [EREW-legal steps are CREW-legal](crew-2.md)
+- [A CREW-legal step stores the writer's value](step-crcw-of-crew.md)
+- [A Common-legal step stores each writer's value](step-crcw-of-common.md)
+- [Unwritten cells are unchanged by a PRAM step](step-crcw-of-no-writer.md)
+- [Pointer-jumping PRAM step](pointer-jump-step.md)
+- [Pointer-jumping step is CREW-legal](pointer-jump-step-crew.md)
+- [Effect of one pointer-jumping round](pointer-jump-apply.md)

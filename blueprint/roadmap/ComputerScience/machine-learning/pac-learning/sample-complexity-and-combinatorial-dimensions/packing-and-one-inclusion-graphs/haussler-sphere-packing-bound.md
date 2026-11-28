@@ -20,7 +20,7 @@ The key combinatorial input is a weighted edge-density inequality on the hypercu
 ## Proof depends on
 
 - [Edge density and bounded-outdegree orientations of one-inclusion graphs](one-inclusion-graph-edge-density.md)
-- [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
+- [Sauer bound for the growth function](../growth-function-and-sauer-closed-form/growth-function-le-sum.md)
 
 ## Sources
 

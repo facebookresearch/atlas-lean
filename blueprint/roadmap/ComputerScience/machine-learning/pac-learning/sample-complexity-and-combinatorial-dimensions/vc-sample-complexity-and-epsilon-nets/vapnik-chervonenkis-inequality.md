@@ -20,14 +20,14 @@ By the ghost-sample step, the bad event has probability at most twice that of th
 
 ## Depends on
 
-- [Growth function](../../../../not-yet-classified/growth-function/growth-function.md)
+- [Growth function](../growth-function-and-sauer-closed-form/growth-function.md)
 - [Uniform convergence property and eps-representative samples](../../agnostic-pac-learning-and-uniform-convergence/uniform-convergence-property-and-eps-representative-samples.md)
 - [The VC dimension is at most the size of the ground set](../../../../../Combinatorics/extremal-set-theory/vc-dim-le-card.md)
 
 ## Proof depends on
 
 - [Double-sample symmetrization: ghost samples and coordinate swaps](double-sample-symmetrization.md)
-- [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
+- [Sauer bound for the growth function](../growth-function-and-sauer-closed-form/growth-function-le-sum.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Sources

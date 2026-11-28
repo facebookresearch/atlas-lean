@@ -14,7 +14,7 @@ Apply Natarajan's lemma to the set $C$ itself, viewed as labelings of the $n = |
 
 ## Depends on
 
-- [Natarajan dimension at most d](../../../../not-yet-classified/natarajan/ndim-le.md)
+- [Natarajan dimension at most d](../natarajan-dimension-and-the-natarajan-lemma/ndim-le.md)
 - [Natarajan's lemma](natarajans-lemma.md)
 
 ## Proof depends on
