@@ -199,7 +199,11 @@ example :
     (by intro n; simp) (by intro n; simp) (by intro n; simp)
     zeroPairing 0 0 rfl rfl (𝟙 Z) (by rw [zero_d, zero_comp])
   have he := congrArg (fun g : MonoidalCategory.tensorObj Z Z ⟶ Z => g ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ))) h
-  simpa only [zeroReadback, zeroPairing, Category.comp_id, multiply_tmul] using he
+  change ((classMap (fun _ => 0) (by intro n; simp) 0 rfl ⊗ₘ
+    classMap (fun _ => 0) (by intro n; simp) 0 rfl) ≫
+    zeroPairing.pairHomology 0 0 ≫ zeroReadback)
+      ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ)) = multiply ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ)) at he
+  exact he.trans (multiply_tmul 2 3)
 
 example : (oddPairing.pair 1 0 ≫ oddComplex.d 1 2) ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = -3 := by
   rw [coefficient_d]
@@ -223,7 +227,8 @@ private lemma reduced_boundary : oddComplex.d 1 2 ≫ reduceThree = 0 := by
   intro x
   change (((-3 : ℤ) * x : ℤ) : ZMod 3) = 0
   rw [Int.cast_mul]
-  norm_num
+  have hthree : ((-3 : ℤ) : ZMod 3) = 0 := by decide
+  rw [hthree, zero_mul]
 
 private def oddReadback : oddComplex.homology 2 ⟶ T :=
   readback oddComplex 2 reduceThree (by
@@ -241,7 +246,14 @@ example :
       rw [CochainComplex.prev_nat_succ]
       exact reduced_boundary)
   have he := congrArg (fun g : MonoidalCategory.tensorObj Z Z ⟶ T => g ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ))) h
-  simpa [oddReadback, oddPairing, oddComponent, reduceThree] using he
+  change ((classMap (fun _ => 0) (by intro n; simp) 1 rfl ⊗ₘ
+    classMap evenThree evenThree_square 1 (by norm_num [evenThree])) ≫
+    oddPairing.pairHomology 1 1 ≫ oddReadback)
+      ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = reduceThree (multiply ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ))) at he
+  exact he.trans (by
+    rw [multiply_tmul]
+    change ((1 : ℤ) : ZMod 3) = 1
+    rfl)
 
 example : (1 : ZMod 3) ≠ 0 := by norm_num
 
