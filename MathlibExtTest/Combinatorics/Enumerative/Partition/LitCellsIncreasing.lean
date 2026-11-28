@@ -33,3 +33,22 @@ example :
   dsimp only
   rw [← litCellsIncreasing_generatingFunction.2, coeff_mk]
   simp [litCellsIncreasing]
+
+-- The correction term cancels the contribution of the empty partition to the product.
+example :
+    let P : ℤ⟦X⟧ := mk fun n => (Fintype.card (Nat.Partition n) : ℤ)
+    coeff 0 (1 + P * (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 - 1)) = 0 := by
+  dsimp only
+  rw [← litNodesIncreasing_generatingFunction, coeff_mk]
+  simp [litNodesIncreasing]
+
+-- The first positive coefficient comes from the single partition (1).
+example :
+    let P : ℤ⟦X⟧ := mk fun n => (Fintype.card (Nat.Partition n) : ℤ)
+    coeff 1 (1 + P * (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 - 1)) = 1 := by
+  dsimp only
+  rw [← litNodesIncreasing_generatingFunction, coeff_mk]
+  simp [litNodesIncreasing]
+
+-- Repeated parts still contribute to the number of parts in the node statistic.
+example : litNodesIncreasing (Nat.Partition.ofMultiset {3, 3, 1}) = 5 := by decide
