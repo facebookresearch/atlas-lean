@@ -31,15 +31,24 @@ import Mathlib.Topology.Algebra.InfiniteSum.Real
 import Mathlib.Topology.Algebra.InfiniteSum.Ring
 
 /-!
-# Digit decomposition of the Irwin measures, positive index
+# Digit decomposition of the Irwin measures
 
-This module proves that the integral of a bounded measurable function against an Irwin measure
-of positive index decomposes over the first base-`b` digit: scaling the variable by `b` peels
-off the leading digit, giving the same-index integrals for the digits other than `d` plus the
-predecessor-index integral for `d` itself.
+For a natural base `b > 1`, a digit `d < b`, and a measurable real function `f` bounded on
+`[0, b)`, the integral of `f (b * x)` over `[0, 1)` against `μₖ` splits by leading digit.
+For `k ≥ 1` the digit `d` gives a predecessor-index integral and the other digits give
+same-index integrals, each weighted by `1 / b`. For `k = 0` only digits other than `d`
+can lead a nonempty string, and the empty string contributes `f 0`.
 
-Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026),
-Article A11, Lemma 1.
+## References
+
+* Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026),
+  Article A11, pp. 1–20, Lemma 1 (zero-index identity: equation (3), p. 11).
+* Jean-François Burnol, *Moments in the Exact Summation of the Curious Series of Kempner Type*,
+  The American Mathematical Monthly 132 (10) (2025), pp. 995–1006, Lemma 7.
+  As noted in Remark 7 of the Irwin paper, this earlier result excludes the binary case
+  `b = 2`, `d = 1` (where the only allowed digit is `0`).
+* The zero-index Lean proof adapts the reindexing in `integral_irwinMeasure_succ` in this module
+  and uses the same `integral_eq_tsum`, `summable_weight_mul` and `fiber_tsum_of_ne`.
 -/
 
 namespace MetaMathlibExt
@@ -495,6 +504,72 @@ public theorem integral_irwinMeasure_succ
   refine Finset.sum_congr rfl fun a ha => ?_
   have hne : a.val ≠ d := fun h => (Finset.mem_erase.mp ha).1 (Fin.ext h)
   rw [ite_eq_right hne]
+
+set_option linter.unusedVariables false in
+/-- **Digit decomposition of the Irwin measure, zero index.** Let $b > 1$ and $d < b$ be natural
+numbers, and let $\mu_0$ be the Irwin measure of base $b$ and digit $d$ with index $0$. For every
+measurable function $f : \mathbb{R} \to \mathbb{R}$ that is bounded on $[0, b)$,
+$$\int_{[0,1)} f(bx)\, d\mu_0(x) = f(0) +
+\frac{1}{b} \sum_{a \ne d} \int_{[0,1)} f(a + x)\, d\mu_0(x),$$
+where $a$ ranges over the digits $0, 1, \dots, b - 1$ other than $d$.
+
+Measurability of $f$ is a hypothesis added to the paper's boundedness assumption.
+
+Source:
+Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26
+(2026), Article A11, Lemma 1. -/
+public theorem integral_irwinMeasure_zero
+    (b d : ℕ) (hb : 1 < b) (hd : d < b) (f : ℝ → ℝ)
+    (hf_measurable : Measurable f)
+    (hf_bounded : Bornology.IsBounded (f '' Set.Ico (0 : ℝ) b)) :
+    (∫ x in Set.Ico (0 : ℝ) 1, f (b * x) ∂irwinMeasure b d 0 hd) =
+      f 0 + (1 / (b : ℝ)) *
+        ∑ a ∈ Finset.range b,
+          if a = d then 0 else
+            ∫ x in Set.Ico (0 : ℝ) 1, f (a + x) ∂irwinMeasure b d 0 hd := by
+  obtain ⟨C, hC⟩ := hf_bounded.exists_norm_le
+  have hCf : ∀ y ∈ Set.Ico (0 : ℝ) (b : ℝ), ‖f y‖ ≤ C :=
+    fun y hy => hC _ ⟨y, hy, rfl⟩
+  have hCb : ∀ x ∈ Set.Ico (0 : ℝ) 1, ‖f ((b : ℝ) * x)‖ ≤ C :=
+    fun x hx => hCf _ (integralIrwinMeasureSucc.mul_mem_Ico b hb x hx)
+  let F (X : {X : List (Fin b) // X.count ⟨d, hd⟩ = 0}) :=
+    (stringWeight b X.1).toReal * f ((b : ℝ) * normalizedStringValue b X.1)
+  have hF : Summable F :=
+    integralIrwinMeasureSucc.summable_weight_mul b d hb hd _ C hCb 0
+  -- Keep the empty string separate from the fibers indexed by a leading digit.
+  let S (a : Fin b) := {Y : List (Fin b) // (a :: Y).count ⟨d, hd⟩ = 0}
+  let e : Unit ⊕ (Σ a : Fin b, S a) ≃ {X : List (Fin b) // X.count ⟨d, hd⟩ = 0} :=
+    { toFun := fun
+        | .inl _ => ⟨[], rfl⟩
+        | .inr ⟨a, Y⟩ => ⟨a :: Y.1, Y.2⟩
+      invFun := fun
+        | ⟨[], _⟩ => .inl ()
+        | ⟨a :: Y, hY⟩ => .inr ⟨a, ⟨Y, hY⟩⟩
+      left_inv := by rintro (⟨⟩ | ⟨a, Y⟩) <;> rfl
+      right_inv := by rintro ⟨X, hX⟩; cases X <;> rfl }
+  have hReindexed : Summable (F ∘ e) := e.summable_iff.mpr hF
+  have hTail : Summable (fun p : Σ a : Fin b, S a => F (e (.inr p))) :=
+    hReindexed.comp_injective Sum.inr_injective
+  have hEmpty : (∑' u : Unit, F (e (.inl u))) = f 0 := by
+    simp [tsum_fintype, F, e, stringWeight, normalizedStringValue, stringValue]
+  rw [integralIrwinMeasureSucc.integral_eq_tsum b d hb hd _ C hCb 0]
+  change (∑' X, F X) = _
+  rw [← e.tsum_eq F,
+    Summable.tsum_sum (f := fun c => F (e c))
+      (hReindexed.comp_injective Sum.inl_injective) hTail,
+    hEmpty, hTail.tsum_sigma, tsum_fintype, Finset.mul_sum, ← Fin.sum_univ_eq_sum_range]
+  congr 1
+  refine Finset.sum_congr rfl fun a _ => ?_
+  change (∑' Y : S a, (stringWeight b (a :: Y.1)).toReal *
+      f ((b : ℝ) * normalizedStringValue b (a :: Y.1))) = _
+  by_cases ha : a.val = d
+  · have hae : a = (⟨d, hd⟩ : Fin b) := Fin.ext ha
+    subst a
+    have : IsEmpty (S ⟨d, hd⟩) := ⟨fun Y => by simpa using Y.2⟩
+    simp
+  · rw [ite_eq_right ha]
+    exact integralIrwinMeasureSucc.fiber_tsum_of_ne b d hb hd f C hCf 0 a
+      (fun h => ha (congrArg Fin.val h))
 
 end
 

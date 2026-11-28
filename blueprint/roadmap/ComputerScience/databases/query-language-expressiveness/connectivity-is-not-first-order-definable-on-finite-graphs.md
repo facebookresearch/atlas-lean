@@ -3,16 +3,14 @@
 There is no first-order sentence that defines connectivity of finite graphs. Consequently, no relational
 algebra expression computes the transitive closure of a binary relation on all finite instances.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Proof prerequisite: The Ehrenfeucht–Fraïssé theorem.
+- [Relational algebra queries](../relational-algebra/expr.md)
 
 ## Proof depends on
 
 - [Codd's theorem: safe-range calculus equals relational algebra](../relational-calculus/codd-s-theorem-safe-range-calculus-equals-relational-algebra.md)
+- [Ehrenfeucht–Fraïssé theorem](../../../TheoryOfComputation/descriptive-complexity/finite-model-theory/ehrenfeuchtfraisse-theorem.md)
 
 ## Sources
 

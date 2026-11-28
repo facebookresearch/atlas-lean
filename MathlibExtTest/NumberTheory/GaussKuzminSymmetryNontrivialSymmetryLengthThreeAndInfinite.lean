@@ -48,4 +48,19 @@ example : gaussKuzminMass [] ≠ gaussKuzminMass [1, 1] := by
     (by simp) (by decide) (by decide)).mp h
   exact (by decide : characteristicNumber [] ≠ characteristicNumber [1, 1]) hc
 
+-- Exercise both seed families at the smallest positive parameter.
+example : IsStableString [1, 2] ∧ IsStableString [1, 1, 3] :=
+  isStableString_families.1 1 le_rfl
+
+-- The new string uses the reverse, not the original string, as its interior.
+example : IsStableString [3, 2, 1, 6] :=
+  isStableString_families.2.1 [1, 2] (by simp) (isStableString_families.1 1 le_rfl).1 3
+    (by decide)
+
+example : {a : List ℕ | a.length = 2 ∧ (∀ x ∈ a, 0 < x) ∧ IsStableString a}.Infinite :=
+  isStableString_families.2.2 2 le_rfl
+
+example : {a : List ℕ | a.length = 5 ∧ (∀ x ∈ a, 0 < x) ∧ IsStableString a}.Infinite :=
+  isStableString_families.2.2 5 (by decide)
+
 end MathlibExtTest.NumberTheory.GaussKuzminSymmetryNontrivialSymmetryLengthThreeAndInfinite
