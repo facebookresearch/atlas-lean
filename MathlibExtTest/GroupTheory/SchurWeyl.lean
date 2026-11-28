@@ -95,4 +95,25 @@ example {R M : Type*} [Field R] [AddCommGroup M] [Module R M] [FiniteDimensional
   rintro _ ⟨σ, rfl⟩
   rw [Subsingleton.elim σ 1, map_one, one_mul, mul_one]
 
+-- Commuting with all diagonal maps is sufficient for membership in the permutation algebra.
+example {R M : Type*} [Field R] [AddCommGroup M] [Module R M] [FiniteDimensional R M] {k : ℕ}
+    [Invertible (k.factorial : R)] (T : Module.End R (⨂[R]^k M))
+    (hT : ∀ g, glAction R M k g * T = T * glAction R M k g) :
+    T ∈ Algebra.adjoin R (Set.range (symAction R M k)) := by
+  rw [symAction_range_eq_centralizer_glAction, Subalgebra.mem_centralizer_iff]
+  rintro _ ⟨g, rfl⟩
+  exact hT g
+
+-- In characteristic three the permutation algebra on the tensor square contains the swap,
+-- which commutes with every diagonal action.
+example (g : ((Fin 2 → ZMod 3) →ₗ[ZMod 3] (Fin 2 → ZMod 3))ˣ) :
+    Commute (glAction (ZMod 3) (Fin 2 → ZMod 3) 2 g)
+      (symAction (ZMod 3) (Fin 2 → ZMod 3) 2 (Equiv.swap 0 1)) := by
+  have : Invertible ((Nat.factorial 2 : ℕ) : ZMod 3) := invertibleOfNonzero (by decide)
+  have h : symAction (ZMod 3) (Fin 2 → ZMod 3) 2 (Equiv.swap 0 1) ∈
+      Algebra.adjoin (ZMod 3) (Set.range (symAction (ZMod 3) (Fin 2 → ZMod 3) 2)) :=
+    Algebra.subset_adjoin ⟨Equiv.swap 0 1, rfl⟩
+  rw [symAction_range_eq_centralizer_glAction, Subalgebra.mem_centralizer_iff] at h
+  exact h _ ⟨g, rfl⟩
+
 end MathlibExtTest.SchurWeyl

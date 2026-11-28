@@ -11,6 +11,7 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Irreducibility criteria for integer polynomials](irreducibility-criteria-for-integer-polynomials/README.md)
 - [Mestre's square decomposition](mestre-s-square-decomposition/README.md)
 - [Mixed partial derivatives of polynomials](mixed-partial-derivatives-of-polynomials/README.md)
+- [Multivariate polynomials and their coefficients](multivariate-polynomials-and-their-coefficients/README.md)
 - [Newton polygon](newton-polygon/README.md)
 - [Partial fraction decomposition](partial-fraction-decomposition/README.md)
 - [Polynomial automorphisms of the plane](polynomial-automorphisms-of-the-plane/README.md)
@@ -22,3 +23,5 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Univariate polynomial arithmetic](univariate-polynomial-arithmetic/README.md)
 - [Symmetric polynomials in the roots are polynomials in the coefficients](symmetric-polynomial-in-esymm.md)
 - [Independent commuting derivations with a coordinate-free joint kernel](commuting-locally-nilpotent-derivations.md)
+- [Difference equations in sequences](difference-equations-in-sequences/README.md)
+- [Theories of polynomial rings](theories-of-polynomial-rings/README.md)
