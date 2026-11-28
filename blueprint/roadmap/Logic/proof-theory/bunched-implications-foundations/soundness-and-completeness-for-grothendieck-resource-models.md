@@ -12,6 +12,7 @@ where provability is in the sequent calculus [LBI](sequent-calculus-lbi.md) and 
 
 ## Depends on
 
+- [Formulas and bunches of BI](formulas-and-bunches-of-bi.md)
 - [Grothendieck resource models](grothendieck-resource-models.md)
 - [The sequent calculus LBI](sequent-calculus-lbi.md)
 
@@ -24,7 +25,7 @@ None.
 Missing prerequisites of a proof page, for future pages:
 
 - persistence and the sheaf condition extend from propositional letters to all propositions in Grothendieck resource models (Pym, O'Hearn and Yang, Lemmas 16 and 17; Galmiche, Méry and Pym, remark after Definition 2.9);
-- the term model for Grothendieck resource models (Pym, O'Hearn and Yang, Proposition 20, proved for judgements $\varphi \vdash \psi$ between single propositions over normal natural deduction proofs);
+- the term model for Grothendieck resource models (Pym, O'Hearn and Yang, Proposition 20, whose worlds are classes of propositions modulo provability of judgements $\varphi \vdash \psi$ between single propositions, as in their Hilbert-type system HBI; the different term model of their Section 5.2, for sheaves over a topological monoid, is the one restricted to normal natural deduction proofs);
 - the equivalence of NBI and LBI, or at least that $\Gamma \vdash \varphi$ is provable in LBI exactly when $\Phi_\Gamma \vdash \varphi$ is, to reach the sequent form stated here (Galmiche, Méry and Pym's Theorem 2.5, which gives no proof of its own).
 
 The proof of Pym, O'Hearn and Yang's Lemma 16 uses the Stability condition in the downward orientation, which differs from their printed Definition 12, so that proof cannot be copied verbatim into the upward presentation of [Grothendieck resource models](grothendieck-resource-models.md).

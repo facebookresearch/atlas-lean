@@ -1,6 +1,6 @@
 # Natural deduction for BI
 
-The natural deduction system NBI is defined as the sequent-style system of introduction and elimination rules that derives BI judgements $\Gamma \vdash \varphi$; additive and multiplicative rules have the same shape and differ only in combining bunches with ";" or with ",", and only ";" admits weakening and contraction.
+The natural deduction system NBI is defined as the sequent-style system of introduction and elimination rules that derives BI judgements $\Gamma \vdash \varphi$. Paired additive and multiplicative units, conjunctions and implications have rules of the same shape, differing only in combining bunches with ";" or ","; only ";" admits weakening and contraction.
 
 Judgements are $\Gamma \vdash \varphi$ with $\Gamma$ a [bunch](formulas-and-bunches-of-bi.md) and $\varphi$ a BI proposition. *Provability in BI* is derivability by the following rules, where $\Gamma(\Delta)$ is a bunch with a distinguished sub-bunch $\Delta$.
 

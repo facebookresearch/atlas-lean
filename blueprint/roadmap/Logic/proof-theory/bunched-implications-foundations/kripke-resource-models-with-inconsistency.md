@@ -1,8 +1,8 @@
 # Kripke resource models with an inconsistent world
 
-A Kripke resource model with an inconsistent world is defined as an elementary resource model of BI whose preordered commutative monoid has a greatest element $\pi$ absorbing every composition; $\pi$ forces every proposition, $\bot$ is forced exactly at $\pi$, and compositions sent to $\pi$ play the part of undefined combinations of resources.
+A Kripke resource model with an inconsistent world is defined on the kind of monoid underlying the elementary resource semantics of BI, now with a greatest element $\pi$ absorbing every composition, and with forcing modified at $\bot$: $\pi$ forces every proposition, $\bot$ is forced exactly at $\pi$, and compositions sent to $\pi$ play the part of undefined combinations.
 
-A *Kripke resource monoid* in this sense is a preordered commutative monoid $\mathcal{M} = (M, \bullet, e, \sqsubseteq)$ with $\bullet$ bifunctorial for $\sqsubseteq$ ($m \sqsubseteq n$ and $m' \sqsubseteq n'$ imply $m \bullet m' \sqsubseteq n \bullet n'$) that contains a greatest element $\pi$ ($m \sqsubseteq \pi$ for all $m$) with $\pi \bullet m = \pi$ for all $m \in M$. Here and below, following the source's convention, $m = n$ between worlds means the equivalence $m \sqsubseteq n$ and $n \sqsubseteq m$, so $\pi \bullet m = \pi$ says that $\pi \bullet m$ is equivalent to $\pi$.
+A *Kripke resource monoid* in this sense is a [Kripke resource monoid](elementary-kripke-resource-models.md) $\mathcal{M} = (M, \bullet, e, \sqsubseteq)$, a preordered commutative monoid with $\bullet$ bifunctorial for $\sqsubseteq$ ($m \sqsubseteq n$ and $m' \sqsubseteq n'$ imply $m \bullet m' \sqsubseteq n \bullet n'$), that contains a greatest element $\pi$ ($m \sqsubseteq \pi$ for all $m$) with $\pi \bullet m = \pi$ for all $m \in M$. Here and below, following the source's convention, $m = n$ between worlds means the equivalence $m \sqsubseteq n$ and $n \sqsubseteq m$, so $\pi \bullet m = \pi$ says that $\pi \bullet m$ is equivalent to $\pi$.
 
 A *Kripke resource interpretation* is a map $[\![-]\!] : L \to \wp(M)$ such that for every propositional letter $p$: $m \sqsubseteq n$ and $m \in [\![p]\!]$ imply $n \in [\![p]\!]$ (Kripke monotonicity), and $\pi \in [\![p]\!]$.
 
@@ -20,6 +20,7 @@ A sequent $\Gamma \vdash \varphi$ is *valid* in this semantics if, in every Krip
 ## Depends on
 
 - [Formulas and bunches of BI](formulas-and-bunches-of-bi.md)
+- [Elementary Kripke resource models](elementary-kripke-resource-models.md)
 
 ## Proof depends on
 

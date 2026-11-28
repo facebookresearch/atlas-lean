@@ -12,6 +12,7 @@ The rule covers both the ";" and the "," cases of bunch construction, because th
 
 ## Depends on
 
+- [Formulas and bunches of BI](formulas-and-bunches-of-bi.md)
 - [Natural deduction for BI](natural-deduction-for-bi.md)
 
 ## Proof depends on
@@ -20,7 +21,7 @@ None.
 
 ## Expansion
 
-The proof is by induction on the derivation of $\Gamma(\varphi) \vdash \psi$: replace the axiom instance $\varphi \vdash \varphi$ at the distinguished leaf by the derivation of $\Delta \vdash \varphi$, and push the substitution through the other rules. Weakening and contraction on ";" must be handled by substituting into every copy of the affected sub-bunch, and the rule ($\equiv$) by transporting the occurrence along the coherent equivalence. O'Hearn and Pym state the lemma and refer to Pym's sequent presentation and monograph for the connection with cut elimination and normalization, which do not appear here. The lemma is what makes provability a preorder in the [algebraic completeness theorem](soundness-and-completeness-for-bi-algebras.md).
+The proof is by induction on the derivation of $\Gamma(\varphi) \vdash \psi$: replace the axiom instance $\varphi \vdash \varphi$ at the distinguished leaf by the derivation of $\Delta \vdash \varphi$, and push the substitution through the other rules. Weakening and contraction on ";" must be handled by substituting into every copy of the affected sub-bunch, and the rule ($\equiv$) by transporting the occurrence along the coherent equivalence. O'Hearn and Pym state the lemma and refer to Pym's sequent presentation and monograph for the connection with cut elimination and normalization, which do not appear here. With the axiom, it makes NBI provability between single propositions a preorder.
 
 ## Sources
 

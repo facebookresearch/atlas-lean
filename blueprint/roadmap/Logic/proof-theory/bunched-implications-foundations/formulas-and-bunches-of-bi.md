@@ -30,7 +30,7 @@ The formula $\Phi_\Gamma$ of a bunch $\Gamma$ is obtained by replacing each ";" 
 
 ## Depends on
 
-None.
+- [Equivalence relation](../../../Order/ordered-sets/equivalence-relation.md)
 
 ## Proof depends on
 
@@ -38,7 +38,7 @@ None.
 
 ## Expansion
 
-No prerequisite is missing: the definition is purely syntactic. O'Hearn and Pym write $1$ for $\top$ and $\{\}_a$, $\{\}_m$ for $\emptyset_a$, $\emptyset_m$; the notation here follows Galmiche, Méry and Pym. Bunches are trees taken up to $\equiv$ rather than nested multisets, so that the two implications can be introduced by extending a bunch with ";" or with ",". Later pages use the formula $\Phi_\Gamma$ to define validity of a judgement in a model.
+Apart from the notion of an [equivalence relation](../../../Order/ordered-sets/equivalence-relation.md), used for coherent equivalence, the definition is purely syntactic. O'Hearn and Pym write $1$ for $\top$ and $\{\}_a$, $\{\}_m$ for $\emptyset_a$, $\emptyset_m$; the notation here follows Galmiche, Méry and Pym. Bunches are trees taken up to $\equiv$ rather than nested multisets, so that the two implications can be introduced by extending a bunch with ";" or with ",". Later pages use the formula $\Phi_\Gamma$ to define validity of a judgement in a model.
 
 ## Sources
 

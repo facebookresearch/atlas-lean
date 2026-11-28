@@ -1,6 +1,6 @@
 # The sequent calculus LBI
 
-LBI is defined as the bunched sequent calculus for propositional BI: left and right introduction rules for every connective, with antecedents that are bunches, weakening and contraction for the additive combination ";" only, and a cut rule that applies inside any bunch context.
+LBI is defined as the bunched sequent calculus for propositional BI: a left and a right introduction rule for every connective except $\bot$, which has only the left rule ($\bot_L$), with antecedents that are bunches, weakening and contraction for the additive combination ";" only, and a cut rule that applies inside any bunch context.
 
 Sequents are $\Gamma \vdash \varphi$ with $\Gamma$ a [bunch](formulas-and-bunches-of-bi.md) and $\varphi$ a BI proposition; $\Gamma(\Delta)$ is a bunch with a distinguished sub-bunch $\Delta$. The rules of LBI are:
 
@@ -41,7 +41,7 @@ None.
 
 ## Expansion
 
-No prerequisite outside this folder is needed. The rule ($\vee_L$) is stated here in the corrected form given by Galmiche, Méry and Pym, who note that it was mis-stated in Pym's 2002 monograph. The relation between LBI and the [natural deduction system NBI](natural-deduction-for-bi.md) is worked out in Pym's monograph and is not part of this page.
+No prerequisite outside this folder is needed. The rule ($\vee_L$) is stated here in the corrected form given by Galmiche, Méry and Pym, who note that it was mis-stated in Pym's 2002 monograph; the monograph's errata record the same correction. Galatos, Jipsen, Knudstorp and Ramanayake display the same calculus (their Figure 1) with the rules ($\mathrel{-\!\!\ast}_L$) and ($\to_L$) written without the extra sub-bunch $\Delta'$: the two forms derive the same sequents, since taking $\Delta' = \emptyset_m$ (resp. $\emptyset_a$) and using ($\equiv$) gives theirs, and applying theirs in the context $\Gamma(- , \Delta')$ (resp. $\Gamma(- ; \Delta')$) gives the form here. The relation between LBI and the [natural deduction system NBI](natural-deduction-for-bi.md) is not part of this page.
 
 ## Sources
 
