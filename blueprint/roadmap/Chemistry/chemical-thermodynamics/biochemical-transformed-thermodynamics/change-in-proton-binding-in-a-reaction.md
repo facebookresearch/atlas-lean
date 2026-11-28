@@ -10,11 +10,11 @@ $$
 
 **Statement.** At fixed $T>0$, $P$ and $I$:
 
-1.
+1. (pH slope)
 
-$$
-\frac{\partial\Delta_rG'^\circ}{\partial\,\mathrm{pH}}=RT\ln(10)\,\Delta_rN_{\mathrm H};
-$$
+    $$
+    \frac{\partial\Delta_rG'^\circ}{\partial\,\mathrm{pH}}=RT\ln(10)\,\Delta_rN_{\mathrm H};
+    $$
 
 2. $\partial\log_{10}K'/\partial\,\mathrm{pH}=-\Delta_rN_{\mathrm H}$; in particular $K'$ increases with pH where $\Delta_rN_{\mathrm H}<0$, that is where the products bind fewer hydrogen atoms on average than the reactants and the reaction releases hydrogen ions to the buffer;
 3. at fixed reactant concentrations, $\partial\Delta_rG'/\partial\,\mathrm{pH}=\partial\Delta_rG'^\circ/\partial\,\mathrm{pH}$;

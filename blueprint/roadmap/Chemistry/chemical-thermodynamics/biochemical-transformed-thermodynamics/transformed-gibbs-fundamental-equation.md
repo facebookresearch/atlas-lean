@@ -6,9 +6,9 @@ At specified pH the free hydrogen-ion term drops out of the differential of the 
 
 1. $G$ is differentiable along the path and satisfies the Gibbs fundamental equation
 
-$$
-\frac{dG}{dt}=-S\frac{dT}{dt}+V\frac{dP}{dt}+\sum_{j\in J}\mu_j\frac{dn_j}{dt};
-$$
+    $$
+    \frac{dG}{dt}=-S\frac{dT}{dt}+V\frac{dP}{dt}+\sum_{j\in J}\mu_j\frac{dn_j}{dt};
+    $$
 
 2. the free hydrogen ion stays at the specified pH: $\mu_{\mathrm{H^+}}(t)=\mu(\mathrm{H^+})(t)$;
 3. at the fixed $I$, $\Delta_fG^\circ(\mathrm{H^+})$ is a differentiable function of $T$ alone (no pressure dependence).
@@ -41,7 +41,7 @@ $$
 \frac{dG'}{dt}=-S'\frac{dT}{dt}+V\frac{dP}{dt}+\sum_{j\in J\setminus\{\mathrm{H^+},\mathrm{Mg^{2+}}\}}\mu_j'\frac{dn_j}{dt}+RT\ln(10)\,n_c(\mathrm H)\frac{d\,\mathrm{pH}}{dt}+RT\ln(10)\,n_c(\mathrm{Mg})\frac{d\,\mathrm{pMg}}{dt},
 $$
 
-and the reactant form holds with groups partitioning $J\setminus\{\mathrm{H^+},\mathrm{Mg^{2+}}\}$ and the extra pMg term. *Proof.* Repeat the main proof with the magnesium reservoir: $-\mu(\mathrm{Mg^{2+}})\,dn_c(\mathrm{Mg})/dt$ joins the species sum and makes the coefficient $\mu'_{\mathrm{Mg^{2+}}}$ vanish by the added hypothesis, and $-n_c(\mathrm{Mg})\,d\mu(\mathrm{Mg^{2+}})/dt$ with $d\mu(\mathrm{Mg^{2+}})/dt=-\bar S(\mathrm{Mg^{2+}})\,dT/dt-RT\ln(10)\,d\,\mathrm{pMg}/dt$ gives the entropy and pMg terms.
+and the reactant form holds with groups partitioning $J\setminus\{\mathrm{H^+},\mathrm{Mg^{2+}}\}$ and the extra pMg term. The source states its spontaneity criterion $(dG')\le0$ only for the pH transform; a pMg form of that criterion is an analogue the source does not state, and this page does not use it. *Proof.* Repeat the main proof with the magnesium reservoir: $-\mu(\mathrm{Mg^{2+}})\,dn_c(\mathrm{Mg})/dt$ joins the species sum and makes the coefficient $\mu'_{\mathrm{Mg^{2+}}}$ vanish by the added hypothesis, and $-n_c(\mathrm{Mg})\,d\mu(\mathrm{Mg^{2+}})/dt$ with $d\mu(\mathrm{Mg^{2+}})/dt=-\bar S(\mathrm{Mg^{2+}})\,dT/dt-RT\ln(10)\,d\,\mathrm{pMg}/dt$ gives the entropy and pMg terms.
 
 **Counting the hydrogen component by reactants.** In the reactant form, if every $n_i'>0$ and $\bar N_{\mathrm H}(i)=\sum_{j\in J_i}N_{\mathrm H}(j)\,n_j/n_i'$ is the amount-weighted mean hydrogen count of group $i$, then
 

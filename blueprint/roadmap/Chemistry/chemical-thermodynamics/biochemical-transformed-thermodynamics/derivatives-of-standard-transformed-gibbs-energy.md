@@ -18,27 +18,27 @@ with $T$-derivatives at fixed pH and $I$.
 
 1. (hydrogen binding)
 
-$$
-\frac{\partial g_i}{\partial\,\mathrm{pH}}=RT\ln(10)\,\bar N_{\mathrm H}(i);
-$$
+    $$
+    \frac{\partial g_i}{\partial\,\mathrm{pH}}=RT\ln(10)\,\bar N_{\mathrm H}(i);
+    $$
 
 2. (transformed enthalpy)
 
-$$
-\Delta_fH_i'^\circ=\sum_{j\in J_i}r_j\,\Delta_fH_j'^\circ;
-$$
+    $$
+    \Delta_fH_i'^\circ=\sum_{j\in J_i}r_j\,\Delta_fH_j'^\circ;
+    $$
 
 3. (pH dependence of enthalpy and entropy)
 
-$$
-\frac{\partial\Delta_fH_i'^\circ}{\partial\,\mathrm{pH}}=-RT^2\ln(10)\frac{\partial\bar N_{\mathrm H}(i)}{\partial T},\qquad -\frac{\partial\Delta_fS_i'^\circ}{\partial\,\mathrm{pH}}=R\ln(10)\frac{\partial\bigl(T\bar N_{\mathrm H}(i)\bigr)}{\partial T};
-$$
+    $$
+    \frac{\partial\Delta_fH_i'^\circ}{\partial\,\mathrm{pH}}=-RT^2\ln(10)\frac{\partial\bar N_{\mathrm H}(i)}{\partial T},\qquad -\frac{\partial\Delta_fS_i'^\circ}{\partial\,\mathrm{pH}}=R\ln(10)\frac{\partial\bigl(T\bar N_{\mathrm H}(i)\bigr)}{\partial T};
+    $$
 
 4. (reciprocal effect) if pMg is also specified, with the species energies of the magnesium extension of the [species page](standard-transformed-gibbs-energy-of-a-species.md), $g_i=g_i(T,\mathrm{pH},\mathrm{pMg})$ on the interval times $\mathbb R^2$ and $\bar N_{\mathrm{Mg}}(i)=\sum_{j\in J_i}r_jN_{\mathrm{Mg}}(j)$, then, the first derivative at fixed pH and the second at fixed pMg,
 
-$$
-\frac{\partial\bar N_{\mathrm H}(i)}{\partial\,\mathrm{pMg}}=\frac{\partial\bar N_{\mathrm{Mg}}(i)}{\partial\,\mathrm{pH}}.
-$$
+    $$
+    \frac{\partial\bar N_{\mathrm H}(i)}{\partial\,\mathrm{pMg}}=\frac{\partial\bar N_{\mathrm{Mg}}(i)}{\partial\,\mathrm{pH}}.
+    $$
 
 The source prints the entropy relation in part 3 with $\partial/\partial T$ on the left and $RT\ln(10)$ on the right, which is dimensionally inconsistent; the form above is what the mixed partial derivatives of $g_i$ give. The diagonal derivative $\partial\bar N_{\mathrm H}/\partial\,\mathrm{pH}$ is the occupancy-variance identity of binding polynomials and is not restated here.
 

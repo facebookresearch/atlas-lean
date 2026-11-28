@@ -28,9 +28,9 @@ Consequently:
 2. With the fractions given by the species energies as on the pseudoisomer-group page, they depend only on $T$, $I$ and pH, so $K'$ is a function of $T$, $I$ and pH, while $K$ depends only on $T$ and $I$.
 3. In energy form, with $\Delta_rG^\circ=-RT\ln K$ for the reference reaction and $\Delta_rG'^\circ=-RT\ln K'$,
 
-$$
-\Delta_rG'^\circ=\Delta_rG^\circ-RT\ln(10)\,\mathrm{pH}-RT\ln\frac{r(\mathrm{ATP^{4-}})}{r(\mathrm{ADP^{3-}})\,r(\mathrm{HPO_4^{2-}})}.
-$$
+    $$
+    \Delta_rG'^\circ=\Delta_rG^\circ-RT\ln(10)\,\mathrm{pH}-RT\ln\frac{r(\mathrm{ATP^{4-}})}{r(\mathrm{ADP^{3-}})\,r(\mathrm{HPO_4^{2-}})}.
+    $$
 
 ## Derived extensions
 

@@ -10,19 +10,19 @@ When the species of a biochemical reactant interconvert by binding hydrogen and 
 
 1. $\Delta_fG_i'=\Delta_fG_i'^\circ+RT\ln[\mathrm B_i]$, where
 
-$$
-\Delta_fG_i'^\circ=-RT\ln\sum_{j\in J_i}\exp\Bigl(-\frac{\Delta_fG_j'^\circ}{RT}\Bigr),
-$$
+    $$
+    \Delta_fG_i'^\circ=-RT\ln\sum_{j\in J_i}\exp\Bigl(-\frac{\Delta_fG_j'^\circ}{RT}\Bigr),
+    $$
 
-the [Helmholtz free energy](../canonical-ensemble-of-a-finite-system/helmholtz-free-energy.md) of the finite system $J_i$ with energies $\Delta_fG_j'^\circ$ and inverse molar energy $\beta=1/(RT)$.
+    the [Helmholtz free energy](../canonical-ensemble-of-a-finite-system/helmholtz-free-energy.md) of the finite system $J_i$ with energies $\Delta_fG_j'^\circ$ and inverse molar energy $\beta=1/(RT)$.
 
 2. The equilibrium mole fractions within the group are
 
-$$
-r_j=\frac{[\mathrm B_j]}{[\mathrm B_i]}=\exp\Bigl(\frac{\Delta_fG_i'^\circ-\Delta_fG_j'^\circ}{RT}\Bigr),
-$$
+    $$
+    r_j=\frac{[\mathrm B_j]}{[\mathrm B_i]}=\exp\Bigl(\frac{\Delta_fG_i'^\circ-\Delta_fG_j'^\circ}{RT}\Bigr),
+    $$
 
-the [Boltzmann probabilities](../canonical-ensemble-of-a-finite-system/boltzmann-prob.md) of the finite system $J_i$ with energies $\Delta_fG_j'^\circ$ at inverse temperature $1/(RT)$. They are positive, sum to $1$, and depend on $T$, $I$, pH and pMg but not on $[\mathrm B_i]$.
+    the [Boltzmann probabilities](../canonical-ensemble-of-a-finite-system/boltzmann-prob.md) of the finite system $J_i$ with energies $\Delta_fG_j'^\circ$ at inverse temperature $1/(RT)$. They are positive, sum to $1$, and depend on $T$, $I$, pH and pMg but not on $[\mathrm B_i]$.
 
 3. Conversely, for every $[\mathrm B_i]>0$ the concentrations $[\mathrm B_j]=r_j[\mathrm B_i]$ satisfy the hypothesis, so the species distribution of a reactant at equilibrium is unique.
 

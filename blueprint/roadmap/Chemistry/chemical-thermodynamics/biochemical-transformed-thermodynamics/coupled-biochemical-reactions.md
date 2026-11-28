@@ -19,11 +19,11 @@ each [balanced](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiom
 1. (additivity) $\Delta_rG'(\nu_c)=\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b)$, the same holds for the standard values $\Delta_rG'^\circ$, and $K'(\nu_c)=K'(\nu_a)\,K'(\nu_b)$.
 2. (single extent) Along the [amounts after an extent](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/amount-after-extents.md) $n'(\xi')=n_0'+\xi'\nu_c$ of the ligase reaction, wherever $n'(\xi')$ lies in the domain of $G'$,
 
-$$
-\frac{dG'}{d\xi'}=\Delta_rG'(\nu_c)=\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b).
-$$
+    $$
+    \frac{dG'}{d\xi'}=\Delta_rG'(\nu_c)=\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b).
+    $$
 
-Under the source's criterion that a biochemical reaction can go spontaneously to the right only if its transformed reaction Gibbs energy at the actual concentrations is negative, the ligase reaction can run forward only when $\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b)<0$, a condition compatible with $\Delta_rG'(\nu_b)>0$.
+    Under the source's criterion that a biochemical reaction can go spontaneously to the right only if its transformed reaction Gibbs energy at the actual concentrations is negative, the ligase reaction can run forward only when $\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b)<0$, a condition compatible with $\Delta_rG'(\nu_b)>0$.
 
 3. (extra component) The composition matrix of the six reactants of $\nu_c$ over C, N, O and P has rank $4$, while the linear combinations of their amounts left unchanged by $\nu_c$ form a space of dimension $5$. So the ligase reaction conserves one combination of reactant amounts that is no combination of element balances. With the apparent equilibrium constant, the element balances give only five relations among six equilibrium concentrations; the extra conserved combination supplies the sixth.
 
