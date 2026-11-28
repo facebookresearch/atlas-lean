@@ -125,6 +125,46 @@ open scoped CompactlySupported
 
 variable {d : ℕ}
 
+set_option linter.dupNamespace false in
+/-- In function coordinates, the closed unit cube is the interval from the zero vector
+to the vector of ones. -/
+lemma cube_eq_preimage_Icc :
+    cube d = WithLp.ofLp ⁻¹' Set.Icc (0 : Fin d → ℝ) 1 := by
+  ext x
+  exact forall_and
+
+set_option linter.dupNamespace false in
+/-- The multivariate monomial evaluates to the product of the coordinate powers. -/
+lemma monomial_apply (n : Fin d → ℕ) (x : EuclideanSpace ℝ (Fin d)) :
+    monomial n x = ∏ i, (x i) ^ (n i) := rfl
+
+set_option linter.dupNamespace false in
+/-- The moment of a measure at a multi-index is the integral of its monomial over the cube. -/
+lemma momentOf_eq_integral (μ : Measure (EuclideanSpace ℝ (Fin d))) (n : Fin d → ℕ) :
+    momentOf μ n = ∫ x in cube d, monomial n x ∂μ := rfl
+
+set_option linter.dupNamespace false in
+/-- A positive moment configuration is witnessed by a finite measure with the prescribed moments
+on the cube. -/
+lemma isPositiveMomentConfiguration_iff (a : (Fin d → ℕ) → ℝ) :
+    IsPositiveMomentConfiguration a ↔
+      ∃ μ : Measure (EuclideanSpace ℝ (Fin d)), IsFiniteMeasure μ ∧ ∀ n, a n = momentOf μ n :=
+  Iff.rfl
+
+set_option linter.dupNamespace false in
+/-- Backward differences distribute over a constant multiple of one sequence minus another. -/
+lemma diff_const_mul_sub (c : ℝ) (a b : (Fin d → ℕ) → ℝ) (k n : Fin d → ℕ) :
+    diff (fun j => c * a j - b j) k n = c * diff a k n - diff b k n := by
+  simp only [diff, Finset.mul_sum, ← Finset.sum_sub_distrib]
+  exact Finset.sum_congr rfl fun j _ => by ring
+
+set_option linter.dupNamespace false in
+/-- The backward difference of order zero at the origin is the value at the origin. -/
+lemma diff_zero_zero (a : (Fin d → ℕ) → ℝ) : diff a 0 0 = a 0 := by
+  have hIic : Finset.Iic (0 : Fin d → ℕ) = {0} := Finset.Iic_bot
+  have hsub : (0 : Fin d → ℕ) - 0 = 0 := funext fun _ => Nat.sub_zero 0
+  simp [diff, multiChoose, hIic, hsub]
+
 private abbrev Box (d : ℕ) := Fin d → Set.Icc (0 : ℝ) 1
 
 private def embedBox (x : Box d) : EuclideanSpace ℝ (Fin d) :=
@@ -134,7 +174,9 @@ private theorem continuous_embedBox : Continuous (embedBox (d := d)) :=
   (PiLp.continuous_toLp 2 _).comp (continuous_pi fun i => continuous_subtype_val.comp
     (continuous_apply i))
 
-private theorem compact_cube : IsCompact (cube d) := by
+set_option linter.dupNamespace false in
+/-- The closed unit cube is compact. -/
+lemma isCompact_cube : IsCompact (cube d) := by
   have heq : cube d = Set.range (embedBox (d := d)) := by
     ext x
     constructor
@@ -145,7 +187,9 @@ private theorem compact_cube : IsCompact (cube d) := by
   rw [heq]
   exact isCompact_range continuous_embedBox
 
-private theorem continuous_monomial (n : Fin d → ℕ) : Continuous (monomial n) :=
+set_option linter.dupNamespace false in
+/-- Every multivariate monomial is continuous on Euclidean space. -/
+lemma continuous_monomial (n : Fin d → ℕ) : Continuous (monomial n) :=
   continuous_finsetProd _ fun i _ => (PiLp.continuous_apply 2 _ i).pow _
 
 -- Expand each complementary power and collect the coordinate sums into the multi-index box.
@@ -179,14 +223,14 @@ private theorem diff_moment_nonneg {μ : Measure (EuclideanSpace ℝ (Fin d))} [
   change 0 ≤ ∑ j ∈ Iic k, c j * ∫ x in cube d, monomial (n - j) x ∂μ
   simp_rw [← integral_const_mul]
   rw [← integral_finsetSum]
-  · apply setIntegral_nonneg compact_cube.measurableSet
+  · apply setIntegral_nonneg isCompact_cube.measurableSet
     intro x hx
     change 0 ≤ ∑ j ∈ Iic k, c j • ∏ i, x i ^ (n i - j i)
     rw [← kernel_expand (fun i => x i) h]
     exact prod_nonneg fun i _ => mul_nonneg (pow_nonneg (hx i).1 _)
       (pow_nonneg (sub_nonneg.mpr (hx i).2) _)
   · exact fun j _ => ((continuous_monomial (n - j)).continuousOn.integrableOn_compact
-      compact_cube).const_mul _
+      isCompact_cube).const_mul _
 
 private abbrev Poly (d : ℕ) := MvPolynomial (Fin d) ℝ
 
@@ -351,7 +395,7 @@ private theorem positive_moments {a : (Fin d → ℕ) → ℝ}
   refine ⟨μ.map embedBox, inferInstance, fun n => ?_⟩
   let p : Poly d := ∏ i, MvPolynomial.X i ^ n i
   let f := CompactlySupportedContinuousMap.continuousMapEquiv (restrictPoly p)
-  rw [momentOf, setIntegral_map compact_cube.measurableSet
+  rw [momentOf, setIntegral_map isCompact_cube.measurableSet
     (continuous_monomial n).aestronglyMeasurable continuous_embedBox.aemeasurable,
     show embedBox ⁻¹' cube d = Set.univ from Set.eq_univ_of_forall fun x i => (x i).property,
     setIntegral_univ]

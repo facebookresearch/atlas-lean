@@ -38,7 +38,6 @@ Moments*. Knill, *Some fundamental theorems in mathematics*, §115.
 -/
 module
 
-public import Batteries.Util.ProofWanted
 public import Mathlib
 public import MathlibExt.Analysis.HausdorffAbsoluteContinuity
 
