@@ -2,7 +2,7 @@
 
 Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, with
 $L$-function $L(E, s) = \sum_{n \ge 1} a_n n^{-s}$, the Euler product of
-[modularity of elliptic curves over $\mathbb{Q}$](../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md),
+[modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md),
 which converges for $\operatorname{Re}(s) > 3/2$. Let $f$ be the newform of weight $2$ and level $N$ with
 $L(f, s) = L(E, s)$ that the modularity theorem provides.
 
@@ -12,7 +12,7 @@ $L(f, s) = L(E, s)$ that the modularity theorem provides.
 
     satisfies $\Lambda(E, s) = w(E) \, \Lambda(E, 2 - s)$ for a sign $w(E) \in \{1, -1\}$, the **root number** of $E$.
 2. **The sign.** Let $w_N$ be the Fricke involution of the
-   [modular curve](../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md)
+   [modular curve](../../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md)
    $X_0(N) = X_{\Gamma_0(N)}$ over $\mathbb{Q}$, which sends a cyclic $N$-isogeny
    $\varphi \colon A \to A'$ to its dual $\varphi' \colon A' \to A$, and let $\varepsilon \in \{1, -1\}$ be its
    eigenvalue on the differential $\omega_f = 2\pi i f(z) \, dz$, that is, $w_N^* \omega_f = \varepsilon \omega_f$.
@@ -20,28 +20,28 @@ $L(f, s) = L(E, s)$ that the modularity theorem provides.
 3. **Parity.** Consequently $L(E, s)$ vanishes to even order at $s = 1$ when $w(E) = 1$ and to odd order when
    $w(E) = -1$. In particular, if $L(E, s)$ has a simple zero at $s = 1$, then $w(E) = -1$.
 
-## Expansion
-
-This node is still to be broken down. A good expansion states and links:
-
-- Hecke's theorem for a newform $f$ of weight $2$ on $\Gamma_0(N)$: the integral representation
-  $\Lambda(f, s) = (2\pi)^{-s}\Gamma(s)N^{s/2}L(f, s) = N^{s/2} \int_0^\infty f(it) t^{s-1} \, dt$ (Darmon (2.11)), the
-  action of $w_N$ on newforms (Darmon (2.12)–(2.13)), and the resulting continuation and functional equation
-  $\Lambda(f, s) = -\varepsilon \Lambda(f, 2 - s)$ (Darmon (2.14)), with $\varepsilon$ the eigenvalue of $w_N$ normalised
-  as in item 2;
-- the deduction of items 1 and 2 from $L(E, s) = L(f, s)$, and of item 3 from item 1, as $\Lambda(E, s)$ is not
-  identically zero.
+Proof, from the pages beside this one: by modularity
+$L(E, s) = L(f, s)$, so $\Lambda(E, s) = \Lambda(f, s)$, the [Mellin transform](mellin-transform-of-a-weight-two-cusp-form.md)
+of $f$ on the half-plane where the Euler product converges, and the
+[functional equation of $L(f, s)$](functional-equation-of-the-l-function-of-a-newform.md) gives
+items 1 and 2 with $w(E) = -\varepsilon$, $\varepsilon$ the [Fricke eigenvalue](fricke-eigenvalue-of-a-newform.md)
+of $f$, normalised by $w_N^*\omega_f = \varepsilon\omega_f$ as in item 2. For item 3 (worked out here; Darmon states the conclusion,
+p. 21): $\Lambda(E, s)$ is not identically zero, as $a_1 = 1$ and so $L(E, s) \to 1$ as $s \to +\infty$ along the real
+axis; as $(2\pi)^{-s}\Gamma(s)N^{s/2}$ is holomorphic and nonzero at $s = 1$ ($\Gamma(1) = 1$), $L(E, s)$ and
+$\Lambda(E, s)$ vanish to the same order $m$ there. Writing $\Lambda(E, 1 + h) = \sum_{k \ge 0} c_k h^k$, the functional
+equation gives $c_k = w(E)(-1)^k c_k$ for every $k$, and $c_m \ne 0$ forces $(-1)^m = w(E)$.
 
 ## Depends on
 
-- [Modularity of elliptic curves over $\mathbb{Q}$](../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s)$ and the newform $f$ of item 2
-- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $X_0(N) = X_{\Gamma_0(N)}$ over $\mathbb{Q}$, on which $w_N$ acts in item 2
+- [Modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s)$ and the newform $f$ of item 2
+- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $X_0(N) = X_{\Gamma_0(N)}$ over $\mathbb{Q}$, on which $w_N$ acts in item 2
+- [Fricke eigenvalue of a newform](fricke-eigenvalue-of-a-newform.md), for the eigenvalue $\varepsilon$ of item 2 and its description by $w_N^*\omega_f = \varepsilon\omega_f$
 
 ## Proof depends on
 
-- [Modularity of elliptic curves over $\mathbb{Q}$](../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s) = L(f, s)$
-
-The rest of its proof is that of the sources below, as the Expansion describes.
+- [Modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s) = L(f, s)$
+- [Mellin transform of a weight-two cusp form](mellin-transform-of-a-weight-two-cusp-form.md), for $\Lambda(f, s)$ as an integral
+- [Functional equation of the $L$-function of a newform](functional-equation-of-the-l-function-of-a-newform.md), for the continuation and $\Lambda(f, s) = -\varepsilon\Lambda(f, 2 - s)$
 
 ## Sources
 

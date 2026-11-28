@@ -8,7 +8,7 @@ integers. Let $\omega$ be the minimal invariant differential of $E$, with $\psi^
 nonzero integer $\alpha$, where $\omega_f = 2\pi i f(z)\,dz$, and let $c = \lvert \alpha \rvert$ be the Manin
 constant. Let $K$ be an imaginary quadratic field of discriminant $D_K \ne -3, -4$ in which every prime factor of $N$
 splits, with no condition on the parity of $D_K$, and let $y_K \in E(K)$ be
-[the Heegner point](heegner-point-of-an-elliptic-curve.md) built with $\psi$.
+[the Heegner point](heegner-points-on-x0-n/heegner-point-of-an-elliptic-curve.md) built with $\psi$.
 
 Let $\varepsilon_K$ be the
 [quadratic Dirichlet character](../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md)
@@ -57,9 +57,9 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
-- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md), for $y_K$
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-points-on-x0-n/heegner-point-of-an-elliptic-curve.md), for $y_K$
 - [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\psi$, $f$ and $\alpha$
-- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](../zeta-l-functions/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for the continuation of $L(E, s)$
+- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](../zeta-l-functions/root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for the continuation of $L(E, s)$
 - [Quadratic Dirichlet character of a fundamental discriminant](../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/quadratic-dirichlet-character.md), for $\varepsilon_K$
 - [The Néron–Tate height of an abelian variety over a number field](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), for the canonical height of $E$ over $K$
 
