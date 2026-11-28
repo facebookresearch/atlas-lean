@@ -68,19 +68,29 @@ lemma vertical_not_surjective : ¬ Function.Surjective (V.d 1 0).hom := by
       LinearMap.id_apply] using h
   have hsum : (rowHomologyIso.hom.hom x : ℤ) + rowHomologyIso.hom.hom x = (1 : ℤ) :=
     (rowHomologyIso.hom.hom.map_add x x).symm.trans (hv.trans he)
+  let z : ℤ := rowHomologyIso.hom.hom x
+  have hz : Int.add z z = (1 : ℤ) := hsum
   omega
 
 lemma vertical_homology_nonzero : ¬ IsZero (V.homology 0) := by
   intro hz
   have hExact : V.ExactAt 0 := (V.exactAt_iff_isZero_homology 0).mpr hz
-  have hShort : (V.sc' 1 0 0).Exact :=
-    (V.exactAt_iff' (i := 1) (j := 0) (k := 0) rfl rfl).mp hExact
-  have hElem := (ShortComplex.moduleCat_exact_iff (V.sc' 1 0 0)).mp hShort
+  have hShort : (V.sc' 1 0 ((ComplexShape.down ℕ).next 0)).Exact :=
+    (V.exactAt_iff' (i := 1) (j := 0) (k := (ComplexShape.down ℕ).next 0)
+      ((ComplexShape.down ℕ).prev_eq'
+        (show (ComplexShape.down ℕ).Rel 1 0 from rfl)) rfl).mp hExact
+  have hElem := (ShortComplex.moduleCat_exact_iff
+    (V.sc' 1 0 ((ComplexShape.down ℕ).next 0))).mp hShort
+  have hg : V.d 0 ((ComplexShape.down ℕ).next 0) = 0 :=
+    V.shape 0 _ (by
+      intro h
+      change (ComplexShape.down ℕ).next 0 + 1 = 0 at h
+      omega)
   apply vertical_not_surjective
   intro z
   obtain ⟨x, hx⟩ := hElem z (by
-    change (V.d 0 0).hom z = 0
-    rw [vertical_zero]
+    change (V.d 0 ((ComplexShape.down ℕ).next 0)).hom z = 0
+    rw [hg]
     rfl)
   exact ⟨x, hx⟩
 
