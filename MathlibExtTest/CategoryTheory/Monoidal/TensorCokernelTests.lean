@@ -67,13 +67,17 @@ private lemma kills_relations :
   · rw [coprod.inl_desc_assoc, comp_zero]
     apply tensor_ext
     intro x y
-    norm_num [twiceA, AddCommGrpCat.whiskerRight_apply, multiplication_tmul,
-      map_zsmul, zsmul_eq_mul, castA, castB]
+    change castA ((2 : ℤ) • x) * castB y = 0
+    rw [map_zsmul, zsmul_eq_mul]
+    have htwo : (2 : ZMod 2) = 0 := by decide
+    rw [htwo, zero_mul, zero_mul]
   · rw [coprod.inr_desc_assoc, comp_zero]
     apply tensor_ext
     intro x y
-    norm_num [twiceB, AddCommGrpCat.whiskerLeft_apply, multiplication_tmul,
-      map_zsmul, zsmul_eq_mul, castA, castB]
+    change castA x * castB ((2 : ℤ) • y) = 0
+    rw [map_zsmul, zsmul_eq_mul]
+    have htwo : (2 : ZMod 2) = 0 := by decide
+    rw [htwo, zero_mul, mul_zero]
 
 private def descended : cokernel twiceA ⊗ cokernel twiceB ⟶ D :=
   tensorCokernelDesc twiceA twiceB multiplication kills_relations
@@ -83,10 +87,10 @@ example : PreservesColimitsOfSize.{0, 0} (tensorRight A) := inferInstance
 
 example : twiceA (1 : ZMod 4) ≠ 0 := by
   change (2 : ZMod 4) ≠ 0
-  norm_num
+  decide
 example : twiceB (1 : ZMod 6) ≠ 0 := by
   change (2 : ZMod 6) ≠ 0
-  norm_num
+  decide
 
 example :
     descended ((cokernel.π twiceA ⊗ₘ cokernel.π twiceB)

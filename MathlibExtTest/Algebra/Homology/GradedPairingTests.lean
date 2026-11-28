@@ -125,11 +125,14 @@ private def oddPairing : CochainGradedPairing zeroComplex evenComplex oddComplex
     · subst p
       apply tensor_ext (X := Z) (Y := Z) (D := Z)
       intro x y
-      simp only [oddComponent, ite_eq_left rfl, ite_eq_right (by omega : 1 + 1 ≠ 1),
-        zeroComplex, evenComplex, oddComplex, coefficient_d, scalar_zero,
-        AddCommGrpCat.tensorHom_apply, coefficient_iso_apply, multiply_tmul]
+      rw [coefficient_d, coefficient_d, coefficient_d]
+      simp only [oddComponent, if_pos rfl, if_neg (by omega : 1 + 1 ≠ 1),
+        scalar_zero, MonoidalPreadditive.zero_tensor, zero_comp, zero_add]
+      simp only [AddCommGrpCat.comp_apply, AddCommGrpCat.hom_zsmul,
+        AddCommGrpCat.tensorHom_apply,
+        coefficient_iso_apply, multiply_tmul, scalar_apply, AddCommGrpCat.id_apply]
       change oddMinusThree (1 + q) * (x * y) =
-        0 + ((-1 : ℤ) ^ 1) • (x * (evenThree q * y))
+        ((-1 : ℤ) ^ 1) • (x * (evenThree q * y))
       rw [odd_shift]
       simp only [pow_one, zsmul_eq_mul]
       ring
@@ -196,15 +199,18 @@ example :
     (by intro n; simp) (by intro n; simp) (by intro n; simp)
     zeroPairing 0 0 rfl rfl (𝟙 Z) (by rw [zero_d, zero_comp])
   have he := congrArg (fun g : MonoidalCategory.tensorObj Z Z ⟶ Z => g ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ))) h
-  simpa [zeroReadback, zeroPairing] using he
+  simpa only [zeroReadback, zeroPairing, Category.comp_id, multiply_tmul] using he
 
 example : (oddPairing.pair 1 0 ≫ oddComplex.d 1 2) ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = -3 := by
-  norm_num [oddPairing, oddComponent, oddComplex, coefficient_d]
+  rw [coefficient_d]
+  change (-3 : ℤ) * (1 * 1) = -3
+  norm_num
 
 example : ((𝟙 Z ⊗ₘ evenComplex.d 0 1) ≫ oddPairing.pair 1 1)
     ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = 3 := by
-  norm_num [oddPairing, oddComponent, evenComplex, coefficient_d, evenThree,
-    AddCommGrpCat.tensorHom_apply]
+  rw [coefficient_d]
+  change (1 : ℤ) * (evenThree 0 * 1) = 3
+  norm_num [evenThree]
 
 example : (3 : ℤ) ≠ -3 := by norm_num
 
@@ -216,11 +222,12 @@ private lemma reduced_boundary : oddComplex.d 1 2 ≫ reduceThree = 0 := by
   apply ConcreteCategory.ext_apply
   intro x
   change (((-3 : ℤ) * x : ℤ) : ZMod 3) = 0
+  rw [Int.cast_mul]
   norm_num
 
 private def oddReadback : oddComplex.homology 2 ⟶ T :=
   readback oddComplex 2 reduceThree (by
-    change oddComplex.d 1 2 ≫ reduceThree = 0
+    rw [CochainComplex.prev_nat_succ]
     exact reduced_boundary)
 
 example :
@@ -231,7 +238,7 @@ example :
     (by intro n; simp) evenThree_square oddMinusThree_square
     oddPairing 1 1 rfl (by norm_num [evenThree]) reduceThree
     (by
-      change oddComplex.d 1 2 ≫ reduceThree = 0
+      rw [CochainComplex.prev_nat_succ]
       exact reduced_boundary)
   have he := congrArg (fun g : MonoidalCategory.tensorObj Z Z ⟶ T => g ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ))) h
   simpa [oddReadback, oddPairing, oddComponent, reduceThree] using he
