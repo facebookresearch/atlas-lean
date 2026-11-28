@@ -864,6 +864,78 @@
       "upstream_sha256": "541badd2cc4954b5cc1d40b9200d593292a8e6a072dca14cc9173ca81637eeb9"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationFiniteComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e0006aee7543a38c62315285986f91e3ebe937467f891867a130abe83835aa70",
+      "rationale": "Repair compiler-reported native parameter, matrix coordinate or dependent transport boundaries; original assumptions, worlds, degree data and actual maps are retained. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a3003fd720e8e6c95cdc5248f0ccf0c012c1777a9d71d90e65889d864b0afcd7"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e40f1dabbd4f8a345b9514c378cf0250d8ccf820edafd811a4e7894642d566b4",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7cc11790cfb1689f3f83dede788e469285fee1ba7801e9cd8d993deb5a0b67b8"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationNaturality.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9a51a7b9bde93376acfac4dc797d181cbede6b3449f5724f33a7ecaad64aeea9",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "3cf99e66889e5fdbb1e600150209e91e919434d5bf11c71038aa0273b1648894"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestriction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "883799548fffb485fd3f5363f3a7d1b8b6826af6fc25207c436be18281f4c8d4",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "680b6044bc0bb2cba96dcd0cf9efb20c5eaa73c9a9c2e9a6387404516bd8155b"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestrictionHomology.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6212e06fe31ad1e069cba78093ab22752915b6fb62e41d684604b032d333d244",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "0d1f005ca0ede216eae74ce00a601b41d55d5602f947184c12697b5842d4542a"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestrictionNaturality.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "19b06b35a0f2ea50f8b337e32805dd5fe129b44e4d01cba0d4b49ab63479acd4",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9edf2257705f686128442cc838381cf48f7a6af3722a32765ca6217e63608672"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestrictionTotal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "15434461e7d54f39253c3fccd022f0f1aa4952a2b0fd42e3dd2f0eb47a141630",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "69756d56857ec857a1a282beeef8c38c2d4083453d68aa3924dc044e18005ff9"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationSpectralNaturality.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "afeb551da54528263dbec69e48bcdf00336a1425e810864a3b18b99fd0ef50cb",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a6e3984bf5a182333c66903b0566fb903df6c26f0b7dc40bb8f1d7a0e3c52604"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/FirstQuadrantFilteredComplex.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -909,6 +981,15 @@
       "upstream_sha256": "c139956b9f4472f9ecba5888d6a1ec4ae19688e14f15a4d4a1f57db17ce711da"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantFirstPage.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d8d62ec1979a001bf8bb30871c20d7ee4dbf51662dd30235d0a78fffa8caeea9",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "be2cfc66fadf284fd2069e6efd739a7e7f623a515013814b589b04e0ad7ee3f9"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/FirstQuadrantSpectralObject.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -916,6 +997,24 @@
       "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "60c6af3393839b24a0935af48cecf2c3f7f3985978112aba095f1fcabc0ad048"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantSpectralSequenceData.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "3c8a9b701bd0d968f409f2df315cca69013520ba8f79b2d18ed7bf44149492a5",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "544c17e8ac91013d1ab659513e7ed12a8891bb5d0b1561854967d96f7e5173fc"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FirstQuadrantSpectralSequenceSupport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7acaa24b098f762d081532e76089bf13e4b8c450fafba05e1a7e9b97bbf2dad3",
+      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "640adb51bbe32d702f34c4675426ecf257a24500b89d36ee93825ccc18cd7f26"
     },
     {
       "path": "MathlibExt/Algebra/Homology/FirstQuadrantTotal.lean",
