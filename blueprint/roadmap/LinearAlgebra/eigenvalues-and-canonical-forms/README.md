@@ -21,3 +21,4 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Eigenvalues and eigenspaces](eigenvalues-and-eigenspaces/README.md)
 - [Existence of eigenvalues](existence-of-eigenvalues/README.md)
 - [A finitely generated torsion-free module over a principal ideal domain is free](finite-torsion-free-module-pid-free.md)
+- [Joint spectral radius and switched linear systems](joint-spectral-radius-and-switched-systems/README.md)

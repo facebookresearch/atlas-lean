@@ -13,3 +13,5 @@ Extensions and complements (Schur–Zassenhaus), splitting of extensions, homolo
 - [Schur–Zassenhaus theorem: conjugacy of complements](schur-zassenhaus-conjugate-complements.md)
 
 - [Cohomological dimension two but geometric dimension three](eilenberg-ganea-counterexample.md)
+- [Bounded cohomology of groups](bounded-cohomology-of-groups/README.md)
+- [Computability of group homology](computability-of-group-homology/README.md)
