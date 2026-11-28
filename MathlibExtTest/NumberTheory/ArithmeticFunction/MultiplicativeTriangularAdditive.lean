@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditive
+-- The arithmetic function fixtures reuse the production module's bound on small summands.
+import all MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditive
 
 /-!
 # Tests for Park's identity and vanishing lemmas
@@ -30,18 +31,6 @@ private theorem divisorIndicator_multiplicative (p : ℕ) [NeZero p] :
     ⟨fun hd ↦ ⟨dvd_trans (dvd_mul_right a b) hd, dvd_trans (dvd_mul_left b a) hd⟩,
      fun ⟨ha, hb⟩ ↦ hab.mul_dvd_of_dvd_of_dvd ha hb⟩
   by_cases ha : a ∣ p <;> by_cases hb : b ∣ p <;> simp [divisorIndicator, h, ha, hb]
-
-private theorem small_triangular_sums {n : ℕ} (hn : IsSumTwoPositiveTriangular n) :
-    n = 2 ∨ n = 4 ∨ 6 ≤ n := by
-  obtain ⟨a, b, ha, hb, hab⟩ := hn
-  have gap (k : ℕ) (hk : 1 ≤ k) :
-      k * (k + 1) = 2 ∨ k * (k + 1) = 6 ∨ 12 ≤ k * (k + 1) := by
-    have cases : k = 1 ∨ k = 2 ∨ 3 ≤ k := by omega
-    rcases cases with rfl | rfl | h
-    · decide
-    · decide
-    · exact Or.inr (Or.inr (Nat.mul_le_mul h (Nat.succ_le_succ h)))
-  rcases gap a ha with ha | ha | ha <;> rcases gap b hb with hb | hb | hb <;> omega
 
 private theorem divisorIndicator_add {p : ℕ} [NeZero p] (hp : p = 3 ∨ p = 5)
     (a b : ℕ) (ha : IsSumTwoPositiveTriangular a) (hb : IsSumTwoPositiveTriangular b) :
@@ -94,5 +83,26 @@ example (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
     (hf2 : f 2 ≠ 0) : f 0 = 0 ∧ f 21 = 21 :=
   let hid := multiplicative_additive_on_sum_two_triangular_eq_id_le_21 f hf hadd hf2
   ⟨by simpa only [Nat.cast_zero] using hid 0 (by decide), hid 21 (by decide)⟩
+
+-- The identity branch extends beyond the small-value lemmas' bound.
+example (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
+      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
+    (hf2 : f 2 ≠ 0) : f 21 = 21 ∧ f 22 = 22 ∧ f 100 = 100 := by
+  rcases multiplicative_additive_on_sum_two_triangular_classification f hf hadd with
+    hid | ⟨hzero, _⟩
+  · exact ⟨hid 21, hid 22, hid 100⟩
+  · exact (hf2 (hzero 2 (by decide))).elim
+
+-- Either exceptional value can be nonzero, but their product and the large values vanish.
+example {p : ℕ} [NeZero p] (hp : p = 3 ∨ p = 5) :
+    divisorIndicator p 22 = 0 ∧ divisorIndicator p 100 = 0 ∧
+      divisorIndicator p 3 * divisorIndicator p 5 = 0 := by
+  rcases multiplicative_additive_on_sum_two_triangular_classification (divisorIndicator p)
+      (divisorIndicator_multiplicative p) (divisorIndicator_add hp) with hid | ⟨hzero, h35⟩
+  · have hf2 : divisorIndicator p 2 = 0 := by
+      rcases hp with rfl | rfl <;> rfl
+    exact (two_ne_zero ((hid 2).symm.trans hf2)).elim
+  · exact ⟨hzero 22 (by decide), hzero 100 (by decide), h35⟩
 
 end MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted

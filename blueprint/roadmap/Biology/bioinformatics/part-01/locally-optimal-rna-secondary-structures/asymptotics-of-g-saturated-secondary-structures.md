@@ -20,7 +20,7 @@ $$
 [t^n]\,g_p(t) \sim c\,\gamma^n\,n^{-3/2}, \qquad n \to \infty .
 $$
 
-For G-saturated structures $\gamma>1$. The same asymptotic form holds for all secondary structures, again with $\gamma>1$, and for saturated structures with $\gamma>0$ only: for saturated structures $\gamma\le3p^{1/(\theta+3)}$, which is $<1$ once $p<3^{-(\theta+3)}$ (the source's Lemma 1). Taking $p=3/8$ makes $[t^n]g_{3/8}(t)$ the expected number of such structures on a uniformly random sequence in $\{A,C,G,U\}^n$ (weight $4$ per free base, $6$ allowed labelings out of $16$ per pair).
+For G-saturated structures $\gamma>1$. The same asymptotic form holds for all secondary structures, again with $\gamma>1$, and for saturated structures with $\gamma>0$ (the source proves $\gamma>1$ only for general and G-saturated structures). Taking $p=3/8$ makes $[t^n]g_{3/8}(t)$ the expected number of such structures on a uniformly random sequence in $\{A,C,G,U\}^n$ (weight $4$ per free base, $6$ allowed labelings out of $16$ per pair).
 
 **Theorem (number of links, Proposition 2).** Let $X_n$ be the number of links of a G-saturated (or saturated, or general) structure of length $n$ drawn with probability proportional to $p^{\#\text{links}}$. There are computable $\mu,\sigma>0$ such that $(X_n - \mu n)/(\sigma\sqrt n)$ converges in distribution to a standard normal law.
 
@@ -34,4 +34,4 @@ The plane-tree encoding turns the local optimality constraints into local condit
 
 ## Sources
 
-- É. Fusy and P. Clote, "Combinatorics of locally optimal RNA secondary structures", arXiv:1112.4610 (2011), Sections 4.3 (Lemma 2 and the system for G-saturated structures) and 5 (Theorems 3–4, Propositions 1–2), <https://doi.org/10.48550/arXiv.1112.4610>.
+- É. Fusy and P. Clote, "Combinatorics of locally optimal RNA secondary structures", arXiv:1112.4610 (2011), Sections 4.4 (Lemma 2 and the system for G-saturated structures) and 5 (Theorems 3–4, Propositions 1–2), <https://doi.org/10.48550/arXiv.1112.4610>.

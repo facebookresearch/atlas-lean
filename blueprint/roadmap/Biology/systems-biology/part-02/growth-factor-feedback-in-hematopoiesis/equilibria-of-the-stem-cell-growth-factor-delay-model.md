@@ -13,7 +13,7 @@ $$
 with the hypotheses:
 
 - $\delta\ge 0$ (death of quiescent cells), $\mu>0$ (clearance of mature cells), $k>0$ (degradation of growth factor);
-- the differentiation flux $g$ is $C^1$, nonnegative, $g(0)=0$, and $Q\mapsto g(Q)/Q$ is nondecreasing, so that $0\le g'(0)\le g(Q)/Q\le g'(Q)$ for $Q>0$; moreover $g(Q)\to+\infty$ as $Q\to\infty$ (true, for instance, if $g'(0)>0$). The source derives this limit from the monotonicity of $g(Q)/Q$ alone, which fails for $g\equiv0$ (then no positive steady state exists although the condition of item 2 can hold), so the page assumes it;
+- the differentiation flux $g$ is $C^1$, nonnegative, $g(0)=0$, and $Q\mapsto g(Q)/Q$ is nondecreasing, so that $0\le g'(0)\le g(Q)/Q\le g'(Q)$ for $Q>0$; moreover $g(Q)>0$ for $Q>0$ (for instance if $g'(0)>0$); with $g(Q)/Q$ nondecreasing this gives $g(Q)\to+\infty$ as $Q\to\infty$, $M^*>0$ and $g'(Q^*)\ge g(Q^*)/Q^*>0$ at a positive root $Q^*$. The source derives $g\to\infty$ from the monotonicity of $g(Q)/Q$ alone, which fails when $g$ vanishes on an interval $[0,a]$ (then $M^*=g(Q^*)/\mu$ can be $0$ and no positive steady state exists although the condition of item 2 holds), so the page assumes positivity of $g$;
 - the feedback $f$ is $C^1$, positive and decreasing, with $f(M)\to 0$ as $M\to\infty$;
 - the reintroduction rate $\beta(Q,E)$ is $C^1$, increasing in $E$ with $\beta(Q,0)=0$, and decreasing in $Q$;
 - the source's standing assumption (6): $\lim_{Q\to\infty}\beta\big(Q,\tfrac1kf(\tfrac1\mu g(Q))\big)=0$.

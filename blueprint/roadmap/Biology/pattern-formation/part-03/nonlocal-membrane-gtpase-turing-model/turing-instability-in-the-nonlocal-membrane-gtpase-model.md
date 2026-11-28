@@ -39,7 +39,7 @@ d>\frac{4(a_3^2+2)^2(a_5+1)^2\big(a_3^2a_4(a_2-a_5)\min\{1,m\}+4(a_3^2+2)a_6V_0(
 $$
 
    then for some $\gamma>0$ the state $(u_*,v_*)$ is linearly unstable for the non-local reaction–diffusion system.
-4. *(No instability for equal diffusion.)* If $d=1$ and $(u_*,v_*)$ is of activator–substrate-depletion type ($\partial_uf,\partial_vf>0$, $\partial_ug_0<0<\partial_vg_0$ with $g_0$ the homogeneous reaction term), then no Turing-type instability exists, despite the non-local coupling.
+4. *(No instability for equal diffusion.)* If $d=1$ and $(u_*,v_*)$ is of activator–substrate-depletion type ($\partial_uf,\partial_vf>0$, $\partial_ug_0<0$ and $\partial_vg_0<0$ with $g_0$ the homogeneous reaction term; the source's (4.7) prints $\partial_vg_0>0$, a sign slip against its Proposition 3.2, whose activator–substrate-depletion state has $\partial_vg_0<0$, and its proof of Theorem 4.1 does not use the signs of $g_0$), then no Turing-type instability exists, despite the non-local coupling.
 
 ## Expansion
 

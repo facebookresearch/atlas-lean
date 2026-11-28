@@ -22,6 +22,10 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Excess-mutation tests for regulatory elements](excess-mutation-tests-for-regulatory-elements/README.md)
 - [Recurrent mutation in regulatory elements](recurrent-mutation-in-regulatory-elements/README.md)
 - [Regional somatic mutation burden](regional-somatic-mutation-burden/README.md)
+- [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
+- [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
+- [Minimum uncovering branching](minimum-uncovering-branching/README.md)
+
 ## [Statistical and evolutionary models of tumour genomes](part-01/README.md)
 - [Cyclic shift permutation testing](part-01/cyclic-shift-permutation-testing/README.md)
 - [Exact site frequency spectrum of birth–death tumors](part-01/exact-site-frequency-spectrum-of-birth-death-tumors/README.md)

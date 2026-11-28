@@ -1,0 +1,25 @@
+# Decision procedures for Petri nets
+
+Decision procedures for Petri nets in their foundations: the monotonicity of firing, König's and Dickson's lemmas, the coverability tree and graph and the coverability problem, backward reachability from upward-closed sets, semilinear inductive invariants for reachability, and the reduction of deadlock-freedom to reachability.
+
+- [Dickson's lemma for finite products of well-quasi-orders](dickson-s-lemma.md)
+- [Monotonicity lemma for Petri net firing sequences](monotonicity-lemma-for-firing-sequences.md)
+- [König's lemma for finitely branching graphs](konig-s-lemma-for-finitely-branching-graphs.md)
+- [ω-markings of a Petri net](omega-markings.md)
+- [The coverability tree](coverability-tree.md)
+- [Properties of the coverability tree](properties-of-the-coverability-tree.md)
+- [The coverability graph algorithm](coverability-graph-algorithm.md)
+- [The coverability graph construction terminates](coverability-graph-construction-terminates.md)
+- [ω-places of the coverability graph can be pumped](omega-places-of-the-coverability-graph-can-be-pumped.md)
+- [The coverability graph characterizes coverable markings](coverability-graph-characterizes-coverability.md)
+- [Coverability is decidable for Petri nets](coverability-is-decidable-for-petri-nets.md)
+- [Upward-closed sets of markings](upward-closed-sets-of-markings.md)
+- [Predecessor sets of markings](predecessor-sets-of-markings.md)
+- [Predecessors of an upward-closed set of markings are upward closed](predecessors-of-an-upward-closed-set-are-upward-closed.md)
+- [Backward reachability from an upward-closed set stabilizes](backward-reachability-stabilizes.md)
+- [Petri nets are well-structured transition systems](petri-nets-are-well-structured-transition-systems.md)
+- [Semilinear sets are the sets definable in Presburger arithmetic](semilinear-sets-are-the-presburger-definable-sets.md)
+- [Non-reachability in Petri nets has a semilinear inductive invariant](non-reachability-has-a-semilinear-inductive-invariant.md)
+- [Deadlock-freedom reduces to reaching a marking empty on a set of places](deadlock-freedom-reduces-to-emptying-a-set-of-places.md)
+- [Reaching a marking empty on a set of places reduces to reachability](emptying-a-set-of-places-reduces-to-reachability.md)
+- [Deadlock-freedom of Petri nets is decidable](deadlock-freedom-is-decidable.md)

@@ -14,7 +14,7 @@ on a bounded smooth domain with no-flux conditions, let $(u^*,v^*,w^*)$ be a hom
 
 **Proposition.** Assume the equilibrium is stable to the homogeneous mode $k=0$. Then for every $k\ge1$:
 
-1. $a_1(k)>0$, and $a_2(k;\xi)$ and $a_3(k;\xi)$ are affine and strictly decreasing in $\xi$, with $\partial_\xi a_2(k)=-v^*\mu_k t<0$ for a positive constant $t$ fixed by the equilibrium. Hence the Hurwitz determinant $H_k(\xi)=a_1a_2-a_3$ is affine in $\xi$, and $\xi\mapsto\omega_k(\xi)$ is continuous and eventually positive.
+1. $a_1(k)>0$; $a_2(k;\xi)$ is affine and strictly decreasing in $\xi$ with slope $-v^*\mu_kt<0$, for a positive constant $t$ fixed by the equilibrium; $a_3(k;\xi)$ is affine in $\xi$ with slope $-v^*\mu_k(A_kt-ps)$, where $A_k$ and $s,p$ are fixed by the mode and the equilibrium, so it is decreasing if and only if $A_kt>ps$. (The source's Proposition 6.2(i) prints "both strictly decreasing", against its own slope formula; its Remark 6.3 notes $A_kt-ps<0$ throughout the unstable band for its Table 3, where $a_3$ increases in $\xi$.) Hence the Hurwitz determinant $H_k(\xi)=a_1a_2-a_3$ is affine in $\xi$, and $\xi\mapsto\omega_k(\xi)$ is continuous and eventually positive.
 2. Since $\omega_k(0)<0$ for all $k$ and $\omega_k(\xi)\to+\infty$ as $\xi\to\infty$ whenever $\mu_k>0$, the critical sensitivity
 
 $$

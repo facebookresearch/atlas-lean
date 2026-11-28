@@ -18,6 +18,8 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Nonlocal multi-species advection–diffusion](nonlocal-multi-species-advection-diffusion/README.md)
 - [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
 - [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)
+- [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
+
 ## [Chemotaxis systems: analysis and inverse problems](part-01/README.md)
 - [Bacterial chemotaxis to two stimuli](part-01/bacterial-chemotaxis-to-two-stimuli/README.md)
 - [Chemotactic tumour–immune models](part-01/chemotactic-tumour-immune-models/README.md)

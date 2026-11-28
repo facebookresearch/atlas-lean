@@ -24,6 +24,11 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 
 - [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
 - [Three-variable repressilator](three-variable-repressilator/README.md)
+- [Reaction network structure and dynamics](reaction-network-structure/README.md)
+- [Molecular computation](molecular-computation/README.md)
+- [Identifiability and inference](identifiability-and-inference/README.md)
+- [Stochastic biochemical dynamics](stochastic-biochemical-dynamics/README.md)
+- [Regulatory and signalling circuits](regulatory-and-signalling-circuits/README.md)
 
 ## [Stochastic reaction networks and gene expression](part-01/README.md)
 
