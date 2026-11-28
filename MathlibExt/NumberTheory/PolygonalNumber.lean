@@ -13,8 +13,7 @@ import Mathlib.Tactic.Ring
 /-!
 # Polygonal numbers
 
-This file formalizes the polygonal-number family from Zhi-Wei Sun's
-"On universal sums of polygonal numbers" (Sci. China Math. 58 (2015), 1367--1396).
+This file formalizes the polygonal-number family.
 
 The source defines, for `m = 3, 4, ...` and `n = 0, 1, 2, ...`,
 `p_m(n) = (m - 2) * C(n, 2) + n`.
@@ -23,6 +22,12 @@ The source's geometric polygonal interpretation assumes `3 ≤ s`.
 The Lean definition below is the total natural-number extension of that
 binomial formula to all `s : ℕ`, using `Nat.choose` so no unintended
 truncated-subtraction semantics enter the definition itself.
+
+## References
+
+* Zhi-Wei Sun, *On universal sums of polygonal numbers*, Sci. China Math. 58 (2015), 1367–1396.
+* `MathlibExt.NumberTheory.PracticalPolygonalSumsPracticalAddPolygonalExceptions`:
+  the former private lemmas `polygonal_ge` and `polygonal_mono` are moved here.
 -/
 
 namespace Nat
@@ -50,6 +55,21 @@ def polygonalNumber (s n : ℕ) : ℕ := (s - 2) * Nat.choose n 2 + n
 /-- The binomial formula for `polygonalNumber`, with natural subtraction in `s - 2`. -/
 theorem polygonalNumber_eq (s n : ℕ) :
     polygonalNumber s n = (s - 2) * n.choose 2 + n := rfl
+
+/-- For all natural numbers `s` and `n`, the `n`-th `s`-gonal number is at least `n`. -/
+theorem le_polygonalNumber (s n : ℕ) : n ≤ polygonalNumber s n := by
+  rw [polygonalNumber_eq]
+  exact Nat.le_add_left n ((s - 2) * n.choose 2)
+
+/-- For natural numbers `s`, `a`, and `b` with `a ≤ b`, the `a`-th `s`-gonal number is at most
+   the `b`-th. -/
+theorem polygonalNumber_mono (s : ℕ) {a b : ℕ} (h : a ≤ b) :
+    polygonalNumber s a ≤ polygonalNumber s b := by
+  simp only [polygonalNumber_eq]
+  have hC : a.choose 2 ≤ b.choose 2 := Nat.choose_le_choose 2 h
+  have hmul : (s - 2) * a.choose 2 ≤ (s - 2) * b.choose 2 :=
+    Nat.mul_le_mul_left (s - 2) hC
+  exact Nat.add_le_add hmul h
 
 /-- **Polygonal numbers at zero.** For every natural number $s$, $p_s(0) = 0$, where $p_s(n)$ is
 the $n$-th $s$-gonal number.

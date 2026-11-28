@@ -206,13 +206,6 @@ public theorem eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
   have hM (j : ℕ) : 0 < M j := mul_pos (primorial_pos _) (pow_pos hp.pos _)
   have hM_succ (j : ℕ) : M (j + 1) = M j * p := by simp [M, pow_succ, mul_assoc]
   have hM_dvd (j : ℕ) : primorial r ∣ M j := dvd_mul_right _ _
-  have hP (k : ℕ) : k ≤ Nat.polygonalNumber s k := by
-    rw [Nat.polygonalNumber_eq]
-    exact Nat.le_add_left _ _
-  have hmono : Monotone (Nat.polygonalNumber s) := by
-    intro a b hab
-    simp only [Nat.polygonalNumber_eq]
-    exact Nat.add_le_add (Nat.mul_le_mul_left _ (Nat.choose_le_choose 2 hab)) hab
   have hpractical (j : ℕ) : IsPracticalNumber (M j) := by
     induction j with
     | zero => simpa [M] using isPracticalNumber_primorial r
@@ -228,7 +221,7 @@ public theorem eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
     refine ⟨(Nat.log p n).succ, ?_⟩
     have hlt := Nat.lt_pow_succ_log_self hp.one_lt n
     have hl := Nat.le_mul_of_pos_left (p ^ (Nat.log p n).succ) (primorial_pos r)
-    have hl' := hP (2 * M (Nat.log p n).succ)
+    have hl' := Nat.le_polygonalNumber s (2 * M (Nat.log p n).succ)
     change p ^ (Nat.log p n).succ ≤ M (Nat.log p n).succ at hl
     omega
   have hj0 : Nat.find hlarge ≠ 0 := by
@@ -250,8 +243,8 @@ public theorem eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
   change x ≤ 2 * M j at hx
   change y ≤ 2 * M j at hy
   have hsum : Nat.polygonalNumber s x + Nat.polygonalNumber s y < n := by
-    have hx' := hmono hx
-    have hy' := hmono hy
+    have hx' := Nat.polygonalNumber_mono s hx
+    have hy' := Nat.polygonalNumber_mono s hy
     omega
   obtain ⟨k, hk⟩ := (Nat.modEq_iff_dvd' hsum.le).mp hxy
   change n - (Nat.polygonalNumber s x + Nat.polygonalNumber s y) = M j * k at hk
