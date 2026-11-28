@@ -8,7 +8,7 @@ $$L_n\ge\frac{2(1+\epsilon)}{H_*}\log(M_nN_n)$$
 
 for all large $n$, then $\mathbb P(I_n)\to1$, and a simple greedy overlap algorithm reconstructs all genomes.
 
-**Theorem (necessary read length).** Suppose $M_n\ge2$, $N_n\to\infty$, $\log(M_n)/N_n\to0$, $F_*\le F(p_n^m,p_n^{m'})\le F^*$ for all pairs, and $L_n\le\delta N_n$ for some $\delta<1$. With $C=\min\{1/F^*,\ 1/(2F^*-F_*)\}$, if for some $\epsilon>0$
+**Theorem (necessary read length).** Suppose $M_n\ge2$, $N_n\to\infty$, $\log(M_n)/N_n\to0$, there exist $F_*, F^* \in (0, \infty)$ such that $F_* \le F(p_n^m, p_n^{m'}) \le F^*$ for all $n$ and all pairs $1 \le m, m' \le M_n$, and $L_n\le\delta N_n$ for some $\delta<1$. With $C=\min\{1/F^*,\ 1/(2F^*-F_*)\}$, if for some $\epsilon>0$
 
 $$L_n\le C(1-\epsilon)\log(M_nN_n)$$
 
