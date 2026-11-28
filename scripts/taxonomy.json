@@ -1705,6 +1705,7 @@
   "CSLibExt/Computability/Distributed/FailureDetector": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consensus and agreement"},
   "CSLibExt/Computability/Distributed/LamportClock": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Lamport clocks"},
   "CSLibExt/Computability/Distributed/Linearizability": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Linearizability"},
+  "CSLibExt/Computability/Distributed/LocalModel": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Distributed execution models"},
   "CSLibExt/Computability/Distributed/LubyMIS": {"to": "ComputerScience/parallel-algorithms", "title": "Luby's maximal independent set algorithm"},
   "CSLibExt/Computability/Distributed/MaxPropagation": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Synchronous maximum propagation"},
   "CSLibExt/Computability/Distributed/MonotonicSemilattice": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Replication and consistency"},
