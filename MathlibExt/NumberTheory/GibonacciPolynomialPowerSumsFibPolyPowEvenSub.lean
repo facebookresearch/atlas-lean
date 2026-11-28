@@ -237,10 +237,6 @@ public theorem lucasPoly_pow_even_sub {n k : ℕ} (hk : k ≤ n) (m : ℕ) :
     𝔩 (n + k) ^ (2 * m) - 𝔩 (n - k) ^ (2 * m) =
       (X ^ 2 + 4) * ∑ j ∈ Finset.range m, ((2 * m).choose j : ℤ[X]) * (-1) ^ ((n + k) * j) *
         𝔣 (2 * k * (m - j)) * 𝔣 (2 * n * (m - j)) := by
-  by_cases hm : m = 0
-  · simp [hm]
-  by_cases hk0 : k = 0
-  · simp [hk0]
   apply QuadraticAlgebra.algebraMap_injective (a := (1 : ℤ[X])) (b := X)
   have h := root_even_sub α β root_mul_other hk m 0
   simp only [pow_zero, one_mul, add_zero] at h
