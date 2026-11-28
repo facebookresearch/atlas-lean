@@ -105,8 +105,8 @@ theorem block_apply_eq_zero_of_le (N L : ℕ) (x : Fin N → ℂ) (b : ℕ) (i :
   unfold block extendNat
   simp [Nat.not_lt.mpr hi]
 
-/-- Disjoint consecutive partition: sample `n` sits in block `n / L` at
-offset `n % L`, and only there. -/
+/-- For `L ≥ 1`, sample `n` of the zero-extended signal is entry `n % L` of
+block `n / L`. -/
 theorem extendNat_eq_block_div_mod (N L : ℕ) (hL : 1 ≤ L) (x : Fin N → ℂ) (n : ℕ) :
     extendNat N x n = block N L x (n / L) ⟨n % L, Nat.mod_lt n (by omega)⟩ := by
   unfold block
