@@ -25,7 +25,7 @@ This page becomes ready once:
 - The input and output head schedule that makes every head oblivious, not only the work-tape sweeps (proof prerequisite; not yet stated)
 - Simulation of a $k$-tape machine by a machine with one work tape holding the $k$ tapes on tracks, in time $O(T(n)^2)$ (proof prerequisite; not yet stated). The existing [quadratic overhead of the single-tape emulation](../../complexity-classes/quadratic-overhead-of-single-tape-simulation/exists-tm0-run-of-tm2-run.md) is for multi-stack machines and does not give oblivious head movement.
 
-It is the proof prerequisite named in the expansion of [P is contained in P/poly](../../complexity-classes/time-and-space-complexity-classes/p-is-contained-in-p-poly.md).
+This is the oblivious-simulation step used in the proof sketch of [P is contained in P/poly](../../complexity-classes/time-and-space-complexity-classes/p-is-contained-in-p-poly.md).
 
 ## Sources
 
