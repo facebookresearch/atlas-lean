@@ -6,13 +6,14 @@ Here a *triangulation* of a PL manifold $M$ is a finite [abstract simplicial com
 
 **Theorem (Nabutovsky and Ben-Av).** Let $M_0$ be a compact four-dimensional PL manifold that cannot be recognized by any algorithm, and for $N \ge 1$ let $s(N)$ be the number of distinct triangulations of $M_0$ with at most $N$ simplices. Then $s$ is not a recursive function.
 
-By Markov's theorem such manifolds exist; the source notes that one can take a manifold diffeomorphic to the $4$-sphere with $46$ attached handles of index two. The source also states that, in the dynamical triangulation model of four-dimensional quantum gravity, $s(N)$ equals the model's partition function (its Equation (2)) at $\hat\lambda_0 = \hat\lambda_4 = \Delta\lambda_0 = 0$, $\Delta\lambda_4 = \infty$ and $\hat N_4 = N$, and concludes that the partition function is then not recursive. Read literally, the weight in that limit vanishes unless the number $N_4$ of four-dimensional simplices equals $N$, so the sum counts the triangulations with exactly $N$ four-simplices rather than those with at most $N$ simplices; this identification is the source's.
+By Markov's theorem such manifolds exist; the source notes that one can take a manifold diffeomorphic to the $4$-sphere with $46$ attached handles of index two. The source also identifies $s(N)$ with the partition function of the dynamical triangulation model of four-dimensional quantum gravity (its Equation (2)) at $\hat\lambda_0 = \hat\lambda_4 = \Delta\lambda_0 = 0$, $\Delta\lambda_4 = \infty$ and $\hat N_4 = N$, and concludes that the partition function is then not recursive. At these parameters the limiting weight is $1$ when the number $N_4$ of four-dimensional simplices equals $N$ and $0$ otherwise, so the partition function counts the triangulations of $M_0$ with exactly $N$ four-simplices; this count differs from $s(N)$, which counts the triangulations with at most $N$ simplices of all dimensions.
 
 ## Depends on
 
 - [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 - [Algorithmic recognition problem for a manifold](recognition-problem-for-a-manifold.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Compact space](../../topological-spaces/compact-space.md)
 
 ## Proof depends on
 

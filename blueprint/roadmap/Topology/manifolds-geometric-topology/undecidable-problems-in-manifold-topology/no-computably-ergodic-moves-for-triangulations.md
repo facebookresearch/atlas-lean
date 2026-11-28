@@ -13,6 +13,7 @@ Consequently, for an ergodic finite set of moves on the triangulations of a comp
 - [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 - [Algorithmic recognition problem for a manifold](recognition-problem-for-a-manifold.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Compact space](../../topological-spaces/compact-space.md)
 
 ## Proof depends on
 
@@ -20,7 +21,7 @@ None.
 
 ## Expansion
 
-If a computationally ergodic finite set of moves with bound $r$ existed, applying all move sequences of length at most $r(N)$ to a fixed triangulation of $M_0$ would list, in time computable from $N$, every triangulation of $M_0$ with at most $N$ simplices. Comparing a given triangulation $T$ with $N$ simplices against this list up to simplicial isomorphism would then decide whether $|T|$ is PL homeomorphic to $M_0$, contradicting unrecognizability. The source notes that the argument is very similar to the proof of Theorem 5 b) of Acquistapace, Benedetti and Broglia (Inventiones Mathematicae 102, 1990). A good expansion links the decidability of simplicial isomorphism of finite complexes (Lemma 2.16 of Acquistapace, Benedetti and Broglia, which the source cites). The application to Markov's manifold uses, in addition, Markov's unrecognizability theorem.
+If a computationally ergodic finite set of moves with bound $r$ existed, fix a triangulation $T_0$ of $M_0$ with $N_0$ simplices. Since the bound applies when both endpoints have at most the given number of simplices, applying all move sequences of length at most $r(\max\{N, N_0\})$ to $T_0$, with no size bound on the intermediate triangulations, and keeping the results with at most $N$ simplices would list, in time computable from $N$, every triangulation of $M_0$ with at most $N$ simplices. Comparing a given triangulation $T$ with $N$ simplices against this list up to simplicial isomorphism would then decide whether $|T|$ is PL homeomorphic to $M_0$, contradicting unrecognizability. The source notes that the argument is very similar to the proof of Theorem 5 b) of Acquistapace, Benedetti and Broglia (Inventiones Mathematicae 102, 1990). A good expansion links the decidability of simplicial isomorphism of finite complexes (Lemma 2.16 of Acquistapace, Benedetti and Broglia, which the source cites). The application to Markov's manifold uses, in addition, Markov's unrecognizability theorem.
 
 ## Sources
 
