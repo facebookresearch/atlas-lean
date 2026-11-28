@@ -1,8 +1,8 @@
 # Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety
 
-This node is still to be broken down. It covers the first results on the Selmer and Shafarevich–Tate groups of an
+This node covers the first results on the Selmer and Shafarevich–Tate groups of an
 abelian variety over a number field, which the proof of the
-[nondegeneracy of the Cassels–Tate pairing](nondegeneracy-of-the-cassels-tate-pairing.md) uses, following Milne's
+[nondegeneracy of the Cassels–Tate pairing](proof-of-the-nondegeneracy-of-the-cassels-tate-pairing/nondegeneracy-of-the-cassels-tate-pairing.md) uses, following Milne's
 *Arithmetic Duality Theorems*, Chapter I, §6.
 
 Let $K$ be a number field, $\bar K$ an algebraic closure and $A$ an
@@ -45,7 +45,7 @@ $H^1(K', A) \to H^1(\hat K', A)$ to the completion is an isomorphism.
 
 ## Expansion
 
-A good expansion has pages for:
+This node is still to be broken down. A good expansion states and links:
 
 - the reduction lemma: if $A$ has good reduction outside $S$ and $m$ is a unit outside $S$, then $A[m]$ is unramified
   outside $S$ and $m \colon A(K_S) \to A(K_S)$ is onto, because $A$ extends to an abelian scheme over the ring of
