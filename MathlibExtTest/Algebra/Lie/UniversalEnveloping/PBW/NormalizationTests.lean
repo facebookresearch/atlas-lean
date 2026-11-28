@@ -57,7 +57,12 @@ private def basis : Module.Basis (Fin 4) R M :=
 
 private lemma basis_single (i j : Fin 2) :
     basis (finProdFinEquiv (i, j)) = Matrix.single i j (1 : R) := by
-  rw [basis, Module.Basis.reindex_apply]
+  change
+    (((Pi.basisFun R J).map
+      (LinearEquiv.piCurry R (fun (_ : Fin 2) (_ : Fin 2) => R))).reindex index)
+      (finProdFinEquiv (i, j)) =
+        (Matrix.single i j (1 : R) : Fin 2 → Fin 2 → R)
+  rw [Module.Basis.reindex_apply]
   have hindex : index.symm (finProdFinEquiv (i, j)) = (⟨i, j⟩ : J) := by
     change (Equiv.sigmaEquivProd (Fin 2) (Fin 2)).symm
       (finProdFinEquiv.symm (finProdFinEquiv (i, j))) = _
@@ -168,8 +173,11 @@ private lemma generator_one_coefficient :
 private lemma commutator_zero_coefficient :
     normalizationQuotientCoordinates basis
       (generator 1 * generator 2 - generator 2 * generator 1) (oneWord 0) = 1 := by
-  rw [commutator_coordinates]
-  simp [Finsupp.sub_apply, Finsupp.single_apply, oneWord]
+  have hthree :
+      (Finsupp.single (oneWord 3) (1 : R)) (oneWord 0) = 0 :=
+    Finsupp.single_eq_of_ne (by decide : oneWord (0 : Fin 4) ≠ oneWord 3)
+  rw [commutator_coordinates, Finsupp.sub_apply, Finsupp.single_eq_same,
+    hthree, sub_zero]
 
 private lemma native_reversed_coordinates :
     pbwCoordinates basis (basisWord basis [2, 1]) =
@@ -238,8 +246,8 @@ example : (2 : R) • generator 1 ≠ 0 ∧
     rw [map_smul, generator_coordinates, Finsupp.smul_apply,
       Finsupp.single_eq_same, smul_eq_mul, mul_one, map_zero] at hc
     exact (by decide : (2 : R) ≠ 0) hc
-  refine ⟨hnonzero, ?_, by norm_num, by norm_num⟩
-  rw [smul_smul, show (3 : R) * 2 = 0 by norm_num, zero_smul]
+  refine ⟨hnonzero, ?_, by decide, by decide⟩
+  rw [smul_smul, show (3 : R) * 2 = 0 by decide, zero_smul]
 
 example : pbwCoordinates basis (basisWord basis [2, 1]) =
     Finsupp.single pairWord 1 + Finsupp.single (oneWord 3) 1 -
@@ -252,7 +260,14 @@ example : basisWord basis [1, 2] - basisWord basis [2, 1] ≠ 0 := by
     (fun u : UniversalEnvelopingAlgebra R M => pbwCoordinates basis u (oneWord 0)) h
   rw [map_sub, pbwCoordinates_basisWord, pbwCoordinates_basisWord,
     normalize_pair, normalize_reversed, map_zero] at hc
-  norm_num [Finsupp.sub_apply, Finsupp.add_apply, Finsupp.single_apply,
-    pairWord, oneWord] at hc
+  have hpair :
+      (Finsupp.single pairWord (1 : R)) (oneWord 0) = 0 :=
+    Finsupp.single_eq_of_ne (by decide : oneWord (0 : Fin 4) ≠ pairWord)
+  have hthree :
+      (Finsupp.single (oneWord 3) (1 : R)) (oneWord 0) = 0 :=
+    Finsupp.single_eq_of_ne (by decide : oneWord (0 : Fin 4) ≠ oneWord 3)
+  simp only [Finsupp.sub_apply, Finsupp.add_apply, hpair, hthree,
+    Finsupp.single_eq_same, Finsupp.zero_apply, zero_add, zero_sub, neg_neg] at hc
+  exact (by decide : (1 : R) ≠ 0) hc
 
 end MathlibExtTest.PBWNormalization
