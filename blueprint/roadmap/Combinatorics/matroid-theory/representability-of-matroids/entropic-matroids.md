@@ -2,7 +2,7 @@
 
 A matroid is entropic when its rank function is a positive multiple of the joint entropy function of a family of discrete random variables indexed by its ground set.
 
-Let $M$ be a finite [matroid](matroids-given-by-rank-functions.md) $M$ with ground set $E$ and rank function $r$ (in Mathlib, a `Matroid` with `Matroid.Finite`, and $r$ given by `Matroid.eRk`). $M$ is *entropic* if there are random variables $(X_e)_{e \in E}$ on a common discrete probability space, so that each $X_S$ below takes countably many values, and a real number $\lambda > 0$ such that
+Let $M$ be a finite [matroid](matroids-given-by-rank-functions.md) with ground set $E$ and rank function $r$ (in Mathlib, a `Matroid` with `Matroid.Finite`, and $r$ given by `Matroid.eRk`). $M$ is *entropic* if there are random variables $(X_e)_{e \in E}$ on a common discrete probability space, so that each $X_S$ below takes countably many values, and a real number $\lambda > 0$ such that
 
 $$
 r(S) = \lambda\, H(X_S) \qquad \text{for all } S \subseteq E,
