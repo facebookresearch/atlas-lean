@@ -11,6 +11,7 @@ module
 public import CSLibExt.Complexity.Algebraic.BilinearRecursion
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import CSLibExt.Complexity.Algebraic.RectangularCircuitExponent
+public import CSLibExt.Complexity.Algebraic.SquareMatrixMultiplicationBounds
 
 /-!
 # Gate counts for recursive bilinear matrix-multiplication circuits
@@ -430,6 +431,17 @@ theorem squareMatrixMultiplicationCircuitExponent_le_logb {F : Type u} [Field F]
     _ ≤ (r : ℝ) * (1 + 6 * (r : ℝ) * (q : ℝ) ^ 2)
         * (n : ℝ) ^ (Real.logb (q : ℝ) (r : ℝ) + ε) :=
       mul_le_mul_of_nonneg_left hrpow hCpos.le
+
+/-- **Tensor exponent from rank.** The rank-defined `matrixMultiplicationExponent`
+is at most `Real.logb q r` when the `q`-tensor has trilinear rank at most `r`. -/
+theorem matrixMultiplicationExponent_le_logb {F : Type u} [Field F] [Infinite F]
+    {q r : ℕ} (hq : 2 ≤ q) (hqr : q ^ 2 < r)
+    (h : MatrixMultiplicationExponent.HasTrilinearRankAtMost
+      (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q) r) :
+    MatrixMultiplicationExponent.matrixMultiplicationExponent F ≤
+      ENNReal.ofReal (Real.logb q r) := by
+  rw [← SquareMatrixMultiplicationBoundsWanted.squareOperationRankBridge]
+  exact squareMatrixMultiplicationCircuitExponent_le_logb hq hqr h
 
 end
 

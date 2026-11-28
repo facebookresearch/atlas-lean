@@ -109,4 +109,12 @@ example {F : Type u} [Field F] :
   squareMatrixMultiplicationCircuitExponent_le_logb (by norm_num) (by decide)
     (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor_rank_le_seven F)
 
+#check @matrixMultiplicationExponent_le_logb
+
+example {F : Type u} [Field F] [Infinite F] :
+    MatrixMultiplicationExponent.matrixMultiplicationExponent F ≤
+      ENNReal.ofReal (Real.logb 2 7) :=
+  matrixMultiplicationExponent_le_logb (by norm_num) (by decide)
+    (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor_rank_le_seven F)
+
 end Cslib.Complexity.Algebraic
