@@ -11,13 +11,15 @@ module
 import Mathlib.Analysis.Normed.Group.InfiniteSum
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.LucasPolytopicNumberClosedForm
 import MathlibExt.NumberTheory.LucasPolytopicNumberEvenLambertSeries
 
 /-!
 # Tests for the even-index Lucas-bracket sum
 
 Check absolute summability and specialize the sum formula to the Mersenne parameters, for
-which the first Lambert argument is negative.
+which the first Lambert argument is negative. Also check the closed form with the smaller root
+listed first.
 -/
 
 namespace MathlibExtTest.NumberTheory.LucasPolytopicNumberEvenLambertSeries
@@ -45,6 +47,11 @@ private def mersenneParameters : LucasParameters where
     intro n hn
     rw [h]
     exact (sub_pos.mpr (one_lt_pow₀ (by norm_num : (1 : ℝ) < 2) hn)).ne'
+
+example (n : ℕ) :
+    (1 - 2 : ℝ) * lucasBracket mersenneParameters n = (1 : ℝ) ^ n - 2 ^ n :=
+  lucasBracket_closed_form mersenneParameters 1 2
+    (by norm_num [mersenneParameters]) (by norm_num [mersenneParameters]) n
 
 example :
     let L : ℝ → ℝ := fun q => ∑' n : ℕ, q ^ (n + 1) / (1 - q ^ (n + 1))

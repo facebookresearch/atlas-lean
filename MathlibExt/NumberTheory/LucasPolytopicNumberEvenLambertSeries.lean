@@ -16,7 +16,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
-import all MathlibExt.NumberTheory.LucasPolytopicNumberHasSumInvLucasBracketMulSucc
+import MathlibExt.NumberTheory.LucasPolytopicNumberClosedForm
 
 /-!
 # Even-index Lucas-bracket series
@@ -31,8 +31,8 @@ The inequalities make explicit the real convergence conditions for the two Lambe
 
 * Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
   Journal of Integer Sequences 28 (2025), Article 25.5.6, pp. 1–19, §2 and Theorem 11 (p. 15).
-* The proof uses `bracket_closed` from
-  `MathlibExt.NumberTheory.LucasPolytopicNumberHasSumInvLucasBracketMulSucc` and
+* The proof uses `lucasBracket_closed_form` from
+  `MathlibExt.NumberTheory.LucasPolytopicNumberClosedForm` and
   `summable_norm_pow_mul_geometric_div_one_sub` from
   `Mathlib.NumberTheory.TsumDivisorsAntidiagonal`.
 -/
@@ -108,7 +108,8 @@ public theorem hasSum_pow_div_lucasBracket_two_mul (P : LucasParameters) (hs : 0
   have hta : P.t = a ^ 2 * q := by rw [pow_two, mul_assoc, hqa, mul_neg, hprod, neg_neg]
   have htpow : P.t ^ m = a ^ (2 * m) * q ^ m := by rw [hta, mul_pow, pow_mul a 2 m]
   have hbc : d * lucasBracket P (2 * m) = a ^ (2 * m) * (1 - (q ^ 2) ^ m) := by
-    rw [← hdiff, bracket_closed P a b hsum hprod, hbq, mul_pow, pow_mul (-q) 2 m, neg_sq]
+    rw [← hdiff, lucasBracket_closed_form P a b hsum hprod, hbq, mul_pow, pow_mul (-q) 2 m,
+      neg_sq]
     ring
   calc
     d * (q ^ m / (1 - q ^ m) - (q ^ 2) ^ m / (1 - (q ^ 2) ^ m)) =
