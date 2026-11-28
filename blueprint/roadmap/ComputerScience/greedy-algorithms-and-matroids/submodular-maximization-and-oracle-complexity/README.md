@@ -6,4 +6,4 @@
 - [Finding a matroid basis needs n independence queries](matroid-basis-independence-query-lower-bound.md)
 - [Independence-query count of matroid intersection](matroid-intersection-query-count.md)
 - [Value-oracle lower bounds for submodular maximization](submodular-value-oracle-lower-bounds.md)
-- [Exact value-query count of submodular greedy](greedy-value-query-count.md)
+- [Value-query complexity of submodular greedy](greedy-value-query-count.md)

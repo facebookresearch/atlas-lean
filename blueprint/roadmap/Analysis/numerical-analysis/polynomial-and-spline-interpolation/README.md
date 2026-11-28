@@ -17,6 +17,10 @@ Error analysis of interpolation: divided differences and Newton's form of the in
 - [Interpolation error at the Chebyshev points](interpolation-error-at-chebyshev-points.md)
 - [Error of Hermite interpolation](hermite-interpolation-error.md)
 
+## Barycentric interpolation
+
+- [Barycentric interpolation](barycentric-interpolation/README.md)
+
 ## Cubic splines
 
 - [Natural cubic spline](natural-cubic-spline.md)

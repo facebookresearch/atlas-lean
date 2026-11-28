@@ -18,7 +18,7 @@ $|A\rangle$ is of $H$-type: $H S |H\rangle = e^{i\pi/8} |A_{-\pi/4}\rangle$, and
 ## Depends on
 
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
 
 ## Sources
 

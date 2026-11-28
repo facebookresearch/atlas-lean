@@ -22,3 +22,4 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Class average of logarithms of CM values of the eta function](eta-cm-values-class-average.md)
 - [Chowla–Selberg formula](chowla-selberg-formula.md)
 - [Shimura's abelian variety attached to a weight-two eigenform](shimura-abelian-variety-of-an-eigenform.md)
+- [Modular parametrization of an elliptic curve over $\mathbb{Q}$](modular-parametrization-of-an-elliptic-curve.md)
