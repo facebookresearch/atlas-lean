@@ -227,8 +227,8 @@ namespace PhyslibExt.QuantumInfo.QIP
 
 open Cslib.Complexity.Classes
 
-/-- A zero-message circuit verifier accepts every prover with the circuit acceptance
-probability. -/
+/-- A zero-message circuit verifier whose initial gate list is well formed accepts every
+prover with the circuit acceptance probability. -/
 lemma acceptProb_circuitVerifier_zero {a m : ℕ} {gen : List Bool × List Bool → List QGate}
     {x : List Bool} {dP : Type*} [Fintype dP] [DecidableEq dP]
     (hwf : ∀ g ∈ gen (x, []), QGateWellFormed (x.length + a + m) g)
