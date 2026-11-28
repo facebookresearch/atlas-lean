@@ -13,6 +13,7 @@ import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyLaws
 import Mathlib.Algebra.Algebra.Bilinear
 import MathlibExt.CategoryTheory.NatIso.ComparisonCoherence
 import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
+import Mathlib.Algebra.Category.ModuleCat.Monoidal.Basic
 import Mathlib.LinearAlgebra.Matrix.StdBasis
 meta import Mathlib.Tactic.NormNum
 meta import Mathlib.Tactic.FinCases
@@ -112,17 +113,17 @@ private abbrev coefficient (a : R) : K R A ⟶ K R A where
   f _ := ModuleCat.ofHom (a • LinearMap.id)
   comm' _ _ _ := by simp [K]
 
+private lemma coefficient_f (a : R) (i : ℕ) :
+    (coefficient R A a).f i = a • 𝟙 (M R A) := rfl
+
 private lemma coefficient_pairing (a b : R) (i j : ℕ) :
     (pairing R A).pair i j ≫ (coefficient R A (a * b)).f (i + j) =
       ((coefficient R A a).f i ⊗ₘ (coefficient R A b).f j) ≫
         (pairing R A).pair i j := by
-  apply ModuleCat.hom_ext
-  change ((a * b) • (LinearMap.id : A →ₗ[R] A)).comp (LinearMap.mul' R A) =
-    (LinearMap.mul' R A).comp (TensorProduct.map (a • LinearMap.id) (b • LinearMap.id))
-  apply TensorProduct.ext'
-  intro x y
-  change (a * b) • (x * y) = (a • x) * (b • y)
-  simp only [smul_mul_assoc, mul_smul_comm, smul_smul]
+  simp only [coefficient_f, MonoidalCategory.tensorHom_def,
+    MonoidalLinear.smul_whiskerRight, MonoidalLinear.whiskerLeft_smul,
+    MonoidalCategory.id_whiskerRight, MonoidalCategory.whiskerLeft_id,
+    Linear.smul_comp, Linear.comp_smul, Category.id_comp, Category.comp_id, smul_smul]
 
 /-- Genuine joint coefficient naturality, with output scalar `a*b`. -/
 example (a b : R) (p q : ℕ) :
