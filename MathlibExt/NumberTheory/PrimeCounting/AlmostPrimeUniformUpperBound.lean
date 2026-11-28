@@ -16,6 +16,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.ArithmeticFunction.PrimePowerValues
 
 /-!
 # The Erdős–Sárközy bound for almost primes
@@ -33,9 +34,8 @@ squareful integers (including `1`).
 * P. Erdős and A. Sárközy, *On the number of prime factors of integers*, Acta Sci. Math.
   (Szeged) 42 (1980), pp. 237–246, Theorem 1, bound (17). The proof here uses a different
   divisor-counting majorant on the odd part.
-* The product construction for the kernel follows `coeff`, `coeff_mul`, and `coeff_pow` in
-  `MathlibExt.NumberTheory.ArithmeticFunction.SquarefulTwoPowOmega`, with coefficients that
-  also depend on the prime.
+* The kernel uses `ArithmeticFunction.ofPrimePowerValues` from
+  `MathlibExt.NumberTheory.ArithmeticFunction.PrimePowerValues`.
 -/
 
 namespace MetaMathlibExt
@@ -48,25 +48,21 @@ private noncomputable def oddKernelCoeff (p a : ℕ) : ℝ :=
   if a = 0 then 1 else if p ≠ 2 ∧ 2 ≤ a then 2 ^ a else 0
 
 private noncomputable def oddKernel : ArithmeticFunction ℝ :=
-  ⟨fun n => if n = 0 then 0 else n.factorization.prod oddKernelCoeff, by simp⟩
+  ofPrimePowerValues oddKernelCoeff
 
-private theorem oddKernel_multiplicative : oddKernel.IsMultiplicative := by
-  refine IsMultiplicative.iff_ne_zero.mpr ⟨by simp [oddKernel], ?_⟩
-  intro m n hm hn hcop
-  simp only [oddKernel, ArithmeticFunction.coe_mk, ite_eq_right hm, ite_eq_right hn,
-    ite_eq_right (mul_ne_zero hm hn), Nat.factorization_mul_of_coprime hcop]
-  exact Finsupp.prod_add_index_of_disjoint hcop.disjoint_primeFactors _
+private theorem oddKernel_multiplicative : oddKernel.IsMultiplicative :=
+  isMultiplicative_ofPrimePowerValues oddKernelCoeff
 
 private theorem oddKernel_prime_pow {p : ℕ} (hp : p.Prime) (a : ℕ) :
     oddKernel (p ^ a) = oddKernelCoeff p a := by
-  simp only [oddKernel, ArithmeticFunction.coe_mk, ite_eq_right (pow_ne_zero a hp.ne_zero),
-    hp.factorization_pow]
-  exact Finsupp.prod_single_index (by simp [oddKernelCoeff])
+  obtain rfl | ha := eq_or_ne a 0
+  · simp [oddKernel_multiplicative.map_one, oddKernelCoeff]
+  · exact ofPrimePowerValues_prime_pow oddKernelCoeff hp ha
 
 private theorem oddKernel_nonneg (n : ℕ) : 0 ≤ oddKernel n := by
   by_cases hn : n = 0
   · simp [hn]
-  simp only [oddKernel, ArithmeticFunction.coe_mk, ite_eq_right hn, Finsupp.prod]
+  rw [oddKernel, ofPrimePowerValues_apply_of_ne_zero _ hn]
   exact Finset.prod_nonneg fun p _ => by
     unfold oddKernelCoeff
     split_ifs <;> positivity
@@ -284,8 +280,7 @@ private theorem almostPrimeCounting_nat_bound (k N : ℕ) :
   have hC : 0 ≤ C := (Real.exp_pos _).le
   calc
     _ = ∑ n ∈ (Ioc 0 N).filter (Nat.IsAlmostPrime k), (2 : ℝ) ^ k := by
-      have hIcc : Icc 1 N = Ioc 0 N := Finset.Icc_succ_left_eq_Ioc 0 N
-      rw [almostPrimeCounting, Finset.sum_const, nsmul_eq_mul, hIcc]
+      rw [almostPrimeCounting_eq_card_filter, Finset.sum_const, nsmul_eq_mul]
     _ ≤ ∑ n ∈ Ioc 0 N, (powTwoWeight k * oddWeight) n := by
       rw [Finset.sum_filter]
       apply Finset.sum_le_sum
@@ -383,13 +378,13 @@ public theorem almostPrime_count_le_erdos_sarkozy :
         linarith only [show (0 : ℝ) ≤ 2 ^ k by positivity]
       _ = _ := by ring
   · have hN : ⌊t⌋₊ < 2 := (Nat.floor_lt (by positivity)).mpr (by exact_mod_cast lt_of_not_ge ht2)
-    have hs : (Icc 1 ⌊t⌋₊).filter (Nat.IsAlmostPrime (k + 1)) = ∅ := by
+    have hs : (Ioc 0 ⌊t⌋₊).filter (Nat.IsAlmostPrime (k + 1)) = ∅ := by
       refine Finset.eq_empty_iff_forall_notMem.mpr fun n hn => ?_
       obtain ⟨hn', hap⟩ := mem_filter.mp hn
-      obtain ⟨hn₁, hn₂⟩ := mem_Icc.mp hn'
+      obtain ⟨hn₁, hn₂⟩ := mem_Ioc.mp hn'
       have he : n = 1 := by omega
       simpa [he] using hap.2
-    rw [almostPrimeCounting, hs, Finset.card_empty, Nat.cast_zero]
+    rw [almostPrimeCounting_eq_card_filter, hs, Finset.card_empty, Nat.cast_zero]
     positivity
 
 end MetaMathlibExt

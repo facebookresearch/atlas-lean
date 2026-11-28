@@ -57,6 +57,13 @@ module `WantedExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptoticWanted`.
 noncomputable def almostPrimeCounting (k x : ℕ) : ℕ :=
   ((Finset.Icc 1 x).filter (fun n => Nat.IsAlmostPrime k n)).card
 
+/-- The count of `k`-almost primes up to `x` is the cardinality of the filter on `(0, x]`
+selecting integers with exactly `k` prime factors, counted with multiplicity. -/
+theorem almostPrimeCounting_eq_card_filter (k x : ℕ) :
+    almostPrimeCounting k x = ((Finset.Ioc 0 x).filter (Nat.IsAlmostPrime k)).card := by
+  have hIcc : Finset.Icc 1 x = Finset.Ioc 0 x := Finset.Icc_succ_left_eq_Ioc 0 x
+  rw [almostPrimeCounting, hIcc]
+
 open Classical in
 /-- Sum of `1 / p` over primes `p ∈ [1, N]`. -/
 private noncomputable def lapPrimeRecipSum (N : ℕ) : ℝ :=

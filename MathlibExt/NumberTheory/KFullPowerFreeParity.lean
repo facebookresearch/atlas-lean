@@ -19,6 +19,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.NumberTheory.EulerProduct.Basic
 import Mathlib.Data.Set.Card
+import MathlibExt.NumberTheory.ArithmeticFunction.PrimePowerValues
 
 /-!
 # Parity of `k`-full, `l`-free numbers
@@ -230,60 +231,39 @@ private lemma weight_sum {k l : ℕ} (hk : 0 < k) (hkl : k < l) :
 
 open ArithmeticFunction
 
-/-- Assemble a multiplicative arithmetic function from its values at positive prime powers. -/
-private noncomputable def ofLocal (a : ℕ → ℕ → ℝ) : ArithmeticFunction ℝ :=
-  ⟨fun n => if n = 0 then 0 else n.factorization.prod a, by simp⟩
-
-private lemma ofLocal_multiplicative (a : ℕ → ℕ → ℝ) : (ofLocal a).IsMultiplicative := by
-  rw [ArithmeticFunction.IsMultiplicative.iff_ne_zero]
-  refine ⟨by simp [ofLocal], fun {m n} hm hn hmn => ?_⟩
-  change (if m * n = 0 then 0 else (m * n).factorization.prod a) =
-    (if m = 0 then 0 else m.factorization.prod a) * (if n = 0 then 0 else n.factorization.prod a)
-  rw [ite_eq_right (mul_ne_zero hm hn), ite_eq_right hm, ite_eq_right hn,
-    Nat.factorization_mul_of_coprime hmn]
-  exact Finsupp.prod_add_index_of_disjoint hmn.disjoint_primeFactors a
-
-private lemma ofLocal_prime_pow (a : ℕ → ℕ → ℝ) {p e : ℕ} (hp : p.Prime) (he : e ≠ 0) :
-    ofLocal a (p ^ e) = a p e := by
-  change (if p ^ e = 0 then 0 else (p ^ e).factorization.prod a) = _
-  rw [ite_eq_right (pow_ne_zero _ hp.ne_zero), Nat.factorization_pow,
-    hp.factorization,
-    Finsupp.smul_single, smul_eq_mul, mul_one, Finsupp.prod, Finsupp.support_single _ he,
-    Finset.prod_singleton, Finsupp.single_eq_same]
-
 private noncomputable def target (k l : ℕ) : ArithmeticFunction ℝ :=
-  ofLocal fun p e => if p ≠ 2 ∧ k ≤ e ∧ e < l then 1 else 0
+  ofPrimePowerValues fun p e => if p ≠ 2 ∧ k ≤ e ∧ e < l then 1 else 0
 
 private noncomputable def powers (k : ℕ) : ArithmeticFunction ℝ :=
-  ofLocal fun p e => if p ≠ 2 ∧ k ∣ e then 1 else 0
+  ofPrimePowerValues fun p e => if p ≠ 2 ∧ k ∣ e then 1 else 0
 
 private noncomputable def step (k : ℕ) : ArithmeticFunction ℝ :=
-  ofLocal fun p e => if p ≠ 2 ∧ e = k then -1 else 0
+  ofPrimePowerValues fun p e => if p ≠ 2 ∧ e = k then -1 else 0
 
 private noncomputable def residual (k l : ℕ) : ArithmeticFunction ℝ := step k * target k l
 
 private lemma residual_multiplicative (k l : ℕ) : (residual k l).IsMultiplicative :=
-  (ofLocal_multiplicative _).mul (ofLocal_multiplicative _)
+  (isMultiplicative_ofPrimePowerValues _).mul (isMultiplicative_ofPrimePowerValues _)
 
 private lemma target_prime_pow (k l : ℕ) {p : ℕ} (hp : p.Prime) (e : ℕ) :
     target k l (p ^ e) = if e = 0 ∨ p ≠ 2 ∧ k ≤ e ∧ e < l then 1 else 0 := by
   rcases eq_or_ne e 0 with rfl | he
-  · simp [(ofLocal_multiplicative _).map_one, target]
-  · rw [target, ofLocal_prime_pow _ hp he]
+  · simp [(isMultiplicative_ofPrimePowerValues _).map_one, target]
+  · rw [target, ofPrimePowerValues_prime_pow _ hp he]
     simp [he]
 
 private lemma powers_prime_pow (k : ℕ) {p : ℕ} (hp : p.Prime) (e : ℕ) :
     powers k (p ^ e) = if e = 0 ∨ p ≠ 2 ∧ k ∣ e then 1 else 0 := by
   rcases eq_or_ne e 0 with rfl | he
-  · simp [(ofLocal_multiplicative _).map_one, powers]
-  · rw [powers, ofLocal_prime_pow _ hp he]
+  · simp [(isMultiplicative_ofPrimePowerValues _).map_one, powers]
+  · rw [powers, ofPrimePowerValues_prime_pow _ hp he]
     simp [he]
 
 private lemma step_prime_pow {k : ℕ} (hk : k ≠ 0) {p : ℕ} (hp : p.Prime) (e : ℕ) :
     step k (p ^ e) = (if e = 0 then 1 else 0) - if p ≠ 2 ∧ e = k then 1 else 0 := by
   rcases eq_or_ne e 0 with rfl | he
-  · simp [(ofLocal_multiplicative _).map_one, step, Ne.symm hk]
-  · rw [step, ofLocal_prime_pow _ hp he, ite_eq_right he]
+  · simp [(isMultiplicative_ofPrimePowerValues _).map_one, step, Ne.symm hk]
+  · rw [step, ofPrimePowerValues_prime_pow _ hp he, ite_eq_right he]
     split_ifs <;> simp
 
 private lemma step_mul_prime_pow {k : ℕ} (hk : k ≠ 0) (f : ArithmeticFunction ℝ)
@@ -314,10 +294,12 @@ private lemma step_mul_prime_pow {k : ℕ} (hk : k ≠ 0) (f : ArithmeticFunctio
 private lemma step_mul_powers {k : ℕ} (hk : k ≠ 0) : step k * powers k = 1 := by
   apply (IsMultiplicative.eq_iff_eq_on_prime_powers _
     (show (step k * powers k).IsMultiplicative from
-      (ofLocal_multiplicative _).mul (ofLocal_multiplicative _)) _ isMultiplicative_one).2
+      (isMultiplicative_ofPrimePowerValues _).mul (isMultiplicative_ofPrimePowerValues _))
+    _ isMultiplicative_one).2
   intro p e hp
   rcases eq_or_ne e 0 with rfl | he
-  · exact ((ofLocal_multiplicative _).mul (ofLocal_multiplicative _)).map_one
+  · exact ((isMultiplicative_ofPrimePowerValues _).mul
+      (isMultiplicative_ofPrimePowerValues _)).map_one
   · have hne : p ^ e ≠ 1 := fun h =>
       he (Nat.pow_right_injective hp.two_le (h.trans (pow_zero _).symm))
     rw [step_mul_prime_pow hk _ hp, powers_prime_pow _ hp, ArithmeticFunction.one_apply_ne hne]
@@ -419,7 +401,7 @@ private lemma residual_prime_pow_eq_zero {k l : ℕ} (hk : k ≠ 0) (hkl : k < l
   rcases h with h | h
   · rcases lt_or_eq_of_le h with h | rfl
     · simp [he, h.not_ge]
-    · simp [hkl, hp₂, hk, (ofLocal_multiplicative _).map_one, target]
+    · simp [hkl, hp₂, hk, (isMultiplicative_ofPrimePowerValues _).map_one, target]
   · have hke : k ≤ e := by omega
     have hel : ¬e < l := by omega
     have hsub : ¬e - k < l := by omega
@@ -533,7 +515,7 @@ private lemma local_sum_pos {k l : ℕ} (hk : 0 < k) {p : ℕ} (hp : p.Prime) :
     split_ifs <;> simp [pow_nonneg hq₀.le]
   have hap : 0 < ∑' e : ℕ, a e := by
     apply ha.tsum_pos ha₀ 0
-    simp [a, target, (ofLocal_multiplicative _).map_one]
+    simp [a, target, (isMultiplicative_ofPrimePowerValues _).map_one]
   let b (e : ℕ) := if k ≤ e then a (e - k) * q ^ k else 0
   have hb : Summable b := (summable_nat_add_iff k).mp ((ha.mul_right (q ^ k)).congr fun e => by
     simp [b])
