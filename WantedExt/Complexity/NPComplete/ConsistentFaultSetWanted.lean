@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Card
+public import CSLibExt.Complexity.NPComplete.ConsistentFaultSetDefs
 
 @[expose] public section
 
@@ -64,33 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of units, the tests `((u_i, u_j), a_ij)` (unit `u_i` tests unit
-`u_j` with outcome `a_ij`, `true` for `1`), and the bound `t`. -/
-abbrev ConsistentFaultSetInstance := ℕ × List ((ℕ × ℕ) × Bool) × ℕ
-
-/-- Well-formedness of an instance: every test names two different units, no arc is listed
-twice, and `t` is positive. -/
-def WellFormed (i : ConsistentFaultSetInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1.1 < i.1 ∧ e.1.2 < i.1 ∧ e.1.1 ≠ e.1.2) ∧ (i.2.1.map Prod.fst).Nodup ∧
-    0 < i.2.2
-
-/-- Some set `F` of at most `t` units is a consistent fault set: for every test
-`((u_i, u_j), a_ij)` with `u_i ∉ F`, (1) `a_ij = 1` if `u_j ∈ F` and (2) `a_ij = 0` if
-`u_j ∉ F`. -/
-def ConsistentFaultSetFeasible (i : ConsistentFaultSetInstance) : Prop :=
-  ∃ F : Finset (Fin i.1), F.card ≤ i.2.2 ∧
-    ∀ e ∈ i.2.1, ∀ (h1 : e.1.1 < i.1) (h2 : e.1.2 < i.1), (⟨e.1.1, h1⟩ : Fin i.1) ∉ F →
-      ((⟨e.1.2, h2⟩ : Fin i.1) ∈ F → e.2 = true) ∧ ((⟨e.1.2, h2⟩ : Fin i.1) ∉ F → e.2 = false)
-
-open Classical in
-/-- CONSISTENT FAULT SET as a decision problem over bitstrings. -/
-noncomputable def consistentFaultSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConsistentFaultSetInstance) x with
-  | some i => decide (WellFormed i ∧ ConsistentFaultSetFeasible i)
-  | none => false
 
 /-- **CONSISTENT FAULT SET is NP-complete.** Source: Fujiwara and Kinoshita (1978), Problem 1
 and Theorem 1; Maheshwari and Hakimi (1976). -/

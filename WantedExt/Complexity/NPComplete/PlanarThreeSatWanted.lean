@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Logics.Propositional.CNF.Semantics
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.PlanarThreeSatDefs
 
 @[expose] public section
 
@@ -57,38 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables (variables `0, …, n - 1`) and the CNF formula, a
-list of clauses, each a list of literals `(variable, polarity)`. -/
-abbrev PlanarThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
-
-/-- The variable-clause incidence graph `G` of the instance: its vertices are the variables
-`Sum.inl u` and the clauses `Sum.inr c`, and `{u, c}` is an edge exactly when `u` or `ū`
-belongs to the clause `c`. -/
-def IncidenceGraph (i : PlanarThreeSatInstance) : SimpleGraph (Fin i.1 ⊕ Fin i.2.length) :=
-  SimpleGraph.fromRel fun a b =>
-    ∃ (u : Fin i.1) (c : Fin i.2.length), a = Sum.inl u ∧ b = Sum.inr c ∧
-      ∃ l ∈ i.2[c], l.1 = (u : ℕ)
-
-/-- Well-formedness of an instance: every clause has at most three literals, all over the
-variables `0, …, n - 1`, and the incidence graph is planar. -/
-def WellFormed (i : PlanarThreeSatInstance) : Prop :=
-  (∀ clause ∈ i.2, clause.length ≤ 3 ∧ ∀ l ∈ clause, l.1 < i.1) ∧
-    (IncidenceGraph i).IsPlanar
-
-/-- Some truth assignment to the `n` variables satisfies every clause. -/
-def PlanarThreeSatFeasible (i : PlanarThreeSatInstance) : Prop :=
-  ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
-
-open Classical in
-/-- PLANAR 3SAT as a decision problem over bitstrings. -/
-noncomputable def planarThreeSatDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarThreeSatInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarThreeSatFeasible i)
-  | none => false
 
 /-- **PLANAR 3SAT is NP-complete.** Source: Garey and Johnson (1979), [LO1], comment;
 Lichtenstein (1982). -/

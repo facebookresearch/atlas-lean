@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Algorithms.SAT.Horn.Basic
+public import CSLibExt.Complexity.NPComplete.StableModelExistenceDefs
 
 @[expose] public section
 
@@ -55,34 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rules of the program, `(a, [b₁, …, bₖ], [c₁, …, cₗ])` standing for
-`a ← b₁, …, bₖ, not c₁, …, not cₗ`. -/
-abbrev StableModelExistenceInstance := List (ℕ × List ℕ × List ℕ)
-
-/-- The Gelfond-Lifschitz reduct `P^M` as a Horn formula: every rule none of whose negated atoms
-lies in `M` contributes the clause `a ∨ ¬b₁ ∨ … ∨ ¬bₖ` of its definite part `a ← b₁, …, bₖ`; the
-other rules are deleted. -/
-def reduct (P : StableModelExistenceInstance) (M : Finset ℕ) : CNF :=
-  (P.filter fun r => r.2.2.all fun c => c ∉ M).map fun r =>
-    (r.1, true) :: r.2.1.map fun b => (b, false)
-
-/-- `M` is a stable model of `P`: it is the least model of the reduct `P^M`. -/
-def IsStableModel (P : StableModelExistenceInstance) (M : Finset ℕ) : Prop :=
-  Cslib.Algorithms.SAT.Horn.close (reduct P M) ∅ = M
-
-/-- The program has a stable model. -/
-def StableModelExistenceFeasible (P : StableModelExistenceInstance) : Prop :=
-  ∃ M : Finset ℕ, IsStableModel P M
-
-open Classical in
-/-- STABLE MODEL EXISTENCE as a decision problem over bitstrings. -/
-noncomputable def stableModelExistenceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StableModelExistenceInstance) x with
-  | some P => decide (StableModelExistenceFeasible P)
-  | none => false
 
 /-- **STABLE MODEL EXISTENCE is NP-complete.** Source: Marek and Truszczyński (1991). -/
 public theorem_wanted stableModelExistence_npComplete :

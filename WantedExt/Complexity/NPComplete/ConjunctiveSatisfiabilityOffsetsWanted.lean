@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ConjunctiveSatisfiabilityOffsetsDefs
 
 @[expose] public section
 
@@ -58,47 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A term `(u, (p, q))`: the variable `u` plus the integer offset `p - q`. -/
-abbrev OffsetTerm := ℕ × ℕ × ℕ
-
-/-- A clause `(W, r, V)`: the terms `W` and `V` related by `≤`, `>`, `=`, `≠` for
-`r = 0, 1, 2, 3`. -/
-abbrev OffsetClause := OffsetTerm × ℕ × OffsetTerm
-
-/-- An instance: the number `n` of variables and the clauses. -/
-abbrev ConjunctiveSatisfiabilityOffsetsInstance := ℕ × List OffsetClause
-
-/-- The value of a term `u + c` under the integer assignment `σ`. -/
-def termValue (σ : ℕ → ℤ) (t : OffsetTerm) : ℤ :=
-  σ t.1 + ((t.2.1 : ℤ) - t.2.2)
-
-/-- The clause `W * V` holds under the integer assignment `σ`. -/
-def ClauseHolds (σ : ℕ → ℤ) (c : OffsetClause) : Prop :=
-  match c.2.1 with
-  | 0 => termValue σ c.1 ≤ termValue σ c.2.2
-  | 1 => termValue σ c.2.2 < termValue σ c.1
-  | 2 => termValue σ c.1 = termValue σ c.2.2
-  | _ => termValue σ c.1 ≠ termValue σ c.2.2
-
-/-- Well-formedness of an instance: every clause relates two terms on variables `< n` by one of
-the relations `0` to `3`. -/
-def WellFormed (i : ConjunctiveSatisfiabilityOffsetsInstance) : Prop :=
-  ∀ c ∈ i.2, c.1.1 < i.1 ∧ c.2.1 ≤ 3 ∧ c.2.2.1 < i.1
-
-/-- Some assignment of integer values to the variables satisfies every clause. -/
-def ConjunctiveSatisfiabilityOffsetsFeasible (i : ConjunctiveSatisfiabilityOffsetsInstance) :
-    Prop :=
-  ∃ σ : ℕ → ℤ, ∀ c ∈ i.2, ClauseHolds σ c
-
-open Classical in
-/-- CONJUNCTIVE SATISFIABILITY WITH OFFSETS as a decision problem over bitstrings. -/
-noncomputable def conjunctiveSatisfiabilityOffsetsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConjunctiveSatisfiabilityOffsetsInstance) x with
-  | some i => decide (WellFormed i ∧ ConjunctiveSatisfiabilityOffsetsFeasible i)
-  | none => false
 
 /-- **CONJUNCTIVE SATISFIABILITY WITH OFFSETS is NP-complete.** Source: Garey and Johnson (1979),
 [LO16]; Chan (1977), Theorems 2 and 4. -/

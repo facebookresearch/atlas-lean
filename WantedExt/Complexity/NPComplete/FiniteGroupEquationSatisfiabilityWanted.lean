@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.List.Basic
-public import Mathlib.GroupTheory.Solvable
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.FiniteGroupEquationSatisfiabilityDefs
 
 @[expose] public section
 
@@ -53,38 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the word `w` as a list of tokens `(kind, index)`. -/
-abbrev FiniteGroupEquationSatisfiabilityInstance := List (ℕ × ℕ)
-
-/-- The value of a token under the numbering `e` of the constants and the assignment `σ` of
-the variables: `(0, c)` is the constant `e c`, `(1, x)` is `σ x`, and `(2, x)` is `(σ x)⁻¹`.
-Other tokens are excluded by `WellFormed`. -/
-def tokenValue {G : Type*} [Group G] {n : ℕ} (e : Fin n ≃ G) (σ : ℕ → G) : ℕ × ℕ → G
-  | (0, c) => if h : c < n then e ⟨c, h⟩ else 1
-  | (1, x) => σ x
-  | (_, x) => (σ x)⁻¹
-
-/-- Well-formedness of an instance: every token is a constant, a variable or an inverted
-variable, and every constant token names one of the `n` elements of `G`. -/
-def WellFormed (n : ℕ) (i : FiniteGroupEquationSatisfiabilityInstance) : Prop :=
-  ∀ t ∈ i, t.1 ≤ 2 ∧ (t.1 = 0 → t.2 < n)
-
-/-- Some assignment of elements of `G` to the variables makes the word evaluate to `1`. -/
-def FiniteGroupEquationSatisfiabilityFeasible {G : Type*} [Group G] {n : ℕ} (e : Fin n ≃ G)
-    (i : FiniteGroupEquationSatisfiabilityInstance) : Prop :=
-  ∃ σ : ℕ → G, (i.map (tokenValue e σ)).prod = 1
-
-open Classical in
-/-- EQUATION SATISFIABILITY over `G`, with the constants numbered by `e`, as a decision problem
-over bitstrings. -/
-noncomputable def finiteGroupEquationSatisfiabilityDec {G : Type*} [Group G] {n : ℕ}
-    (e : Fin n ≃ G) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FiniteGroupEquationSatisfiabilityInstance) x with
-  | some i => decide (WellFormed n i ∧ FiniteGroupEquationSatisfiabilityFeasible e i)
-  | none => false
 
 /-- **EQUATION SATISFIABILITY over a fixed finite nonsolvable group is NP-complete**, for every
 numbering `e` of its elements. Source: Goldmann and Russell (2002). -/

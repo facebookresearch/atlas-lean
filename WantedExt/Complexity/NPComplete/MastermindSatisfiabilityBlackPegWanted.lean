@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MastermindSatisfiabilityWanted
+public import CSLibExt.Complexity.NPComplete.MastermindSatisfiabilityBlackPegDefs
 
 @[expose] public section
 
@@ -52,30 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(K, N, Q)`: the number of colors `K`, the vector length `N`, and the sequence
-`Q` of guesses `Vᵢ` with their black-peg responses `b(Vᵢ)`. -/
-abbrev MastermindSatisfiabilityBlackPegInstance := ℕ × ℕ × List (List ℕ × ℕ)
-
-/-- Well-formedness of an instance `(K, N, Q)`: every guess is a vector of `N` colors below
-`K`. -/
-def WellFormed (i : MastermindSatisfiabilityBlackPegInstance) : Prop :=
-  ∀ q ∈ i.2.2, q.1.length = i.2.1 ∧ ∀ c ∈ q.1, c < i.1
-
-/-- Some vector `V : Fin N → Fin K` has black count `b(Vᵢ)` against every guess `Vᵢ`. -/
-def MastermindSatisfiabilityBlackPegFeasible
-    (i : MastermindSatisfiabilityBlackPegInstance) : Prop :=
-  ∃ V : Fin i.2.1 → Fin i.1, ∀ q ∈ i.2.2, blackPegs q.1 V = q.2
-
-open Classical in
-/-- MASTERMIND SATISFIABILITY with black-peg results as a decision problem over
-bitstrings. -/
-noncomputable def mastermindSatisfiabilityBlackPegDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MastermindSatisfiabilityBlackPegInstance) x with
-  | some i => decide (WellFormed i ∧ MastermindSatisfiabilityBlackPegFeasible i)
-  | none => false
 
 /-- **MASTERMIND SATISFIABILITY with black-peg results is NP-complete.** Source: Goodrich
 (2009), Theorem 1 (membership: guess `V` and check every response; hardness: a reduction from

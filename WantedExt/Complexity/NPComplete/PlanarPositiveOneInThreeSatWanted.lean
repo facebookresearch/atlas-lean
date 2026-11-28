@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.PlanarThreeSatWanted
-public import WantedExt.Complexity.NPComplete.PositiveOneInThreeSatWanted
+public import CSLibExt.Complexity.NPComplete.PlanarPositiveOneInThreeSatDefs
 
 @[expose] public section
 
@@ -61,21 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is well-formed for POSITIVE ONE-IN-THREE 3SAT (three
-literals per clause, variables `< n`, no negated literal), and the variable-clause graph is
-planar. -/
-def WellFormed (i : OneInThreeSatInstance) : Prop :=
-  PositiveOneInThreeSat.WellFormed i ∧ (PlanarThreeSat.IncidenceGraph i).IsPlanar
-
-open Classical in
-/-- PLANAR POSITIVE ONE-IN-THREE 3SAT as a decision problem over bitstrings. -/
-noncomputable def planarPositiveOneInThreeSatDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OneInThreeSatInstance) x with
-  | some i => decide (WellFormed i ∧ OneInThreeSatFeasible i)
-  | none => false
 
 /-- **PLANAR POSITIVE ONE-IN-THREE 3SAT is NP-complete.** Source: Moore and Robson (2001),
 Section 3.1 (Laroche, 1992). -/

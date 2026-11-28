@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.SatisfiabilityOfBooleanExpressionsWanted
+public import CSLibExt.Complexity.NPComplete.WeightedSatisfiabilityWithBoundDefs
 
 @[expose] public section
 
@@ -62,39 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, the postfix token list of `F`
-(as in `SatisfiabilityOfBooleanExpressionsWanted`), the bound `B`, the weights `w(u₀), …,
-w(u_{n-1})`, and the bound `K`. -/
-abbrev WeightedSatisfiabilityWithBoundInstance := ℕ × List (ℕ × ℕ) × ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: the token list spells an expression, every variable token
-names one of `u₀, …, u_{n-1}`, every connective code names one of the 16 binary connectives,
-there is one weight per variable, `B ≤ ∑ w ≤ 2B`, and `K` is positive. -/
-def WellFormed (i : WeightedSatisfiabilityWithBoundInstance) : Prop :=
-  (SatisfiabilityOfBooleanExpressions.parse i.2.1).isSome ∧
-    (∀ t ∈ i.2.1, t.1 = 0 → t.2 < i.1) ∧ (∀ t ∈ i.2.1, t.1 = 1 → t.2 < 16) ∧
-      i.2.2.2.1.length = i.1 ∧ i.2.2.1 ≤ i.2.2.2.1.sum ∧ i.2.2.2.1.sum ≤ 2 * i.2.2.1 ∧
-        0 < i.2.2.2.2
-
-/-- Some truth assignment `σ` has measure at least `K`: the measure is the total weight of the
-variables `uₓ` (`x < n`) with `σ x = true` if `σ` satisfies `F`, and `B` otherwise. Assignments
-are functions `ℕ → Bool`; under `WellFormed` only their values on `0, …, n - 1` matter. -/
-def WeightedSatisfiabilityWithBoundFeasible (i : WeightedSatisfiabilityWithBoundInstance) :
-    Prop :=
-  ∃ F, SatisfiabilityOfBooleanExpressions.parse i.2.1 = some F ∧ ∃ σ : ℕ → Bool,
-    i.2.2.2.2 ≤
-      if F.eval σ then ∑ x ∈ Finset.univ.filter (fun x : Fin i.1 => σ x), i.2.2.2.1.getD x 0
-      else i.2.2.1
-
-open Classical in
-/-- WEIGHTED SATISFIABILITY WITH BOUND as a decision problem over bitstrings. -/
-noncomputable def weightedSatisfiabilityWithBoundDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedSatisfiabilityWithBoundInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedSatisfiabilityWithBoundFeasible i)
-  | none => false
 
 /-- **WEIGHTED SATISFIABILITY WITH BOUND is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
 WEIGHTED SATISFIABILITY WITH BOUND, citing Crescenzi and Panconesi (1991); NP-hard by the reduction

@@ -25,8 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.Minimum3DnfSatisfiabilityDefs
 
 @[expose] public section
 
@@ -63,32 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, the clauses (each a list of
-literals `(x, b)`), and the bound `K`. -/
-abbrev Minimum3DnfSatisfiabilityInstance := ℕ × List (List (ℕ × Bool)) × ℕ
-
-/-- The number of clauses of `C` (with multiplicity) all of whose literals hold under `σ`. -/
-def satisfiedCount (σ : ℕ → Bool) (C : List (List (ℕ × Bool))) : ℕ :=
-  (C.filter fun t => decide (∀ p ∈ t, σ p.1 = p.2)).length
-
-/-- Well-formedness of an instance: every clause has at most three literals, every literal names
-one of `u₀, …, u_{n-1}`, and `K` is positive. -/
-def WellFormed (i : Minimum3DnfSatisfiabilityInstance) : Prop :=
-  (∀ t ∈ i.2.1, t.length ≤ 3 ∧ ∀ l ∈ t, l.1 < i.1) ∧ 0 < i.2.2
-
-/-- Some truth assignment satisfies at most `K` clauses. -/
-def Minimum3DnfSatisfiabilityFeasible (i : Minimum3DnfSatisfiabilityInstance) : Prop :=
-  ∃ σ : ℕ → Bool, satisfiedCount σ i.2.1 ≤ i.2.2
-
-open Classical in
-/-- MINIMUM 3DNF SATISFIABILITY as a decision problem over bitstrings. -/
-noncomputable def minimum3DnfSatisfiabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := Minimum3DnfSatisfiabilityInstance) x with
-  | some i => decide (WellFormed i ∧ Minimum3DnfSatisfiabilityFeasible i)
-  | none => false
 
 /-- **MINIMUM 3DNF SATISFIABILITY is NP-complete.** Source: Crescenzi and Kann, MINIMUM 3DNF
 SATISFIABILITY; Garey and Johnson (1979), [LO8] (the case of no satisfied clause); Cook (1971). -/

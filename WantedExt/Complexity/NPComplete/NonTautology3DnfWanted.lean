@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.KeyTheorems.KarpLubyWanted
+public import CSLibExt.Complexity.NPComplete.NonTautology3DnfDefs
 
 @[expose] public section
 
@@ -53,29 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, and the disjuncts of `E`, each a
-list of literals `(x, b)`. -/
-abbrev NonTautology3DnfInstance := ℕ × List (List (ℕ × Bool))
-
-/-- Well-formedness of an instance: the expression has at least one disjunct, every disjunct
-consists of three literals, and every literal names one of `u₀, …, u_{n-1}`. -/
-def WellFormed (i : NonTautology3DnfInstance) : Prop :=
-  i.2 ≠ [] ∧ ∀ t ∈ i.2, t.length = 3 ∧ ∀ l ∈ t, l.1 < i.1
-
-/-- Some truth assignment makes the expression false. Assignments are functions `ℕ → Bool`;
-under `WellFormed` only their values on `0, …, n - 1` matter. -/
-def NonTautology3DnfFeasible (i : NonTautology3DnfInstance) : Prop :=
-  ∃ σ : ℕ → Bool, ¬ MetaMathlibExt.Complexity.KeyTheorems.KarpLuby.dnfSat σ i.2
-
-open Classical in
-/-- NON-TAUTOLOGY OF 3DNF as a decision problem over bitstrings. -/
-noncomputable def nonTautology3DnfDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NonTautology3DnfInstance) x with
-  | some i => decide (WellFormed i ∧ NonTautology3DnfFeasible i)
-  | none => false
 
 /-- **NON-TAUTOLOGY OF 3DNF is NP-complete.** Source: Garey and Johnson (1979), [LO8],
 comment; Cook (1971). -/

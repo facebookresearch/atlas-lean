@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Sum
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PlanarThreeSatWanted
+public import CSLibExt.Complexity.NPComplete.PlanarThreeSatVariableCycleDefs
 
 @[expose] public section
 
@@ -62,27 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The incidence graph of the instance together with the variable cycle
-`u₀ u₁ ⋯ u_{n-1} u₀`. -/
-def VariableCycleGraph (i : PlanarThreeSat.PlanarThreeSatInstance) :
-    SimpleGraph (Fin i.1 ⊕ Fin i.2.length) :=
-  PlanarThreeSat.IncidenceGraph i ⊔ (SimpleGraph.cycleGraph i.1 ⊕g ⊥)
-
-/-- Well-formedness of an instance: it is a well-formed PLANAR 3SAT instance (at most three
-literals per clause, variables in range, planar incidence graph), there are at least three
-variables, and the incidence graph together with the variable cycle is planar. -/
-def WellFormed (i : PlanarThreeSat.PlanarThreeSatInstance) : Prop :=
-  PlanarThreeSat.WellFormed i ∧ 3 ≤ i.1 ∧ (VariableCycleGraph i).IsPlanar
-
-open Classical in
-/-- PLANAR 3SAT WITH VARIABLE CYCLE as a decision problem over bitstrings. -/
-noncomputable def planarThreeSatVariableCycleDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarThreeSat.PlanarThreeSatInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarThreeSat.PlanarThreeSatFeasible i)
-  | none => false
 
 /-- **PLANAR 3SAT WITH VARIABLE CYCLE is NP-complete.** Source: Lichtenstein (1982); Pilz
 (2019). -/

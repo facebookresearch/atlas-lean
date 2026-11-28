@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SatisfiabilityOfBooleanExpressionsDefs
 
 @[expose] public section
 
@@ -54,60 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A Boolean expression: a variable `uₓ`, or the binary connective with code `c` applied to two
-expressions. -/
-inductive BoolExpr where
-  | var (x : ℕ)
-  | bin (c : ℕ) (a b : BoolExpr)
-
-/-- The binary connective with code `c`: its value at `(p, q)` is bit `2p + q` of `c`. -/
-def connective (c : ℕ) (p q : Bool) : Bool :=
-  c.testBit (2 * p.toNat + q.toNat)
-
-/-- The truth value of an expression under the truth assignment `σ`. -/
-def BoolExpr.eval (σ : ℕ → Bool) : BoolExpr → Bool
-  | .var x => σ x
-  | .bin c a b => connective c (a.eval σ) (b.eval σ)
-
-/-- One step of the postfix reader: push a variable, or replace the top two subexpressions `a`,
-`b` (in written order) by `c(a, b)`. `none` records a stack underflow or an unknown token kind. -/
-def pushToken : Option (List BoolExpr) → ℕ × ℕ → Option (List BoolExpr)
-  | some s, (0, x) => some (.var x :: s)
-  | some (b :: a :: s), (1, c) => some (.bin c a b :: s)
-  | _, _ => none
-
-/-- The expression spelled by a postfix token list, if the list spells exactly one. -/
-def parse (toks : List (ℕ × ℕ)) : Option BoolExpr :=
-  match toks.foldl pushToken (some []) with
-  | some [E] => some E
-  | _ => none
-
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, the connective codes of `B`, and
-the postfix token list of `E`. -/
-abbrev SatisfiabilityOfBooleanExpressionsInstance := ℕ × List ℕ × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: every code in `B` names one of the 16 binary connectives,
-the token list spells an expression, every variable token names one of `u₀, …, u_{n-1}`, and
-every connective of the expression is in `B`. -/
-def WellFormed (i : SatisfiabilityOfBooleanExpressionsInstance) : Prop :=
-  (∀ c ∈ i.2.1, c < 16) ∧ (parse i.2.2).isSome ∧ (∀ t ∈ i.2.2, t.1 = 0 → t.2 < i.1) ∧
-    ∀ t ∈ i.2.2, t.1 = 1 → t.2 ∈ i.2.1
-
-/-- Some truth assignment satisfies the expression. Assignments are functions `ℕ → Bool`; under
-`WellFormed` only their values on `0, …, n - 1` matter. -/
-def SatisfiabilityOfBooleanExpressionsFeasible
-    (i : SatisfiabilityOfBooleanExpressionsInstance) : Prop :=
-  ∃ E, parse i.2.2 = some E ∧ ∃ σ : ℕ → Bool, E.eval σ = true
-
-open Classical in
-/-- SATISFIABILITY OF BOOLEAN EXPRESSIONS as a decision problem over bitstrings. -/
-noncomputable def satisfiabilityOfBooleanExpressionsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SatisfiabilityOfBooleanExpressionsInstance) x with
-  | some i => decide (WellFormed i ∧ SatisfiabilityOfBooleanExpressionsFeasible i)
-  | none => false
 
 /-- **SATISFIABILITY OF BOOLEAN EXPRESSIONS is NP-complete.** Source: Garey and Johnson (1979),
 [LO7]; Cook (1971). -/

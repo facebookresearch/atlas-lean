@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ConjunctiveBooleanQueryDefs
 
 @[expose] public section
 
@@ -55,39 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: `|D|`, the relations (arity, tuples), the number `l` of variables, and the
-atoms of the query (relation index, argument terms). -/
-abbrev ConjunctiveBooleanQueryInstance :=
-  ℕ × List (ℕ × List (List ℕ)) × ℕ × List (ℕ × List (Bool × ℕ))
-
-/-- The value of a term under the assignment `σ` of domain elements to the variables:
-`σ v` for the variable `y_v`, and `c` for the domain element `c`. -/
-def termValue (σ : ℕ → ℕ) (u : Bool × ℕ) : ℕ :=
-  if u.1 then σ u.2 else u.2
-
-/-- Well-formedness of an instance: every tuple of a relation has its relation's arity and
-entries in `D`; every atom names a relation, has as many arguments as that relation's arity,
-and uses only domain elements of `D` and variables `y₀, …, y_{l-1}`. -/
-def WellFormed (i : ConjunctiveBooleanQueryInstance) : Prop :=
-  (∀ r ∈ i.2.1, ∀ t ∈ r.2, t.length = r.1 ∧ ∀ c ∈ t, c < i.1) ∧
-    ∀ a ∈ i.2.2.2, a.1 < i.2.1.length ∧ a.2.length = (i.2.1.getD a.1 (0, [])).1 ∧
-      ∀ u ∈ a.2, (u.1 = true → u.2 < i.2.2.1) ∧ (u.1 = false → u.2 < i.1)
-
-/-- The query is true: some assignment of elements of `D` to `y₀, …, y_{l-1}` puts the
-argument tuple of every atom into its relation. -/
-def ConjunctiveBooleanQueryFeasible (i : ConjunctiveBooleanQueryInstance) : Prop :=
-  ∃ σ : ℕ → ℕ, (∀ v < i.2.2.1, σ v < i.1) ∧
-    ∀ a ∈ i.2.2.2, a.2.map (termValue σ) ∈ (i.2.1.getD a.1 (0, [])).2
-
-open Classical in
-/-- CONJUNCTIVE BOOLEAN QUERY as a decision problem over bitstrings. -/
-noncomputable def conjunctiveBooleanQueryDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConjunctiveBooleanQueryInstance) x with
-  | some i => decide (WellFormed i ∧ ConjunctiveBooleanQueryFeasible i)
-  | none => false
 
 /-- **CONJUNCTIVE BOOLEAN QUERY is NP-complete.** Source: Garey and Johnson (1979), [SR31];
 Chandra and Merlin (1977). -/

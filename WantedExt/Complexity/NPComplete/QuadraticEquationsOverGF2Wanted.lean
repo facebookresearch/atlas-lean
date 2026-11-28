@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.AlgebraicEquationsOverGF2Wanted
+public import CSLibExt.Complexity.NPComplete.QuadraticEquationsOverGF2Defs
 
 @[expose] public section
 
@@ -56,21 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed ALGEBRAIC EQUATIONS OVER GF[2] instance in
-which no term involves more than two variables. -/
-def WellFormed (i : AlgebraicEquationsOverGF2Instance) : Prop :=
-  AlgebraicEquationsOverGF2.WellFormed i ∧ ∀ P ∈ i.2, ∀ t ∈ P, t.length ≤ 2
-
-open Classical in
-/-- ALGEBRAIC EQUATIONS OVER GF[2] with at most two variables per term as a decision problem
-over bitstrings. -/
-noncomputable def quadraticEquationsOverGF2Dec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := AlgebraicEquationsOverGF2Instance) x with
-  | some i => decide (WellFormed i ∧ AlgebraicEquationsOverGF2Feasible i)
-  | none => false
 
 /-- **ALGEBRAIC EQUATIONS OVER GF[2] with at most two variables per term is NP-complete.**
 Source: Garey and Johnson (1979), [AN9], comment (credited to Valiant). -/

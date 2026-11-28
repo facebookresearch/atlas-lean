@@ -17,9 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Logics.LTL.OmegaWord
+public import CSLibExt.Complexity.NPComplete.LTLEventuallySatisfiabilityDefs
 
 @[expose] public section
 
@@ -60,40 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the formula as a postfix token list. -/
-abbrev LTLEventuallySatisfiabilityInstance := List ℕ
-
-/-- Read a postfix token list onto a stack of formulas: `0` pops `g` and `f` and pushes
-`f ∧ g`, `1` pops `f` and pushes `¬f`, `2` pops `f` and pushes `F f`, and `k + 3` pushes the
-atomic proposition `Pₖ`. The result is the single formula left on the stack, or `none` when a
-token lacks its operands or more than one formula is left. -/
-def parse : List ℕ → List (Formula ℕ) → Option (Formula ℕ)
-  | [], [f] => some f
-  | [], _ => none
-  | 0 :: rest, g :: f :: stack => parse rest (Formula.and f g :: stack)
-  | 1 :: rest, f :: stack => parse rest (Formula.not f :: stack)
-  | 2 :: rest, f :: stack => parse rest (Formula.eventually f :: stack)
-  | (k + 3) :: rest, stack => parse rest (Formula.atom k :: stack)
-  | _ :: _, _ => none
-
-/-- Well-formedness of an instance: the tokens form an `L(F)` formula. -/
-def WellFormed (i : LTLEventuallySatisfiabilityInstance) : Prop :=
-  (parse i []).isSome
-
-/-- The formula holds at the first state of some ω-sequence of label sets. -/
-def LTLEventuallySatisfiabilityFeasible (i : LTLEventuallySatisfiabilityInstance) : Prop :=
-  ∃ f, parse i [] = some f ∧
-    ∃ w : Cslib.ωSequence (Set ℕ), Word.Satisfies (fun s a => a ∈ s) w f
-
-open Classical in
-/-- LTL(F) SATISFIABILITY as a decision problem over bitstrings. -/
-noncomputable def ltlEventuallySatisfiabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := LTLEventuallySatisfiabilityInstance) x with
-  | some i => decide (WellFormed i ∧ LTLEventuallySatisfiabilityFeasible i)
-  | none => false
 
 /-- **LTL(F) SATISFIABILITY is NP-complete.** Source: Sistla and Clarke (1985),
 Theorem 3.5 (ii). -/

@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Logics.Propositional.CNF.Semantics
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MaximumNumberOfSatisfiableFormulasDefs
 
 @[expose] public section
 
@@ -60,31 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: `|U|`, the formulas `C`, and the bound `K`. -/
-abbrev MaximumNumberOfSatisfiableFormulasInstance := ℕ × List Cslib.Logic.LegacyPL.CNF × ℕ
-
-/-- Well-formedness of an instance: every clause of every formula has at most three literals,
-all over the variables `0, …, |U| - 1`, and `K` is positive. -/
-def WellFormed (i : MaximumNumberOfSatisfiableFormulasInstance) : Prop :=
-  (∀ F ∈ i.2.1, ∀ clause ∈ F, clause.length ≤ 3 ∧ ∀ l ∈ clause, l.1 < i.1) ∧ 0 < i.2.2
-
-/-- Some assignment satisfies at least `K` of the formulas: a sublist (a choice of positions) of
-at least `K` formulas, all satisfied. -/
-def MaximumNumberOfSatisfiableFormulasFeasible
-    (i : MaximumNumberOfSatisfiableFormulasInstance) : Prop :=
-  ∃ assign : List Bool, assign.length = i.1 ∧
-    ∃ S : List Cslib.Logic.LegacyPL.CNF, S.Sublist i.2.1 ∧ i.2.2 ≤ S.length ∧
-      ∀ F ∈ S, Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) F
-
-open Classical in
-/-- MAXIMUM NUMBER OF SATISFIABLE FORMULAS as a decision problem over bitstrings. -/
-noncomputable def maximumNumberOfSatisfiableFormulasDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumNumberOfSatisfiableFormulasInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumNumberOfSatisfiableFormulasFeasible i)
-  | none => false
 
 /-- **MAXIMUM NUMBER OF SATISFIABLE FORMULAS is NP-complete.** Source: Crescenzi and Kann,
 MAXIMUM NUMBER OF SATISFIABLE FORMULAS; Kann (1992), [7.12]. -/

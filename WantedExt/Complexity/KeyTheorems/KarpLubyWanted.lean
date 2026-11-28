@@ -21,6 +21,7 @@ public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
+public import CSLibExt.Complexity.KeyTheorems.KarpLubyDefs
 
 @[expose] public section
 
@@ -47,13 +48,6 @@ has input length `O(log n)` but `2 ^ n` satisfying assignments, so every success
 estimate has binary output length `Ω(n)`, which no polynomial-time estimator
 receiving only polynomially many random bits in `|x|` could emit.
 -/
-
-/-- **Satisfaction of a DNF formula.** A DNF formula is a list of terms, each a list of literals
-$(v, b)$ of a natural number $v$ (the variable) and a boolean $b$ (the polarity). An assignment $a$
-of booleans to the natural numbers satisfies the formula when some term of it has $a(v) = b$ for
-every literal $(v, b)$ of that term. -/
-def dnfSat (assign : ℕ → Bool) (φ : List (List (ℕ × Bool))) : Prop :=
-  ∃ term ∈ φ, ∀ p ∈ term, assign p.1 = p.2
 
 /-- **Number of satisfying assignments of an encoded DNF formula.** For a bitstring $x$: if $x$
 decodes, under the canonical bitstring encoding, to a pair $(u, \varphi)$ of a bitstring $u$ of
