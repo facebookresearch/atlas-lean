@@ -74,6 +74,15 @@
     {"path": "MathlibExt/Algebra/Group/SplitCoordinateExactness.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f36844f7a84525932016c91ccdd3b21a2e4f9d57b46d1e3bdcd8552679cb2293", "rationale": "Reflow only the lines rejected by the pinned Lean 4.36 strict style checks. Declaration and proof tokens, documentation wording and attribution are unchanged.", "upstream_commit": "efb0b86f464b1cd2243085ad50810fd0ac3c0d07", "upstream_sha256": "9b438da889708d49f0f55c3bcc2ffe2ca2b0de1f9f2759821fa935684119f1f8"},
     {"path": "MathlibExt/Algebra/Group/Subgroup/Pointwise.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "29a23f18a20738ff62a9d260c28bdcff55e75b8bc48f5b9051a6c590a08d4228", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #264)", "upstream_sha256": "68b7ccb62945704ac7960a774bc9cf1db45e3c2f2c4acc3448507531f33bbce1"},
     {"path": "MathlibExt/Algebra/Homology/AugmentedModelTransport.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "28280a9fb56558acd7405d236f2e4c0d8cead0fa20390b311724f15a4a8ea300", "rationale": "Import the complete general MathlibExt.Algebra.Homology.AugmentedModelTransport API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7d5955337d3789b00498b70d915e3bde99139c6e5469b88df8be67e5602508b4"},
+    {
+      "path": "MathlibExt/Algebra/Homology/BrutalTruncationTopCone.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e8ddb614e76ac9329b993063bc3720738f4808d43f85af4246579d5a2fd04e83",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7f3f703a41dc13f551d350ce6b04c42aa24f95a8338ae867f2cb4e4d884407ac"
+    },
     {"path": "MathlibExt/Algebra/Homology/ChainComplex/HomCochainComplex.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "40f1afb06ee8352c9d652e53becd863e1b7e06250af24d2fc0a6b5bc6bd79abe", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "03c84ac576bcb4f20a3a898c72a8d51277725a530378f53b3483c4c0ff0e8a36"},
     {"path": "MathlibExt/Algebra/Homology/ChainComplex/HomCycles.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "d3b6ca32a580ebd88c51bfb6d6ba3a205405ec0d63b362edcea98155ceb4fd97", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "97cd8f24d765563aa38f24b552d66bb267f290ac152923f8308391d7e371831e"},
     {"path": "MathlibExt/Algebra/Homology/ChainComplex/HomCyclesConnecting.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "5d0df72eaaf2139a5ab741303ac9e606a2aebbccfe027046c89015febb8d1ab4", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "052b30c0d11edced83164593fcf619e7c37cfe8bfd4b236f8845797428054720"},
@@ -211,6 +220,15 @@
     {"path": "MathlibExt/Algebra/Homology/Homotopy/HomologyDegree.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "9fd63640089549b3cab320c57b537ddd382bc2c2691ceb3488beade7536285e2", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "35165338ce6cc132e7dd7c9288d58be6f72102dfbcd6a4e50d44a238e88292b4"},
     {"path": "MathlibExt/Algebra/Homology/HomotopyCategory/MappingConeZeroSource.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "82857c0de22d6a61a766bb6703e7a5479ebacdd686a806a66531a720c4929144", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "cad51908224360f0e606751cc24bd9837c730d662fb0662928bccd82c510706c"},
     {"path": "MathlibExt/Algebra/Homology/HomotopyCofiber.lean", "disposition": "identical", "published_sha256": "b9ff3edf2c9815d617b9d39114ca847382d14ba1c0433e81fc65c6ac0cede5fe", "upstream_sha256": "f2da1db6b117442ac92ad1377e079e62ea8b7b554cd556d7744dc00a9be85800"},
+    {
+      "path": "MathlibExt/Algebra/Homology/HomotopyCofiberFunctorNaturality.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a4cbf4365da005e8d0a008ab0e01498ed7618faf1916f223f843cb80c32dc6ec",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a5186c185275f797f1b99f5a3f6ee703d36e6720e535d3b38768fe65245d1c98"
+    },
     {"path": "MathlibExt/Algebra/Homology/HomotopyCofiberSplitting.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "6fb80c78961c411ead8f37036f2399aacb9c03c7482420cb44c9a96bafddea76", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "f636d32f5bf536ac735ee93489eda691aaa15948b34df7d0f46805c973d68bab"},
     {"path": "MathlibExt/Algebra/Homology/InitialSegmentShape.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "e571c07189028b2165a32ed12cbfebb872a510ce7f480aff543381a782817dee", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "c3a295038483a8103b1395a6d44b97425a101f0039ebf51b08f025e2bde909a5"},
     {"path": "MathlibExt/Algebra/Homology/KoszulComplex.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "b2cfbbbd3a4024a3a108c4f441fd7200e5421d75c6bf59ecbdae5da1e3154a37", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "3182e981a33e394135f02e40fe155a398c6916f798dbd810af0e3ac29b3c1e98"},
@@ -234,6 +252,24 @@
     {"path": "MathlibExt/Algebra/Homology/KoszulComplexResidueReduction.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "56dd6332036d869b3fde26570c63e524cba47c0c01a51e66d18bf6a451f1fa55", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "dcbc8fadef3b71b5eb14e3d64303f2e2a111fc28e2b8764a6da46e67dce6e2fd"},
     {"path": "MathlibExt/Algebra/Homology/Linear.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "bb06949098eace296b9340bbc707c9ac90214929089a57f10018f19184ea32e7", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "efcc95c10f51e0ebb315ef523a863c2dc2342b536375bfe71dc691eac7edf856"},
     {"path": "MathlibExt/Algebra/Homology/MappingConeCokernelConnecting.lean", "disposition": "identical", "published_sha256": "9d0d0380ecf8ad70fc64e2efc271514cd862a2118abe23bc653cde9f615b9d46", "upstream_sha256": "28ded7bb46d822971f9af0803e0a99495fc5ed1f91f330c1c417c074e070f1c9"},
+    {
+      "path": "MathlibExt/Algebra/Homology/MappingCylinder.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cee0796be83ed46e02731aa5d7371afa344867f3a545df221a0da386fe835dc5",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4e0869b8a00abad4e377a469a124ff30c144d220dab3d0c36c7ca0fe808243b3"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/MappingCylinderQuasiIso.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "47739fc8d86cb4c9643ec0d8a27b54e59164f4f8920d5d2b4fbaa77c84f0f5d2",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d89f8197ddb8472d788194529c79f6517e47c7e6f762f86d16500f4c7936ffa4"
+    },
     {"path": "MathlibExt/Algebra/Homology/MixedComplex/Basic.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "2fae2253a314dfa43cc62d9886b740e6afc01129b878f1c83b6c5ebf95d95485", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7f3f482a5a8a3e70aa2bf899de44c9120ca9c3c25d447bd95d5b4cd767aa253e"},
     {"path": "MathlibExt/Algebra/Homology/MixedComplex/Comparison.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "6676b8a22baa86ea8429fce46bb6efcbd9ccdf9c07f185009703d08916e3f7b0", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "47a84bb4d61e1b27e5eb07ec0e18bc9aaa125504b17bc335495e218814d77a7f"},
     {"path": "MathlibExt/Algebra/Homology/MixedComplex/Connes.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "298a3ed3ac36bf68e385c88f514c1349fd27ea0dba4132c3023643e1ed705619", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "6883022a12aaae25e9f6cbacc58b56aa73fe869aeed46d69ce3df99898a19e71"},
@@ -243,6 +279,15 @@
     {"path": "MathlibExt/Algebra/Homology/MixedComplex/ContractingBridge.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "2f0a362bdfbb50aee50c19f1609df28aeb79b1390e7cf4bfbf15fde8274fa93b", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "cbe1889c6c864978124ac89280a60e83b221fb18ac6021fedc8aea79a80605c6"},
     {"path": "MathlibExt/Algebra/Homology/MixedComplex/OfBoundaryHomotopy.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "dd3468698b7408d1fb82b7fad39384dbab1b759245e72f08296cafc3339e4b44", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary. Also: use the successors of the deprecated if_pos, if_neg, dif_pos, dif_neg, if_true and if_false.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "0ef4ace74ea97a2ea26b76df1961a326c2b1cca10088fe340a2af5612b4c4667"},
     {"path": "MathlibExt/Algebra/Homology/MixedComplex/TailGenerators.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "b3952902dbe315864a4a6b1a6246d31bb01c1b0e2aff5356f6b309a110f0e7c5", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "409918092f48009eae5ba9df7b45bbca6ca7ca9033578b01ee04e8b0960ba164"},
+    {
+      "path": "MathlibExt/Algebra/Homology/ModuleBiproductExactSequence.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "72835ff35193c78c70d21a26198938c81d56cee343f956f982c88f72669983eb",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ac9ec412e11f8e7c271d266bd2ee02c65f37823badbd93f7918d11e691c3567b"
+    },
     {
       "path": "MathlibExt/Algebra/Homology/ModuleProductExact.lean",
       "backport": "pending",
@@ -304,6 +349,15 @@
     {"path": "MathlibExt/Algebra/Homology/RootAdjoinedUnderCokernelColimits.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5ed420f822f9125aa937f06c7bcd64dcbd9c3b20f0738c18f172f02fbdf26d32", "rationale": "Import the complete general MathlibExt.Algebra.Homology.RootAdjoinedUnderCokernelColimits API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "ee492ac6ffc213cc7721437c74d61094676bf4e53501ace0de5894475eab71be"},
     {"path": "MathlibExt/Algebra/Homology/SBISequence.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f183f1b4d12503d3f05f9dcf2b9aa347b91237ce752c06589550f901eed10c54", "rationale": "Import the general SBI constructions with Atlas documentation; use Lean 4.36 induction alternatives and ordinary local-instance declarations in propositional proofs, preserving all maps and theorem statements.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "33249b51c0c7d44dcc6be2067bb1359f2b69ad362a9ddb0e7f3fe1ef973e7c49"},
     {
+      "path": "MathlibExt/Algebra/Homology/ShortComplex/CokernelComp.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "892591357e25e2e054c7550d6928c29e056f71b3754ba562086b8121a63e6e80",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9732bcb0f71cb0624fbc5dfc833c8c245a2777a1740e5f86350255f7511608a9"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/ShortComplex/CokernelCompFunctor.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -312,11 +366,56 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "a73d17bfada16a5ec4b92f710eac8062e467257dda39a60afa48310bad61d40b"
     },
+    {
+      "path": "MathlibExt/Algebra/Homology/ShortComplex/CokernelCompHomology.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c6ed79385e6a5635ffd0bba97c931a825ef55a2f7ea5ad720b2fde556d778af3",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "2910d798b0fffd2ead6aef0d8daa2500978c5cda639c540a2d196de5e2f1a1ee"
+    },
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/CokernelSequence.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "88f7bae04f2cc13c1624b1212a10752c62589116164f20cf1ebc0b9d12ecf94d", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "563bf2ec783be35efd9830f98d7eabe600c1faffb33150643691d506cfb23a8b"},
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/CyclesImage.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "f4ac9c082285c6bbe4e9d4be534bd74ecb773a0e8429de170c8bca7c7b49ac55", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "229413891226d4439cf601344205c775db4f896ee513963a886b0a2a602db2a0"},
+    {
+      "path": "MathlibExt/Algebra/Homology/ShortComplex/Finite.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9d19e4b6ce9f970cc1bb44a10138ee800693cd774d9bda90c2c122cf702cc4ed",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4be99cd6027b686240d7557a39ed8b2083a7b7a621e8a14af32cb8a08d44f9cc"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ShortComplex/FunctorIso.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ce34d69dbae3648221d09b4fdee0e6f0e00c0374d2b95ab33d8d8173288758d9",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4445beb9acc1c858cfb45bdd7673834679cf76f5d801f9d84c670b4d4f218cc5"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ShortComplex/FunctorIsoHomology.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "665fb0673e3561d5cd4af5adf43a0ca3c1b72cbea4d3737cc3dd3bc4a8ed8718",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d7973d9b0e201fc1d6a674f980da0b0091d51651cbea8c02ce4a9fc94b8274d9"
+    },
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/HEqTransport.lean", "disposition": "identical", "published_sha256": "e5719577589ac5f963c0e5d97f376e288bbeb79009a9c0f4251a7550abf5b372", "upstream_sha256": "6ead36b4538c880d66ac68c7af9e671643c7e4063096e59745e63e46d062c2a8"},
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/HomologyLimits.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ff30a68b5674d00c4079a077eccfc6a912692ce4186a095757aacc3b65fd00e7", "rationale": "Import homology comparison for limits of short complexes with direct native Abelian and functor-category homology instance imports, preserving the original hypotheses and all pointwise comparison maps.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "3ddabc63fb4fcacfc819d3ed692ca16790684d0476dd2a8992f2aa178eeafde3"},
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/MiddleQuasiIso.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "0ba2e57c996a89692b8756dcfbe4c877b785768e8e766a2605da2eb04b4da8de", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "342d6e62c0fe783933c271fdd74d70ca0c41ecd33b867cc58956c8db409a98a2"},
+    {
+      "path": "MathlibExt/Algebra/Homology/ShortComplex/ModuleCatCycleCriterion.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "02f34d00a30ab16aad64dd14b7e82c8f9edaab21af09fe0aed8d88f6502380a8",
+      "rationale": "General mapping-cylinder/cofiber, cokernel/homology, finite exact-sequence and zero-preserving-functor transport API retained from the recorded immutable source. Atlas mathematical documentation, authors/license, shapes, hypotheses, independent worlds, maps, signs and proof tokens are preserved. Only necessary 100-column whitespace wraps were applied; this source is diverged from the current global Formal-Math pin and hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e4bb98e9bad67436f951274fdd8756b379937355a994745db7bc56741802e432"
+    },
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/MorphismExt.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "d214c42c2e2fc74632b804db6628f359ef8f62e89a71e7d7cb93450486e49a2d", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "ef3b6823f2925b9d09c71e6e8fc6d3b45211119f76db68bd47984fea8f108e21"},
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/PreservesHomology.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "7b76d28a0e6a2faa9bd049c85dab2784eacbf0301dd6e5e86ce304f2cc911285", "rationale": "Import the unique homology-preservation composition laws with Atlas documentation; remove the redundant local reducibility attribute already supplied by Mathlib 4.36.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "aae2ce2589ae2e5bdc1aa58d350b4bafdc59c59e741a5b3d575496e9f65f58b7"},
     {"path": "MathlibExt/Algebra/Homology/ShortComplex/PullbackShear.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "24f3b9c5c9a7979574dcd92850d613fd315ec5e8fce255ab444dc76b4a1c9a29", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "d93e22f14db4e503a473d01a6362045af73f9f3d67d8c4dd8d35e09aca23d072"},
