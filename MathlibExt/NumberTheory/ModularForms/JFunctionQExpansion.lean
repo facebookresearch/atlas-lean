@@ -24,10 +24,11 @@ with integers $c_n$, the series converging absolutely, and $c_1 = 196884$
 
 The integrality and the expansion itself come from `ModularCurve.hasSum_jNum_qParam`: the function
 $q j$ is the sum of the integer power series `ModularCurve.jNum`, the expansion of
-$E_4^3/\eta^{24}$, evaluated at $q$. This file adds the values of its first three coefficients,
-$1$, $744$ and $196884$, recorded for the Laurent series `ModularCurve.jq` (that is, $q^{-1}$
-times `jNum`) as `ModularCurve.coeff_jq_zero` and `ModularCurve.coeff_jq_one`; absolute
-convergence follows because in `ℂ` a summable series is absolutely summable (`summable_norm_iff`).
+$q E_4^3/\eta^{24} = E_4^3 \prod_{n \ge 1} (1 - q^n)^{-24}$, evaluated at $q$. This file adds the
+values of its first three coefficients, $1$, $744$ and $196884$, recorded for the Laurent series
+`ModularCurve.jq` (that is, $q^{-1}$ times `jNum`) as `ModularCurve.coeff_jq_zero` and
+`ModularCurve.coeff_jq_one`; absolute convergence follows because in `ℂ` a summable series is
+absolutely summable (`summable_norm_iff`).
 
 The source is Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
 Lecture 19, Lemma 19.5 and Corollary 19.6.
@@ -125,7 +126,8 @@ private theorem coeff_jq_sub_one (n : ℕ) :
   simp
 
 /-- **The constant term of the `j` Laurent series is `744`.** The coefficient of `q⁰` in
-`ModularCurve.jq = q⁻¹ · jNum`, where `jNum = E₄³ · (η²⁴)⁻¹` is the integer power series
+`ModularCurve.jq = q⁻¹ · jNum`, where `jNum = E₄³ · ∏_{n ≥ 1} (1 - qⁿ)⁻²⁴`, the expansion of
+`q E₄³ / Δ`, is the integer power series
 `eisenstein4 ^ 3 * dedekindEtaUnitInv`, is `744`.
 
 Source: Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
