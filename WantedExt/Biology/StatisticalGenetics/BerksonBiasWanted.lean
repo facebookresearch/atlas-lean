@@ -69,19 +69,6 @@ noncomputable def hospitalFrequency (p : ι → ℝ) (t₀ : ℝ) (t : ι → �
   (∑ S ∈ Finset.univ.filter (fun S => G S ∧ c ∈ S), hospitalMass p t₀ t S) /
     ∑ S ∈ Finset.univ.filter G, hospitalMass p t₀ t S
 
-/-- **Admitted persons with multiple diagnoses are over-represented** (Berkson 1946). For a
-common probability `t ∈ [0, 1)` of not triggering admission (selective rate `1 - t`) and `t₀ = 1`,
-`f_2 / f_1 = (1 - t²) / (1 - t) = 1 + t` and `f_3 / f_1 = (1 - t³) / (1 - t) = 1 + t + t²`;
-as the selective rate tends to `0` (`t → 1⁻`) these ratios tend to `2` and `3`.
-
-Source: Berkson (1946), on the ratio of multiple to single diagnoses being "about twice" and
-"about three times"; the exact ratios follow from the selection model. -/
-public theorem_wanted admission_ratios :
-    (∀ t : ℝ, 0 ≤ t → t < 1 →
-      (1 - t ^ 2) / (1 - t) = 1 + t ∧ (1 - t ^ 3) / (1 - t) = 1 + t + t ^ 2) ∧
-    Tendsto (fun t : ℝ => (1 - t ^ 2) / (1 - t)) (𝓝[<] 1) (𝓝 2) ∧
-    Tendsto (fun t : ℝ => (1 - t ^ 3) / (1 - t)) (𝓝[<] 1) (𝓝 3)
-
 /-- **Berkson's inequality** (Berkson 1946). Under the independent population disease law
 (`diseaseSetProb`), let the diseases occur independently with incidences `p_i ∈ (0, 1)` and
 probabilities `t_i ∈ [0, 1]` of not triggering admission, let `t₀ ∈ (0, 1]`, and let `a ≠ b` be
