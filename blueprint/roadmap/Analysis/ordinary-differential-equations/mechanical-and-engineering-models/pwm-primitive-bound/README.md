@@ -1,6 +1,6 @@
 # PWM primitive bound
 
-## Private helpers
+## Integrability of the PWM signal
 
 - [Interval Integrable pwm Signal](interval-integrable-pwm-signal.md)
 

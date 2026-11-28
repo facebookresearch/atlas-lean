@@ -24,6 +24,12 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [Weak maximum principle for the heat equation](exists-mem-parabolic-boundary-is-max-on.md)
 - [Uniqueness for the heat equation on a bounded domain](eq-on-of-heat-equation.md)
 - [Single-mode solution of the Dirichlet heat equation](single-mode-solution-of-the-dirichlet-heat-equation.md)
+- [Heat evolution for exponentially growing data](heat-evolution-for-exponentially-growing-data/README.md)
+- [Spatial derivatives of the heat solution](spatial-derivatives-of-the-heat-solution/README.md)
+- [Heat-kernel initial-value construction in one dimension](heat-kernel-initial-value-construction-in-one-di/README.md)
+- [Joint continuity of the heat evolution at initial time](joint-continuity-of-the-heat-evolution-at-initia/README.md)
+- [Joint positive-time smoothness of heat evolution](joint-positive-time-smoothness-of-heat-evolution/README.md)
+- [One-dimensional heat-kernel derivatives and domination](one-dimensional-heat-kernel-derivatives-and-domi/README.md)
 
 ## Related topics
 
@@ -31,10 +37,4 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
   with zero potential the Fokker–Planck equation is the heat equation, the Wasserstein gradient flow
   of the Boltzmann entropy (Jordan, Kinderlehrer and Otto).
 - [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
-- [Heat evolution for exponentially growing data](heat-evolution-for-exponentially-growing-data/README.md)
-- [Spatial derivatives of the heat solution](spatial-derivatives-of-the-heat-solution/README.md)
-- [Heat-kernel initial-value construction in one dimension](heat-kernel-initial-value-construction-in-one-di/README.md)
-- [Joint continuity of the heat evolution at initial time](joint-continuity-of-the-heat-evolution-at-initia/README.md)
-- [Joint positive-time smoothness of heat evolution](joint-positive-time-smoothness-of-heat-evolution/README.md)
-- [One-dimensional heat-kernel derivatives and domination](one-dimensional-heat-kernel-derivatives-and-domi/README.md)
   the drift–diffusion equation that reduces to the heat equation without drift.

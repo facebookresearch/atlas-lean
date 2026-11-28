@@ -8,9 +8,9 @@
 
 ## C. Energy invariance and coercivity
 
-- [Yee Energy zero](yee-energy-zero.md)
+- [The Yee energy of the zero pair](yee-energy-zero.md)
 - [The squared pair norm is nonnegative](pair-norm-sq-nonneg.md)
 
 ## D. All iterates
 
-- [Leapfrog Iterate yee Energy](leapfrog-iterate-yee-energy.md)
+- [The leapfrog iterates conserve the Yee energy](leapfrog-iterate-yee-energy.md)
