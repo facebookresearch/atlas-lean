@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Complexity.Algebraic.BilinearRecursion
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import CSLibExt.Complexity.Algebraic.RectangularCircuitExponent
 
 /-!
 # Gate counts for recursive bilinear matrix-multiplication circuits
@@ -392,6 +393,43 @@ theorem exists_strassen_recursiveCircuit (F : Type u) [Field F] :
   rw [h42] at h
   norm_num at h
   exact h
+
+/-- **Circuit exponent from rank.** The square circuit exponent is at most `Real.logb q r`
+when the `q`-tensor has trilinear rank at most `r`. -/
+theorem squareMatrixMultiplicationCircuitExponent_le_logb {F : Type u} [Field F]
+    {q r : ℕ} (hq : 2 ≤ q) (hqr : q ^ 2 < r)
+    (h : MatrixMultiplicationExponent.HasTrilinearRankAtMost
+      (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q) r) :
+    squareMatrixMultiplicationCircuitExponent F ≤ ENNReal.ofReal (Real.logb q r) := by
+  have hq1 : 1 < q := by omega
+  have hr1 : 1 ≤ r := by
+    have h4 : (2 : ℕ) ^ 2 ≤ q ^ 2 := Nat.pow_le_pow_left hq 2
+    norm_num at h4
+    omega
+  have hlognn : 0 ≤ Real.logb (q : ℝ) (r : ℝ) :=
+    Real.logb_nonneg (by exact_mod_cast hq1) (by exact_mod_cast hr1)
+  rw [squareMatrixMultiplicationCircuitExponent_le_iff F hlognn]
+  refine ⟨by norm_num, hlognn, fun ε hε => ?_⟩
+  have hrpos : (0 : ℝ) < (r : ℝ) :=
+    by exact_mod_cast lt_of_le_of_lt (Nat.zero_le _) hqr
+  have hCpos : (0 : ℝ) < (r : ℝ) * (1 + 6 * (r : ℝ) * (q : ℝ) ^ 2) := by
+    have hC1 : (0 : ℝ) < 1 + 6 * (r : ℝ) * (q : ℝ) ^ 2 := by positivity
+    exact mul_pos hrpos hC1
+  refine ⟨(r : ℝ) * (1 + 6 * (r : ℝ) * (q : ℝ) ^ 2), hCpos, 1, by norm_num, ?_⟩
+  intro n hn
+  obtain ⟨c, hc, hsize⟩ := exists_circuit_size_le_rpow_of_rank hq hqr h hn
+  rw [MatrixMultiplicationExponent.rectangularInnerDimension_one]
+  refine ⟨c, hc, ?_⟩
+  have hn1 : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+  have hrpow : (n : ℝ) ^ Real.logb (q : ℝ) (r : ℝ)
+      ≤ (n : ℝ) ^ (Real.logb (q : ℝ) (r : ℝ) + ε) :=
+    Real.rpow_le_rpow_of_exponent_le hn1 (by linarith)
+  calc (c.size : ℝ)
+      ≤ (r : ℝ) * (1 + 6 * (r : ℝ) * (q : ℝ) ^ 2)
+        * (n : ℝ) ^ Real.logb (q : ℝ) (r : ℝ) := hsize
+    _ ≤ (r : ℝ) * (1 + 6 * (r : ℝ) * (q : ℝ) ^ 2)
+        * (n : ℝ) ^ (Real.logb (q : ℝ) (r : ℝ) + ε) :=
+      mul_le_mul_of_nonneg_left hrpow hCpos.le
 
 end
 

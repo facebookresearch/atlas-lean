@@ -102,4 +102,11 @@ example {F : Type u} [Field F] :
   obtain ⟨terms, hlength, h⟩ := exists_strassen_recursiveCircuit F
   exact ⟨terms, hlength, h 1⟩
 
+#check @squareMatrixMultiplicationCircuitExponent_le_logb
+
+example {F : Type u} [Field F] :
+    squareMatrixMultiplicationCircuitExponent F ≤ ENNReal.ofReal (Real.logb 2 7) :=
+  squareMatrixMultiplicationCircuitExponent_le_logb (by norm_num) (by decide)
+    (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor_rank_le_seven F)
+
 end Cslib.Complexity.Algebraic
