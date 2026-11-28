@@ -6,7 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
 
+`Mathlib/AlgebraicTopology/AlternatingFaceMapComplex.lean` (Mathlib):
+Copyright (c) 2021 Joël Riou. All rights reserved.
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Joël Riou, Adam Topaz, Johan Commelin
+Paired-index square-zero proof with the last face omitted.
+-/
+-- Adapter: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SemiSimplicialObject.AlternatingFaceMapComplex
@@ -40,7 +50,7 @@ universe u v
 
 namespace AlgebraicTopology
 
-namespace TruncatedAlternatingFaceMapComplex
+namespace LastFaceOmittedAlternatingFaceMapComplex
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable (X Y : SemiSimplicialObject C)
@@ -144,7 +154,7 @@ variable (X : SemiSimplicialObject C)
 
 include hFirst in
 /-- Let X be a semisimplicial object in a preadditive category C and let s_n : X_n ⟶ X_(n+1)
-satisfy s_n ≫ X.δ 0 = 𝟙 X_n for all n : ℕ. The truncated bottom differential satisfies s₀ ≫
+satisfy s_n ≫ X.δ 0 = 𝟙 X_n for all n : ℕ. The last-face-omitted bottom differential satisfies s₀ ≫
 objD X 0 = 𝟙 X₀, since objD X 0 is the first face δ₀. -/
 theorem frontInsertion_sum_zero : s 0 ≫ objD X 0 = 𝟙 (X _⦋0⦌ₛ) := by
   change s 0 ≫ (∑ i : Fin 1, (-1 : ℤ) ^ i.val • X.δ i.castSucc) = 𝟙 (X _⦋0⦌ₛ)
@@ -155,7 +165,7 @@ include hFirst hShift in
 /-- Let X be a semisimplicial object in a preadditive category C, with maps s_n : X_n ⟶ X_(n+1).
 Assume s_n ≫ δ₀ = 𝟙 X_n for every n, and s_(n+1) ≫ δ_(i+1) = δ_i ≫ s_n for every i : Fin (n +
 1), where the faces have the casts i.succ.castSucc and i.castSucc. For every n : ℕ, the
-truncated boundaries satisfy objD X n ≫ s_n + s_(n+1) ≫ objD X (n + 1) = 𝟙 X_(n+1). -/
+last-face-omitted boundaries satisfy objD X n ≫ s_n + s_(n+1) ≫ objD X (n + 1) = 𝟙 X_(n+1). -/
 theorem frontInsertion_sum_succ (n : ℕ) :
     objD X n ≫ s n + s (n + 1) ≫ objD X (n + 1) = 𝟙 (X _⦋n + 1⦌ₛ) := by
   have hs : s (n + 1) ≫ objD X (n + 1) =
@@ -201,7 +211,7 @@ def contractingHomotopy : Homotopy (𝟙 (obj X)) 0 := by
     | zero =>
       rw [Homotopy.nullHomotopicMap'_f_of_not_rel_left
         (k₁ := 1) (k₀ := 0) (by rfl) (by intro l; simp [ComplexShape.down_Rel]) H]
-      simp only [hH, HomologicalComplex.id_f, obj_d]
+      simp only [HomologicalComplex.id_f, obj_d]
       change s 0 ≫ objD X 0 = 𝟙 (X _⦋0⦌ₛ)
       exact frontInsertion_sum_zero X s hFirst
     | succ n =>
@@ -216,7 +226,7 @@ def contractingHomotopy : Homotopy (𝟙 (obj X)) 0 := by
 Assume s_n ≫ δ₀ = 𝟙 X_n for every n, and s_(n+1) ≫ δ_(i+1) = δ_i ≫ s_n for every i : Fin (n +
 1), where the faces have the casts i.succ.castSucc and i.castSucc. For every n : ℕ,
 (contractingHomotopy X s hFirst hShift).hom n (n + 1) = s_n. This identifies the sign and the
-degree-raising map of the contraction of the truncated identity to zero. -/
+degree-raising map of the contraction of the last-face-omitted identity to zero. -/
 @[simp]
 theorem contractingHomotopy_hom (n : ℕ) :
     (contractingHomotopy X s hFirst hShift).hom n (n + 1) = s n := by
@@ -230,7 +240,7 @@ theorem contractingHomotopy_hom (n : ℕ) :
 
 end FrontInsertion
 
-end TruncatedAlternatingFaceMapComplex
+end LastFaceOmittedAlternatingFaceMapComplex
 
 variable (C : Type u) [Category.{v} C] [Preadditive C]
 
@@ -238,37 +248,37 @@ variable (C : Type u) [Category.{v} C] [Preadditive C]
 its last-face-omitted alternating complex with terms X_n and boundaries ∑ i : Fin (n + 1),
 (−1)^i • X.δ i.castSucc. It sends each semisimplicial morphism to the chain map given by its
 degree components. -/
-def truncatedAlternatingFaceMapComplex : SemiSimplicialObject C ⥤ ChainComplex C ℕ where
-  obj := TruncatedAlternatingFaceMapComplex.obj
-  map f := TruncatedAlternatingFaceMapComplex.map f
+def lastFaceOmittedAlternatingFaceMapComplex : SemiSimplicialObject C ⥤ ChainComplex C ℕ where
+  obj := LastFaceOmittedAlternatingFaceMapComplex.obj
+  map f := LastFaceOmittedAlternatingFaceMapComplex.map f
 
 /-- For a semisimplicial object X in a preadditive category C and every n : ℕ, the degree-n term
-of (truncatedAlternatingFaceMapComplex C).obj X is X _⦋n⦌ₛ. -/
+of (lastFaceOmittedAlternatingFaceMapComplex C).obj X is X _⦋n⦌ₛ. -/
 @[simp]
-theorem truncatedAlternatingFaceMapComplex_obj_X (X : SemiSimplicialObject C) (n : ℕ) :
-    ((truncatedAlternatingFaceMapComplex C).obj X).X n = X _⦋n⦌ₛ := rfl
+theorem lastFaceOmittedAlternatingFaceMapComplex_obj_X (X : SemiSimplicialObject C) (n : ℕ) :
+    ((lastFaceOmittedAlternatingFaceMapComplex C).obj X).X n = X _⦋n⦌ₛ := rfl
 
 /-- For a semisimplicial object X in a preadditive category C, the differential from n + 1 to n in
-(truncatedAlternatingFaceMapComplex C).obj X equals ∑ i : Fin (n + 1), (−1 : ℤ)^i • X.δ
+(lastFaceOmittedAlternatingFaceMapComplex C).obj X equals ∑ i : Fin (n + 1), (−1 : ℤ)^i • X.δ
 i.castSucc, the alternating sum with the final face omitted. -/
 @[simp]
-theorem truncatedAlternatingFaceMapComplex_obj_d (X : SemiSimplicialObject C) (n : ℕ) :
-    ((truncatedAlternatingFaceMapComplex C).obj X).d (n + 1) n =
-      TruncatedAlternatingFaceMapComplex.objD X n := by
-  exact TruncatedAlternatingFaceMapComplex.obj_d X n
+theorem lastFaceOmittedAlternatingFaceMapComplex_obj_d (X : SemiSimplicialObject C) (n : ℕ) :
+    ((lastFaceOmittedAlternatingFaceMapComplex C).obj X).d (n + 1) n =
+      LastFaceOmittedAlternatingFaceMapComplex.objD X n := by
+  exact LastFaceOmittedAlternatingFaceMapComplex.obj_d X n
 
 /-- For a morphism f : X ⟶ Y of semisimplicial objects in a preadditive category C, the degree-n
-component of (truncatedAlternatingFaceMapComplex C).map f equals f.app (op ⦋n⦌ₛ) for every n :
+component of (lastFaceOmittedAlternatingFaceMapComplex C).map f equals f.app (op ⦋n⦌ₛ) for every n :
 ℕ. -/
 @[simp]
-theorem truncatedAlternatingFaceMapComplex_map_f {X Y : SemiSimplicialObject C}
+theorem lastFaceOmittedAlternatingFaceMapComplex_map_f {X Y : SemiSimplicialObject C}
     (f : X ⟶ Y) (n : ℕ) :
-    ((truncatedAlternatingFaceMapComplex C).map f).f n = f.app (op ⦋n⦌ₛ) := rfl
+    ((lastFaceOmittedAlternatingFaceMapComplex C).map f).f n = f.app (op ⦋n⦌ₛ) := rfl
 
 /-- For a preadditive category C, the last-face-omitted alternating-complex functor is additive.
 It sends f + g to map f + map g and the zero semisimplicial morphism to the zero chain map;
 these equalities hold in every degree. -/
-instance truncatedAlternatingFaceMapComplexAdditive :
-    (truncatedAlternatingFaceMapComplex C).Additive where
+instance lastFaceOmittedAlternatingFaceMapComplexAdditive :
+    (lastFaceOmittedAlternatingFaceMapComplex C).Additive where
 
 end AlgebraicTopology

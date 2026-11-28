@@ -52,19 +52,6 @@ namespace MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesWanted
 
 open MetaMathlibExt (powOmega unitaryConv multiplicativeOfPrimePowers)
 
-/-- **Discriminant times an (a, b)-Fibonacci number.** Let $a$ and $b$ be complex numbers with
-$a^2 + 4b \ne 0$, and write $F_n$ and $L_n$ for the $(a,b)$-Fibonacci and $(a,b)$-Lucas
-numbers. Then for every natural number $m$,
-$$(a^2 + 4b) F_{m+1} = L_{m+2} + b L_m.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Corollary 4. -/
-theorem_wanted disc_mul_fibAB (a b : ℂ) (hΔ : a ^ 2 + 4 * b ≠ 0)
-    (m : ℕ) :
-    (a ^ 2 + 4 * b) * fibAB a b (m + 1) =
-      lucasAB a b (m + 2) + b * lucasAB a b m
-
 /-- **Sums of (a, b)-Lucas numbers weighted by powers of -b.** Let $a, b$ be complex numbers
 with $b \ne 0$, and let $(F_n)$ and $(L_n)$ be the $(a, b)$-Fibonacci and $(a, b)$-Lucas
 numbers. Then for every integer $n \ge 0$,

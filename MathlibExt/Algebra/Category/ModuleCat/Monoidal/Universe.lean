@@ -6,13 +6,27 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
 
+`Mathlib/Algebra/Category/ModuleCat/Monoidal/Basic.lean` (Mathlib):
+Copyright (c) 2020 Kim Morrison. All rights reserved.
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Kevin Buzzard, Kim Morrison, Jakob von Raumer
+Tensor-structure axioms, additive whiskering and scalar linearity.
+
+`Mathlib/Algebra/Category/ModuleCat/Monoidal/Symmetric.lean` (Mathlib):
+Copyright (c) 2020 Kim Morrison. All rights reserved.
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Kevin Buzzard, Kim Morrison, Jakob von Raumer
+Braiding and reverse-hexagon argument.
+-/
 -- Author: @toskua
 module
 
 public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Symmetric
-public import Mathlib.Algebra.Category.ModuleCat.Projective
-public import Mathlib.RingTheory.Flat.Basic
 
 /-!
 # Tensor products in a module category containing the ring unit
@@ -26,7 +40,7 @@ The associator sends `(x⊗y)⊗z` to `x⊗(y⊗z)`. The left and right unitors 
 
 Whiskering is additive and `R`-linear.
 
-References: Bourbaki, *Algebra*, Chapter III; Mac Lane, *Categories for the Working
+References: Bourbaki, *Algebra I*, Chapter II, §3; Mac Lane, *Categories for the Working
 Mathematician*, Chapter VII.
 -/
 
