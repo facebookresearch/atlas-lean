@@ -18,6 +18,11 @@ import Mathlib.Tactic.LinearCombination
 
 Multiplication by the bronze ratio or its complementary Beatty ratio gives six identities
 for the bronze numbers and their two companion sequences.
+
+## References
+
+* Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial Games with
+  Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, pp. 1–38, Section 4 and Proposition 3.
 -/
 
 namespace MetaMathlibExt
@@ -34,6 +39,9 @@ def bronzeLucasParams : LucasSequenceParams where
   p := 3
   q := -1
   q_ne_zero := by decide
+
+/-- The second Lucas parameter of the bronze sequence is $-1$. -/
+theorem bronzeLucasParams_q : bronzeLucasParams.q = -1 := rfl
 
 /-- **Recurrence of the bronze numbers.** Let $B_n$ be the bronze numbers, the terms of the Lucas
 sequence $U(3, -1)$. For every natural number $n$, $B_{n+2} = 3B_{n+1} + B_n$.
@@ -79,6 +87,15 @@ Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4 (com
 numbers of the second type). -/
 def bronzeCompanionSecond (n : ℕ) : ℤ :=
   lucasU bronzeLucasParams (n + 1) - lucasU bronzeLucasParams n
+
+/-- At index $n+1$, the first and second bronze companions are respectively
+$B_{n+1}+B_n$ and $2B_{n+1}+B_n$, for each natural number $n$. -/
+theorem bronzeCompanion_succ (n : ℕ) :
+    bronzeCompanionFirst (n + 1) = lucasU bronzeLucasParams (n + 1) + lucasU bronzeLucasParams n ∧
+      bronzeCompanionSecond (n + 1) =
+        2 * lucasU bronzeLucasParams (n + 1) + lucasU bronzeLucasParams n := by
+  simp only [bronzeCompanionFirst, bronzeCompanionSecond, lucasU_bronzeLucasParams_add_two n]
+  constructor <;> ring
 
 /-- **Recurrence for the companion bronze numbers of the first type.** For every natural number
 $n$, the companion bronze numbers $C_n$ of the first type satisfy $C_{n+2} = 3C_{n+1} + C_n$.

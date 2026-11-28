@@ -22,6 +22,7 @@ public import MathlibExt.NumberTheory.PellSilverRatio
 public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsPellHalfCompanionRepresentation
 public import MathlibExt.NumberTheory.OlympicGamesNumerationExistsTwoPellHalfCompanionRepresentation
 public import MathlibExt.NumberTheory.OlympicGamesNumerationFloorGreedyBronzeCompanionSumMul
+public import MathlibExt.NumberTheory.OlympicGamesBronzePositions
 
 /-!
 # Fibonacci and Pell numeration identities from the Olympic games
@@ -52,37 +53,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Finset
-
-/-- **Moves of the Beatty octal game.** Let $\alpha$ and $\beta$ be real numbers. In the Beatty
-octal game for $\alpha$ and $\beta$, a move takes a heap of $n$ tokens to a heap of $m$ tokens
-exactly when one of the following holds: $n \ge 1$, $n = \lfloor k\alpha \rfloor$ for some
-integer $k \ge 1$, and $m = 0$ (the whole heap is removed); or $m = n - i$ for some natural
-number $i$ with $1 \le i < n$ and $i = \lfloor k\beta \rfloor$ for some integer $k \ge 1$
-(removing $i$ tokens leaves a nonempty heap).
-
-When $\alpha$ and $\beta$ are complementary, so that every $i \ge 1$ lies in exactly one of the
-Beatty sequences $\{\lfloor k\alpha \rfloor : k \ge 1\}$ and
-$\{\lfloor k\beta \rfloor : k \ge 1\}$, this is the octal game with code
-$0{\cdot}d_1 d_2 d_3 \ldots$, where $d_i = 1$ if $i$ lies in the first sequence and $d_i = 2$ if
-$i$ lies in the second.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 1.1 (octal codes) and
-the codes of the gold, silver and bronze games in Sections 2, 3, 4. -/
-def beattyOctalMove (α β : ℝ) (n m : ℕ) : Prop :=
-  (0 < n ∧ (∃ k : ℤ, 0 < k ∧ beattySeq α k = n) ∧ m = 0) ∨
-    ∃ i : ℕ, (∃ k : ℤ, 0 < k ∧ beattySeq β k = i) ∧ 0 < i ∧ i < n ∧ m = n - i
-
-/-- **Moves of a Beatty octal game decrease the heap.** For all real numbers $\alpha$, $\beta$
-and all natural numbers $n$, $m$: if a move of the Beatty octal game for $\alpha$ and $\beta$
-takes a heap of $n$ tokens to a heap of $m$ tokens, then $m < n$.
-
-Consequently every play of the game terminates.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 1.1. -/
-theorem beattyOctalMove_lt {α β : ℝ} {n m : ℕ} (h : beattyOctalMove α β n m) : m < n := by
-  rcases h with ⟨hn, -, rfl⟩ | ⟨i, -, hi, hin, rfl⟩ <;> omega
 
 /-- **P-positions of the gold game.** Let $\varphi$ be the golden ratio and $F_n$ the Fibonacci
 numbers ($F_1 = F_2 = 1$). In the gold game a heap of $n$ tokens may be removed entirely when
@@ -251,28 +221,6 @@ theorem_wanted floor_greedy_mixed_bronze_sum_mul (R R' : ℕ → ℤ)
     (n : ℕ) (a : ℕ → ℕ) (ha : ∀ m ≤ n + 1, ∑ k ∈ range m, (a k : ℤ) * R k < R m) :
     ⌊((∑ k ∈ range (n + 1), (a k : ℤ) * R k : ℤ) : ℝ) * ((5 + Real.sqrt 13) / 6)⌋ =
       ∑ k ∈ range (n + 1), (a k : ℤ) * R' (k + 1)
-
-/-- **P-positions of the bronze game.** Let $\alpha = (3 + \sqrt{13})/2$ and
-$\beta = (5 + \sqrt{13})/6$, let $B_n$ be the bronze numbers, and let $C_n$ and $D_n$ be the
-companion bronze numbers of the first and second type. Let $P$ be the set of natural numbers
-$x$ such that $x = 0$ or $x \in \{B_{2k+1}, C_{2k+2}, D_{2k+2}\}$ for some natural number $k$.
-Then, in the Beatty octal game for $\alpha$ and $\beta$, no move takes a heap whose size lies
-in $P$ to a heap whose size lies in $P$, and from every heap whose size is not in $P$ some move
-leads to a heap whose size lies in $P$.
-
-So $P$ is stable and absorbing for the moves of the game; since every move decreases the heap,
-this determines $P$ as the set of P-positions, the heap sizes from which the previous player
-wins: $0, B_1, C_2, D_2, B_3, C_4, D_4, \ldots$
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 11. -/
-theorem_wanted bronzeGame_pPositions (P : Set ℕ)
-    (hP : ∀ x, x ∈ P ↔ x = 0 ∨ ∃ k, (x : ℤ) = lucasU bronzeLucasParams (2 * k + 1) ∨
-      (x : ℤ) = bronzeCompanionFirst (2 * k + 2) ∨ (x : ℤ) = bronzeCompanionSecond (2 * k + 2)) :
-    (∀ x y, x ∈ P →
-        beattyOctalMove ((3 + Real.sqrt 13) / 2) ((5 + Real.sqrt 13) / 6) x y → y ∉ P) ∧
-      ∀ x, x ∉ P →
-        ∃ y, beattyOctalMove ((3 + Real.sqrt 13) / 2) ((5 + Real.sqrt 13) / 6) x y ∧ y ∈ P
 
 end
 
