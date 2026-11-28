@@ -22,8 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.UnitDedicatedProcessorMakespanDefs
 
 @[expose] public section
 
@@ -55,31 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of processors, the processor sets `fixⱼ` of the tasks, and the
-bound `K`. -/
-abbrev UnitDedicatedProcessorInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: there is at least one processor (`0 < m`); every task has a
-nonempty set of processors, listed without repetitions, all below `m`; and `0 < K`. -/
-def WellFormed (i : UnitDedicatedProcessorInstance) : Prop :=
-  0 < i.1 ∧ (∀ f ∈ i.2.1, f ≠ [] ∧ f.Nodup ∧ ∀ k ∈ f, k < i.1) ∧ 0 < i.2.2
-
-/-- There are start times `s` with makespan at most `K` (every `s j + 1 ≤ K`) such that any two
-different tasks with a common processor are processed in disjoint unit time intervals. -/
-def UnitDedicatedProcessorMakespanFeasible (i : UnitDedicatedProcessorInstance) : Prop :=
-  ∃ s : Fin i.2.1.length → ℕ, (∀ j, s j + 1 ≤ i.2.2) ∧
-    ∀ j j', j ≠ j' → (∃ k ∈ i.2.1.get j, k ∈ i.2.1.get j') →
-      s j + 1 ≤ s j' ∨ s j' + 1 ≤ s j
-
-open Classical in
-/-- `P|fixⱼ, pⱼ = 1|C_max` as a decision problem over bitstrings. -/
-noncomputable def unitDedicatedProcessorMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitDedicatedProcessorInstance) x with
-  | some i => decide (WellFormed i ∧ UnitDedicatedProcessorMakespanFeasible i)
-  | none => false
 
 /-- **UNIT-TIME DEDICATED-PROCESSOR SCHEDULING with makespan bound (`P|fixⱼ, pⱼ = 1|C_max`) is
 NP-complete.** Source: Hoogeveen, van de Velde and Veltman (1994), Theorem 2.5. -/

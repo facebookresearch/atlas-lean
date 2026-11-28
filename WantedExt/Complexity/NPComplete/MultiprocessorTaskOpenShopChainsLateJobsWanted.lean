@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopChainsTardinessWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopChainsLateJobsDefs
 
 @[expose] public section
 
@@ -82,31 +79,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed `OMPT2|chains; p_ij = 1|ΣT_i` instance
-(`MultiprocessorTaskOpenShopChainsTardiness.WellFormed`: two machines, well-formed stages, unit
-processing times, chains) with at least one job. -/
-def WellFormed (i : MultiprocessorTaskOpenShopChainsTardinessInstance) : Prop :=
-  MultiprocessorTaskOpenShopChainsTardiness.WellFormed i ∧ 0 < i.2.2.1.length
-
-/-- Some unit-time MPT open-shop schedule obeys the chains and has at most `K` late jobs
-(`d_j < C_j`). -/
-def MultiprocessorTaskOpenShopChainsLateJobsFeasible
-    (i : MultiprocessorTaskOpenShopChainsTardinessInstance) : Prop :=
-  ∃ σ : Fin i.2.2.1.length → Fin i.2.1.length → ℕ,
-    IsMPTOpenShopPrecedenceSchedule i.2.1 i.2.2.2.1 σ ∧
-      (Finset.univ.filter fun j => dueDate i j < completionTime (fun _ _ => 1) σ j).card ≤
-        i.2.2.2.2
-
-open Classical in
-/-- `OMPT2|chains; p_ij = 1|ΣU_i` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopChainsLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorTaskOpenShopChainsTardinessInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultiprocessorTaskOpenShopChainsLateJobsFeasible i)
-  | none => false
 
 /-- **`OMPT2|chains; p_ij = 1|ΣU_i` is NP-complete.** Source: Timkovsky (2003); Brucker and
 Knust, *Complexity results for scheduling problems*; Brucker (2007), Chapter 11. -/

@@ -24,11 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.RobotFlowShopUnitWeightedTardinessWanted
-public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysReleaseTimesWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopUnitReleaseTotalCompletionDefs
 
 @[expose] public section
 
@@ -85,24 +81,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some single-robot schedule starts every job on `M₁` no earlier than its release date and
-has total completion time `Σⱼ Cⱼ` at most `K`, where `Cⱼ = σ 1 j + 1`. -/
-def RobotFlowShopUnitReleaseTotalCompletionFeasible
-    (i : UnitFlowShopTransportationDelaysReleaseTimesInstance) : Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, ∃ ρ : Job i → ℕ,
-    IsUnitRobotFlowShopSchedule (delay i) σ ρ ∧
-      (∀ j, releaseDate i j ≤ σ 0 j) ∧
-      ∑ j, (σ 1 j + 1) ≤ i.2
-
-open Classical in
-/-- F2;R1|p_ij=1;t_i;r_i|ΣC_i as a decision problem over bitstrings. -/
-noncomputable def robotFlowShopUnitReleaseTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopTransportationDelaysReleaseTimesInstance) x with
-  | some i => decide (WellFormed i ∧ RobotFlowShopUnitReleaseTotalCompletionFeasible i)
-  | none => false
 
 /-- **F2;R1|p_ij=1;t_i;r_i|ΣC_i is NP-complete.**
 Source: Brucker and Knust's classification, class `f_1ro`, citing Knust (1999); robot model of

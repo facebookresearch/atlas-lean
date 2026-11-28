@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ParallelMachinesInTreeReleaseMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelMachinesInTreeReleaseMakespanDefs
 
 @[expose] public section
 
@@ -76,43 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a `P|intree; r_i; p_i = 1|C_max` instance and the eligible machine sets, job `t`
-having the `t`-th listed set `μ_t`. -/
-abbrev MultipurposeParallelMachinesInTreeReleaseMakespanInstance :=
-  ParallelMachinesInTreeReleaseMakespanInstance × List (List ℕ)
-
-/-- The eligible machine set `μ_t` of job `t`. -/
-def eligible (i : MultipurposeParallelMachinesInTreeReleaseMakespanInstance) (t : Task i.1.1) :
-    List ℕ :=
-  i.2.getD t []
-
-/-- Well-formedness of an instance: a well-formed `P|intree; r_i; p_i = 1|C_max` instance, one
-eligible set per job, and every eligible set nonempty with machines below `m`. -/
-def WellFormed (i : MultipurposeParallelMachinesInTreeReleaseMakespanInstance) : Prop :=
-  ParallelMachinesInTreeReleaseMakespan.WellFormed i.1 ∧ i.2.length = i.1.1.1.length ∧
-    ∀ μ ∈ i.2, μ ≠ [] ∧ ∀ k ∈ μ, k < i.1.1.2.1
-
-/-- Some schedule processes every job on an eligible machine, no two jobs on one machine at the
-same time, respects the release dates and the precedence constraints, and has makespan at most
-`K`. -/
-def MultipurposeParallelMachinesInTreeReleaseMakespanFeasible
-    (i : MultipurposeParallelMachinesInTreeReleaseMakespanInstance) : Prop :=
-  ∃ σ : Task i.1.1 → ℕ, ∃ a : Task i.1.1 → ℕ, (∀ t, a t ∈ eligible i t) ∧
-    (∀ t t', t ≠ t' → a t = a t' →
-      σ t + taskLength i.1.1 t ≤ σ t' ∨ σ t' + taskLength i.1.1 t' ≤ σ t) ∧
-    (∀ t, releaseDate i.1 t ≤ σ t) ∧
-    (∀ t t', Prec i.1.1 t t' → σ t + taskLength i.1.1 t ≤ σ t') ∧
-    ∀ t, σ t + taskLength i.1.1 t ≤ i.1.1.2.2.2
-
-open Classical in
-/-- `PMPM|intree; p_i = 1; r_i|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelMachinesInTreeReleaseMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelMachinesInTreeReleaseMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeParallelMachinesInTreeReleaseMakespanFeasible i)
-  | none => false
 
 /-- **MPM PARALLEL MACHINES `PMPM|intree; p_i = 1; r_i|C_max` is NP-complete.** Source:
 Brucker, Garey and Johnson (1977); Brucker and Knust, *Complexity results for scheduling

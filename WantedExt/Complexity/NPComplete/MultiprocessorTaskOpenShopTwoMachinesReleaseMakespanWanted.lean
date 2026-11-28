@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopTwoMachinesTotalCompletionWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopTwoMachinesReleaseMakespanDefs
 
 @[expose] public section
 
@@ -80,36 +78,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an `OMPT2||ΣC_i` instance (the number of processors, the stage processor sets,
-one list of `r` processing times per job, the bound `K`) and the release dates, job `j` having
-the `j`-th listed release date `r_j`. -/
-abbrev MultiprocessorTaskOpenShopTwoMachinesReleaseMakespanInstance :=
-  MultipurposeFlowShopThreeJobsInstance × List ℕ
-
-/-- Well-formedness of an instance: a well-formed `OMPT2||ΣC_i` instance with one release date
-per job. -/
-def WellFormed (i : MultiprocessorTaskOpenShopTwoMachinesReleaseMakespanInstance) : Prop :=
-  MultiprocessorTaskOpenShopTwoMachinesTotalCompletion.WellFormed i.1 ∧
-    i.2.length = i.1.2.2.1.length
-
-/-- Some MPT open-shop schedule of the jobs starts no task of job `j` before `r_j` and has
-makespan at most `K`. -/
-def MultiprocessorTaskOpenShopTwoMachinesReleaseMakespanFeasible
-    (i : MultiprocessorTaskOpenShopTwoMachinesReleaseMakespanInstance) : Prop :=
-  ∃ σ : Job i.1 → Stage i.1 → ℕ, IsMPTOpenShopSchedule i.1.2.1 (processingTime i.1) σ ∧
-    (∀ (j : Job i.1) s, i.2.getD j 0 ≤ σ j s) ∧
-      ∀ j, completionTime (processingTime i.1) σ j ≤ i.1.2.2.2
-
-open Classical in
-/-- `OMPT2|r_i|C_max` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopTwoMachinesReleaseMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorTaskOpenShopTwoMachinesReleaseMakespanInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultiprocessorTaskOpenShopTwoMachinesReleaseMakespanFeasible i)
-  | none => false
 
 /-- **`OMPT2|r_i|C_max` is NP-complete.** Source: Brucker and Knust, *Complexity results for
 scheduling problems*; Lawler, Lenstra, and Rinnooy Kan (1981, 1982); Brucker (2007),

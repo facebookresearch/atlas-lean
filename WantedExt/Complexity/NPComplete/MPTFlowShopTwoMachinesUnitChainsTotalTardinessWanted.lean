@@ -24,13 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MPMOpenShopTwoMachinesUnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.MPTFlowShopTwoMachinesUnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopPrecedenceMakespanWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MPTFlowShopTwoMachinesUnitChainsTotalTardinessDefs
 
 @[expose] public section
 
@@ -89,24 +83,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus a
 polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPT flow-shop schedule of the unit-time jobs on the two machines obeying the chain arcs has
-total tardiness `Σ_j max(0, C_j - d_j)` at most `K` (natural-number subtraction truncates at `0`).
--/
-def MPTFlowShopTwoMachinesUnitChainsTotalTardinessFeasible
-    (i : MPMOpenShopTwoMachinesUnitChainsLateJobsInstance) : Prop :=
-  ∃ σ : Fin i.2.1.length → Fin i.1.length → ℕ,
-    IsMPTPrecedenceSchedule i.1 i.2.2.1 σ ∧
-      (∑ j, (completionTime (fun _ _ => 1) σ j - i.2.1.get j)) ≤ i.2.2.2
-
-open Classical in
-/-- `FMPT2|chains;p_ij=1|ΣT_i` as a decision problem over bitstrings. -/
-noncomputable def mptFlowShopTwoMachinesUnitChainsTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MPMOpenShopTwoMachinesUnitChainsLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MPTFlowShopTwoMachinesUnitChainsTotalTardinessFeasible i)
-  | none => false
 
 /-- **MPT FLOW SHOP FMPT2|chains;p_ij=1|ΣT_i is NP-complete.** Source: Brucker and Knust's
 classification ("Single-machine problem": Leung and Young (1990), `1|chains;p_i=1|ΣT_i`); Brucker

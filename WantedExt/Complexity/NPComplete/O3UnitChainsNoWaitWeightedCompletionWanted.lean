@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.F3UnitChainsWeightedCompletionWanted
-public import WantedExt.Complexity.NPComplete.O3UnitChainsNoWaitLateJobsWanted
+public import CSLibExt.Complexity.NPComplete.O3UnitChainsNoWaitWeightedCompletionDefs
 
 @[expose] public section
 
@@ -70,22 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some no-wait schedule has total weighted completion time at most `K`, with
-`C_j = S j + 3`. -/
-def O3UnitChainsNoWaitWeightedCompletionFeasible (i : F3UnitChainsWeightedCompletionInstance) :
-    Prop :=
-  ∃ (S : Fin i.1.length → ℕ) (σ : Fin 3 → Fin i.1.length → ℕ),
-    IsNoWaitSchedule 3 i.1.length i.2.1 S σ ∧ ∑ j, i.1.get j * (S j + 3) ≤ i.2.2
-
-open Classical in
-/-- `O3|p_ij=1;chains;no-wait|Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def o3UnitChainsNoWaitWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := F3UnitChainsWeightedCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ O3UnitChainsNoWaitWeightedCompletionFeasible i)
-  | none => false
 
 /-- **NO-WAIT OPEN SHOP `O3|p_ij=1;chains;no-wait|Σw_iC_i` is NP-complete.** Source: Brucker and
 Knust's classification (strongly NP-hard), citing Timkovsky (2003); membership in NP is the

@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ParallelMachinesInTreeReleaseMakespanWanted
+public import CSLibExt.Complexity.NPComplete.InTreeUnitParallelBatchingReleaseMakespanDefs
 
 @[expose] public section
 
@@ -76,21 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is well-formed for `P|intree;r_i;p_i=1|C_max` (unit
-lengths, `b > 0`, a strict partial order that is an in-tree, `K > 0`, one release date per job),
-and the batch capacity is bounded: `b < n`. -/
-def WellFormed (i : ParallelMachinesInTreeReleaseMakespanInstance) : Prop :=
-  ParallelMachinesInTreeReleaseMakespan.WellFormed i ∧ i.1.2.1 < i.1.1.length
-
-open Classical in
-/-- `1|intree;p_i=1;p-batch;r_i;b<n|C_max` as a decision problem over bitstrings. -/
-noncomputable def inTreeUnitParallelBatchingReleaseMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ParallelMachinesInTreeReleaseMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ ParallelMachinesInTreeReleaseMakespanFeasible i)
-  | none => false
 
 /-- **PARALLEL BATCHING `1|intree;p_i=1;p-batch;r_i;b<n|C_max` is NP-complete.** Source: Brucker
 and Knust's classification (reduction from `P|intree;r_i;p_i=1|C_max`, Brucker, Garey and

@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopInTreeReleaseMakespanWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopOutTreeReleaseMakespanDefs
 
 @[expose] public section
 
@@ -92,31 +89,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the machine environment is well formed and every stage
-machine set is nonempty, there is at least one job, the listed pairs describe a precedence
-relation on the jobs, and it is an out-tree (every job has at most one immediate predecessor). -/
-def WellFormed (i : MultipurposeFlowShopInTreeReleaseMakespanInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧ i.2.2.1 ≠ [] ∧
-    PrecedenceWellFormed i.2.2.1.length i.2.2.2.1 ∧
-    ∀ k a b, ImmediateSuccessor i a k → ImmediateSuccessor i b k → a = b
-
-/-- Some MPM open-shop schedule of the unit-time jobs obeys the precedence constraints, starts
-no operation of a job before its release date, and has makespan at most `K`. -/
-def MultipurposeOpenShopOutTreeReleaseMakespanFeasible
-    (i : MultipurposeFlowShopInTreeReleaseMakespanInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsMPMOpenShopPrecedenceSchedule i.1 i.2.1 i.2.2.2.1 σ a ∧
-      (∀ j s, releaseDate i j ≤ σ j s) ∧ ∀ j, completionTime (fun _ _ => 1) σ j ≤ i.2.2.2.2
-
-open Classical in
-/-- `OMPM|outtree; r_i; p_ij = 1|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopOutTreeReleaseMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopInTreeReleaseMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopOutTreeReleaseMakespanFeasible i)
-  | none => false
 
 /-- **`OMPM|outtree; r_i; p_ij = 1|C_max` is NP-complete.** Source: Timkovsky (2003), as
 recorded in the Brucker-Knust classification (with the special case

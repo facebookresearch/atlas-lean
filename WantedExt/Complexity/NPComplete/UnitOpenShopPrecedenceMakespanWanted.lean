@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespanDefs
 
 @[expose] public section
 
@@ -71,22 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some open-shop schedule completes every operation by time `K` (makespan
-`max_j C_j ≤ K`). -/
-def UnitOpenShopPrecedenceMakespanFeasible (i : UnitFlowShopPrecedenceMakespanInstance) :
-    Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
-    ∀ k j, σ k j + 1 ≤ i.2.2.2
-
-open Classical in
-/-- OPEN SHOP O|p_ij=1;prec|Cmax as a decision problem over bitstrings. -/
-noncomputable def unitOpenShopPrecedenceMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopPrecedenceMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopPrecedenceMakespanFeasible i)
-  | none => false
 
 /-- **OPEN SHOP O|p_ij=1;prec|Cmax is NP-complete.** Source: Brucker and Knust's classification
 (strongly NP-hard), citing Timkovsky (2003); membership in NP is the certificate argument in the

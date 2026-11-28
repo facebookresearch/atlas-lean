@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopTreeLatenessWanted
-public import WantedExt.Complexity.NPComplete.UnitFlowShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.OutTreeUnitParallelBatchingMaxLatenessDefs
 
 @[expose] public section
 
@@ -89,37 +86,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the batch capacity `b`, the precedence arcs `(i, k)`, the due dates
-`d_0, …, d_{n-1}` (jobs `Fin n`), and the bound `K`; due dates and bound as pairs `(a, b)`
-standing for `a - b`. -/
-abbrev OutTreeUnitParallelBatchingMaxLatenessInstance :=
-  ℕ × List (ℕ × ℕ) × List (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- Well-formedness of an instance: `0 < b < n`, the arcs name jobs and form an acyclic digraph,
-and every job has at most one immediate predecessor (an out-tree). -/
-def WellFormed (i : OutTreeUnitParallelBatchingMaxLatenessInstance) : Prop :=
-  0 < i.1 ∧ i.1 < i.2.2.1.length ∧ PrecWellFormed i.2.2.1.length i.2.1 ∧
-    ∀ k a b : Fin i.2.2.1.length, ImmediatePredecessor i.2.1 a k →
-      ImmediatePredecessor i.2.1 b k → a = b
-
-/-- Some batch schedule `σ` (batch start time of each job) puts at most `b` jobs in each batch,
-obeys the precedence arcs, and has maximum lateness at most `K`:
-`(σ(t) + 1) - d_t ≤ K` for every job `t`. -/
-def OutTreeUnitParallelBatchingMaxLatenessFeasible
-    (i : OutTreeUnitParallelBatchingMaxLatenessInstance) : Prop :=
-  ∃ σ : Fin i.2.2.1.length → ℕ, (∀ u, (Finset.univ.filter fun t => σ t = u).card ≤ i.1) ∧
-    (∀ t t', Prec i.2.1 t t' → σ t + 1 ≤ σ t') ∧
-    ∀ t, ((σ t + 1 : ℕ) : ℤ) - toInt (i.2.2.1.get t) ≤ toInt i.2.2.2
-
-open Classical in
-/-- `1|outtree;p_i=1;p-batch;b<n|L_max` as a decision problem over bitstrings. -/
-noncomputable def outTreeUnitParallelBatchingMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OutTreeUnitParallelBatchingMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ OutTreeUnitParallelBatchingMaxLatenessFeasible i)
-  | none => false
 
 /-- **PARALLEL BATCHING `1|outtree;p_i=1;p-batch;b<n|L_max` is NP-complete.** Source: Brucker
 and Knust's classification (reduction from `P|outtree;p_i=1|L_max`, Brucker, Garey and Johnson

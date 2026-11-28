@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopTransportationDelaysDefs
 
 @[expose] public section
 
@@ -75,32 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A schedule of a two-machine open shop with unit-time operations and delays `t`: `σ m j` is
-the start time of job `j`'s operation on machine `M_{m+1}`; `σ` is a unit-time open-shop
-schedule (`IsUnitOpenShopSchedule` with no precedence arcs: each machine, and each job, starts
-its operations at different times), and the two operations of job `j`, in either order, are
-separated by at least `t j`: the later one starts at least `t j` time units after the earlier
-one completes. -/
-def IsUnitOpenShopScheduleWithDelays {n : ℕ} (t : Fin n → ℕ) (σ : Fin 2 → Fin n → ℕ) : Prop :=
-  IsUnitOpenShopSchedule 2 n [] σ ∧
-    ∀ j, σ 0 j + 1 + t j ≤ σ 1 j ∨ σ 1 j + 1 + t j ≤ σ 0 j
-
-/-- Some open-shop schedule with the job delays completes every operation by `K`. -/
-def UnitOpenShopTransportationDelaysFeasible
-    (i : UnitFlowShopTransportationDelaysInstance) : Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, IsUnitOpenShopScheduleWithDelays (delay i) σ ∧
-    ∀ m j, σ m j + 1 ≤ i.2
-
-open Classical in
-/-- OPEN SHOP WITH TRANSPORTATION DELAYS `O2|p_ij=1;t_i|C_max` as a decision problem over
-bitstrings. -/
-noncomputable def unitOpenShopTransportationDelaysDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopTransportationDelaysInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopTransportationDelaysFeasible i)
-  | none => false
 
 /-- **OPEN SHOP WITH TRANSPORTATION DELAYS `O2|p_ij=1;t_i|C_max` is NP-complete.** Source:
 Yu (1996), Section 3.8, Theorem 2; Yu, Hoogeveen and Lenstra (2004). -/

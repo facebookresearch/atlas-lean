@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OpenShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopSymmetricTransportationDelaysDefs
 
 @[expose] public section
 
@@ -76,41 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an OPEN-SHOP SCHEDULING instance (the number `m` of machines, the jobs as lists
-of task lengths, the bound `K`) and the delay matrix, row `k` listing `t_k0, …, t_k(m-1)`. -/
-abbrev UnitOpenShopSymmetricTransportationDelaysInstance :=
-  OpenShopSchedulingInstance × List (List ℕ)
-
-/-- The transportation delay `t_kl` from machine `k` to machine `l`. -/
-def delay (i : UnitOpenShopSymmetricTransportationDelaysInstance) (k l : Fin i.1.1) : ℕ :=
-  (i.2.getD k []).getD l 0
-
-/-- Well-formedness of an instance: a well-formed OPEN-SHOP SCHEDULING instance (`m ≥ 1`, `m`
-tasks per job, `K ≥ 1`) whose tasks all have length `1`, with an `m × m` symmetric delay matrix
-whose diagonal is `0`. -/
-def WellFormed (i : UnitOpenShopSymmetricTransportationDelaysInstance) : Prop :=
-  NoWaitFlowShopScheduling.WellFormed i.1 ∧ (∀ job ∈ i.1.2.1, ∀ l ∈ job, l = 1) ∧
-    i.2.length = i.1.1 ∧ (∀ row ∈ i.2, row.length = i.1.1) ∧
-    (∀ k l, delay i k l = delay i l k) ∧ ∀ k, delay i k k = 0
-
-/-- Some open-shop schedule meeting the makespan bound `K` respects the delays: if job `j`'s
-task on machine `q ≠ p` starts no earlier than its task on machine `p`, it starts at least
-`t_pq` after that task is completed. -/
-def UnitOpenShopSymmetricTransportationDelaysFeasible
-    (i : UnitOpenShopSymmetricTransportationDelaysInstance) : Prop :=
-  ∃ σ : Fin i.1.1 → Fin i.1.2.1.length → ℕ, IsOpenShopSchedule i.1 σ ∧
-    ∀ j p q, p ≠ q → σ p j ≤ σ q j → σ p j + taskLength i.1 p j + delay i p q ≤ σ q j
-
-open Classical in
-/-- OPEN SHOP WITH TRANSPORTATION DELAYS `O|p_ij=1;t_kl=t_lk|C_max` as a decision problem over
-bitstrings. -/
-noncomputable def unitOpenShopSymmetricTransportationDelaysDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitOpenShopSymmetricTransportationDelaysInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopSymmetricTransportationDelaysFeasible i)
-  | none => false
 
 /-- **OPEN SHOP WITH TRANSPORTATION DELAYS `O|p_ij=1;t_kl=t_lk|C_max` is NP-complete.** Source:
 Rayward-Smith and Rebaine (1992), Theorem 2; Brucker and Knust, scheduling classification,

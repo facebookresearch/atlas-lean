@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopThreeJobsWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopThreeJobsDefs
 
 @[expose] public section
 
@@ -83,27 +80,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: that of `FMPM|n = 3|C_max` (the machine environment is well
-formed, exactly three jobs, one processing time per stage) and every stage machine set is
-nonempty. -/
-def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  MultipurposeFlowShopThreeJobs.WellFormed i ∧ ∀ M ∈ i.2.1, M ≠ []
-
-/-- Some MPM open-shop schedule of the jobs has makespan at most `K`. -/
-def MultipurposeOpenShopThreeJobsFeasible (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsMPMOpenShopSchedule i.1 i.2.1 (processingTime i) σ a ∧
-      ∀ j, completionTime (processingTime i) σ j ≤ i.2.2.2
-
-open Classical in
-/-- `OMPM|n = 3|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopThreeJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopThreeJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopThreeJobsFeasible i)
-  | none => false
 
 /-- **`OMPM|n = 3|C_max` is NP-complete.** Source: Brucker (2007), Section 10.2; Gonzalez and
 Sahni (1976); Brucker and Knust, *Complexity results for scheduling problems*. -/

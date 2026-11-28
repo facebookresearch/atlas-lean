@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OpenShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorNoWaitOpenShopDefs
 
 @[expose] public section
 
@@ -65,26 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed OPEN-SHOP SCHEDULING instance with two
-processors. -/
-def WellFormed (i : OpenShopSchedulingInstance) : Prop :=
-  NoWaitFlowShopScheduling.WellFormed i ∧ i.1 = 2
-
-/-- An open-shop schedule meeting the deadline in which every job runs its tasks back to back:
-one task starts exactly when the job's task on the other processor ends. -/
-def TwoProcessorNoWaitOpenShopFeasible (i : OpenShopSchedulingInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsOpenShopSchedule i σ ∧
-    ∀ j, ∃ p q : Fin i.1, p ≠ q ∧ σ q j = σ p j + taskLength i p j
-
-open Classical in
-/-- TWO-PROCESSOR NO-WAIT OPEN-SHOP SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def twoProcessorNoWaitOpenShopDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OpenShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorNoWaitOpenShopFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR NO-WAIT OPEN-SHOP SCHEDULING is NP-complete.** Source: Garey and Johnson
 (1979), [SS16]; Sahni and Cho (1979). -/

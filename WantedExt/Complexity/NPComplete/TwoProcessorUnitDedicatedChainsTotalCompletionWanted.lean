@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.TwoProcessorUnitDedicatedChainsMakespanWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorUnitDedicatedChainsTotalCompletionDefs
 
 @[expose] public section
 
@@ -64,20 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some schedule has total completion time `Σ_j (s j + 1)` at most `K`. -/
-def TwoProcessorUnitDedicatedChainsTotalCompletionFeasible
-    (i : TwoProcessorUnitDedicatedChainsInstance) : Prop :=
-  ∃ s, IsSchedule i s ∧ (∑ j, (s j + 1)) ≤ i.1.2.2
-
-open Classical in
-/-- `P2|chains;p_i=1;fix_i|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorUnitDedicatedChainsTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorUnitDedicatedChainsInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorUnitDedicatedChainsTotalCompletionFeasible i)
-  | none => false
 
 /-- **DEDICATED-PROCESSOR SCHEDULING `P2|chains;p_i=1;fix_i|ΣC_i` is NP-complete.** Source:
 Hoogeveen, van de Velde and Veltman (1994), Theorem 3.6. -/

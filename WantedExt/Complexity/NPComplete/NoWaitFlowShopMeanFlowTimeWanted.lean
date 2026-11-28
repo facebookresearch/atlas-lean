@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.NoWaitFlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.NoWaitFlowShopMeanFlowTimeDefs
 
 @[expose] public section
 
@@ -62,26 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- There is a no-wait flow-shop schedule (each job's task on processor `p + 1` starts exactly
-when its task on processor `p` finishes) whose sum over all jobs of the completion times on
-the last processor is at most `K`. -/
-def NoWaitFlowShopMeanFlowTimeFeasible
-    (i : NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, NoWaitFlowShopScheduling.IsFlowShopSchedule i σ ∧
-    (∀ j p q, q.1 = p.1 + 1 → σ q j = σ p j + NoWaitFlowShopScheduling.taskLength i p j) ∧
-    ∀ p : Fin i.1, p.1 + 1 = i.1 →
-      ∑ j, (σ p j + NoWaitFlowShopScheduling.taskLength i p j) ≤ i.2.2
-
-open Classical in
-/-- NO-WAIT FLOW-SHOP MEAN FLOW TIME as a decision problem over bitstrings. -/
-noncomputable def noWaitFlowShopMeanFlowTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingInstance) x with
-  | some i => decide (NoWaitFlowShopScheduling.WellFormed i ∧
-      NoWaitFlowShopMeanFlowTimeFeasible i)
-  | none => false
 
 /-- **NO-WAIT FLOW-SHOP MEAN FLOW TIME is NP-complete.** Source: Garey and Johnson (1979),
 [SS16], comment; Lenstra, Rinnooy Kan, and Brucker (1977). -/

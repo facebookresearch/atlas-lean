@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.NoWaitFlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.NoWaitFlowShopFixedProcessorsDefs
 
 @[expose] public section
 
@@ -55,23 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed number `m` of processors: the parent's
-(`0 < m`, every job has `m` tasks, `0 < D`) and the instance has exactly `m` processors. -/
-def WellFormed (m : ℕ) (i : NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingInstance) :
-    Prop :=
-  NoWaitFlowShopScheduling.WellFormed i ∧ i.1 = m
-
-open Classical in
-/-- NO-WAIT FLOW-SHOP SCHEDULING with the number of processors fixed to `m`, as a decision
-problem over bitstrings. -/
-noncomputable def noWaitFlowShopFixedProcessorsDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingInstance) x with
-  | some i => decide (WellFormed m i ∧
-      NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingFeasible i)
-  | none => false
 
 /-- **NO-WAIT FLOW-SHOP SCHEDULING is NP-complete for every fixed number `m ≥ 4` of
 processors.** Source: Garey and Johnson (1979), [SS16], comment; Papadimitriou and Kanellakis

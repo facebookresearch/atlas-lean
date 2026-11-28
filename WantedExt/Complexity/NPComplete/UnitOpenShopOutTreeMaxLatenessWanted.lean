@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitFlowShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessDefs
 
 @[expose] public section
 
@@ -70,30 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `σ k j` (start of job `j`'s unit operation on machine `k`) is an open-shop schedule for the
-precedence arcs `A`: each machine starts its operations at pairwise different times, each job
-starts its operations at pairwise different times, and if job `i` precedes job `j` then every
-operation of `j` starts after every operation of `i` is completed. -/
-def IsUnitOpenShopSchedule (m n : ℕ) (A : List (ℕ × ℕ)) (σ : Fin m → Fin n → ℕ) : Prop :=
-  (∀ k, Function.Injective (σ k)) ∧ (∀ j, Function.Injective fun k => σ k j) ∧
-    ∀ i j, Prec A i j → ∀ k k', σ k i + 1 ≤ σ k' j
-
-/-- Some open-shop schedule completes every operation of every job `j` by time `d_j + K`
-(maximum lateness `max_j (C_j - d_j) ≤ K`). -/
-def UnitOpenShopOutTreeMaxLatenessFeasible (i : UnitFlowShopOutTreeMaxLatenessInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
-    ∀ (k : Fin i.1) (j : Fin i.2.1.length),
-      ((σ k j + 1 : ℕ) : ℤ) - toInt (i.2.1.getD j ([], (0, 0))).2 ≤ toInt i.2.2.2
-
-open Classical in
-/-- OPEN SHOP O|p_ij=1;outtree|Lmax as a decision problem over bitstrings. -/
-noncomputable def unitOpenShopOutTreeMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopOutTreeMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopOutTreeMaxLatenessFeasible i)
-  | none => false
 
 /-- **OPEN SHOP O|p_ij=1;outtree|Lmax is NP-complete.** Source: Brucker and Knust's
 classification (strongly NP-hard), citing Timkovsky (2003). -/

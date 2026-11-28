@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.UnitFlowShopChainsWeightedCompletionWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopChainsWeightedCompletionDefs
 
 @[expose] public section
 
@@ -79,22 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some unit-time two-machine open-shop schedule obeys the chains and has total weighted
-completion time `∑_j w_j C_j` at most `K`, where `C_j = max (σ 0 j) (σ 1 j) + 1`. -/
-def UnitOpenShopChainsWeightedCompletionFeasible
-    (i : TwoProcessorUnitFlowShopChainsTardinessInstance) : Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, IsUnitOpenShopSchedule 2 i.1.length i.2.1 σ ∧
-    ∑ j, weight i j * (max (σ 0 j) (σ 1 j) + 1) ≤ i.2.2
-
-open Classical in
-/-- OPEN SHOP `O2|p_ij=1;chains|∑ w_i C_i` as a decision problem over bitstrings. -/
-noncomputable def unitOpenShopChainsWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorUnitFlowShopChainsTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopChainsWeightedCompletionFeasible i)
-  | none => false
 
 /-- **OPEN SHOP `O2|p_ij=1;chains|∑ w_i C_i` is NP-complete.** Source: Timkovsky (2003); Brucker
 and Knust, scheduling classification, class `o_nop`. -/

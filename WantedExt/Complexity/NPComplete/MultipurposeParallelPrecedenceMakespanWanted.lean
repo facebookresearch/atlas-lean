@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelPrecedenceMakespanDefs
 
 @[expose] public section
 
@@ -80,33 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an MPM job-shop instance (`m`, the jobs as lists of operations `(pᵢ, μᵢ)`, the
-bound `K`) and the precedence arcs `(i, k)`. -/
-abbrev MultipurposeParallelPrecedenceMakespanInstance := MPMJobShopInstance × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: at least one machine (`m ∈ ℤ⁺`), a well-formed MPM job-shop
-instance (machines `1, …, m`, nonempty machine sets) in which every job has exactly one
-operation, of processing time `1`, and the arcs name jobs and form an acyclic digraph. -/
-def WellFormed (i : MultipurposeParallelPrecedenceMakespanInstance) : Prop :=
-  0 < i.1.1 ∧ MPMWellFormed i.1.1 i.1 ∧ (∀ job ∈ i.1.2.1, job.length = 1 ∧ ∀ o ∈ job, o.1 = 1) ∧
-    PrecWellFormed i.1.2.1.length i.2
-
-/-- Some MPM schedule of the jobs obeys the precedence arcs and completes every job by `K`. -/
-def MultipurposeParallelPrecedenceMakespanFeasible
-    (i : MultipurposeParallelPrecedenceMakespanInstance) : Prop :=
-  ∃ a σ : Operation i.1 → ℕ, IsMPMJobShopSchedule i.1 a σ ∧
-    (∀ t t' : Operation i.1, Prec i.2 t.1 t'.1 → σ t + opLength i.1 t ≤ σ t') ∧
-    ∀ t, σ t + opLength i.1 t ≤ i.1.2.2
-
-open Classical in
-/-- `PMPM|prec; pᵢ = 1|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelPrecedenceMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelPrecedenceMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeParallelPrecedenceMakespanFeasible i)
-  | none => false
 
 /-- **`PMPM|prec; pᵢ = 1|C_max` is NP-complete.**
 Source: Garey and Johnson (1979), [SS9], and

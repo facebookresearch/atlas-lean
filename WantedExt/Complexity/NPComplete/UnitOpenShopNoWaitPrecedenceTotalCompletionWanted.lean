@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopNoWaitPrecedenceTotalCompletionDefs
 
 @[expose] public section
 
@@ -71,23 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some no-wait open-shop schedule has total completion time at most `K`: each job's
-operations fill `m` consecutive unit slots, and `Σ_j max_k (σ k j + 1) ≤ K`. -/
-def UnitOpenShopNoWaitPrecedenceTotalCompletionFeasible
-    (i : UnitFlowShopPrecedenceMakespanInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
-    (∀ j, ∃ s, ∀ k, s ≤ σ k j ∧ σ k j < s + i.1) ∧
-    ∑ j, Finset.univ.sup (fun k => σ k j + 1) ≤ i.2.2.2
-
-open Classical in
-/-- NO-WAIT OPEN SHOP O|p_ij=1;prec;no-wait|ΣC_i as a decision problem over bitstrings. -/
-noncomputable def unitOpenShopNoWaitPrecedenceTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopPrecedenceMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopNoWaitPrecedenceTotalCompletionFeasible i)
-  | none => false
 
 /-- **NO-WAIT OPEN SHOP O|p_ij=1;prec;no-wait|ΣC_i is NP-complete.** Source: Brucker and
 Knust's classification (strongly NP-hard), citing Lenstra and Rinnooy Kan (1978); membership in

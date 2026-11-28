@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopTwoMachinesMaximumLatenessWanted
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopTwoMachinesMaximumLatenessDefs
 
 @[expose] public section
 
@@ -87,30 +84,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the stage processor sets are well formed for two processors
-(`StagesWellFormed`), there is at least one job, every job lists one processing time per stage,
-and there is one due date per job. -/
-def WellFormed (i : MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) : Prop :=
-  StagesWellFormed 2 i.1 ∧ i.2.1 ≠ [] ∧ (∀ job ∈ i.2.1, job.length = i.1.length) ∧
-    i.2.2.1.length = i.2.1.length
-
-/-- Some MPT open-shop schedule of the jobs completes every job `j` with lateness
-`C_j - d_j ≤ y⁺ - y⁻`. -/
-def MultiprocessorTaskOpenShopTwoMachinesMaximumLatenessFeasible
-    (i : MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, IsMPTOpenShopSchedule i.1 (processingTime i) σ ∧
-    ∀ j, completionTime (processingTime i) σ j + i.2.2.2.2 ≤ i.2.2.1.getD j 0 + i.2.2.2.1
-
-open Classical in
-/-- `OMPT2||L_max` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopTwoMachinesMaximumLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultiprocessorTaskOpenShopTwoMachinesMaximumLatenessFeasible i)
-  | none => false
 
 /-- **`OMPT2||L_max` is NP-complete.** Source: Brucker and Knust, *Complexity results for
 scheduling problems*; Lawler, Lenstra, and Rinnooy Kan (1981, 1982); Brucker (2007),

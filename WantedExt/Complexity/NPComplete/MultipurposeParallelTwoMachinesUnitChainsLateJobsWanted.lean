@@ -25,12 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
-public import WantedExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesUnitChainsMakespanWanted
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesUnitChainsLateJobsDefs
 
 @[expose] public section
 
@@ -79,35 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus a
 polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a `PMPM2|chains; pᵢ = 1|C_max` instance (whose bound is the bound `K` on the number
-of late jobs) and the due dates `dᵢ`, job `j` having the `j`-th listed due date. -/
-abbrev MultipurposeParallelTwoMachinesUnitChainsLateJobsInstance :=
-  MultipurposeParallelTwoMachinesUnitChainsMakespanInstance × List ℕ
-
-/-- Well-formedness of an instance: a well-formed `PMPM2|chains; pᵢ = 1|C_max` instance and one due
-date per job. -/
-def WellFormed (i : MultipurposeParallelTwoMachinesUnitChainsLateJobsInstance) : Prop :=
-  MultipurposeParallelTwoMachinesUnitChainsMakespan.WellFormed i.1 ∧
-    i.2.length = i.1.1.2.1.length
-
-/-- Some MPM schedule of the jobs obeys the precedence arcs and has at most `K` late jobs: jobs
-whose operation `t` completes after the due date of its job, `d < σ t + p_t`. -/
-def MultipurposeParallelTwoMachinesUnitChainsLateJobsFeasible
-    (i : MultipurposeParallelTwoMachinesUnitChainsLateJobsInstance) : Prop :=
-  ∃ a σ : Operation i.1.1 → ℕ, IsMPMJobShopSchedule i.1.1 a σ ∧
-    (∀ t t' : Operation i.1.1, Prec i.1.2 t.1 t'.1 → σ t + opLength i.1.1 t ≤ σ t') ∧
-    (Finset.univ.filter fun t : Operation i.1.1 =>
-      i.2.getD t.1 0 < σ t + opLength i.1.1 t).card ≤ i.1.1.2.2
-
-open Classical in
-/-- `PMPM2|chains; pᵢ = 1|ΣUᵢ` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelTwoMachinesUnitChainsLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelTwoMachinesUnitChainsLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeParallelTwoMachinesUnitChainsLateJobsFeasible i)
-  | none => false
 
 /-- **MPM PARALLEL MACHINES `PMPM2|chains; pᵢ = 1|ΣUᵢ` is NP-complete.** Source: Brucker and Knust's
 classification ("Single-machine problem": Lenstra and Rinnooy Kan (1980), `1|chains;p_i=1|ΣU_i`);

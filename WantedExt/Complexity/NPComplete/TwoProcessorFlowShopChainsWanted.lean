@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorFlowShopChainsDefs
 
 @[expose] public section
 
@@ -74,53 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the [SS15] instance of `FlowShopSchedulingWanted` (the number of processors
-`m`, one list of task lengths per job, and the deadline `D`), and the arcs `(j, k)` of the
-chains, `j` the immediate predecessor of `k`. -/
-abbrev TwoProcessorFlowShopChainsInstance :=
-  FlowShopScheduling.FlowShopSchedulingInstance × List (ℕ × ℕ)
-
-/-- The arc relation of the chains: `j` is the immediate predecessor of `k` when the pair
-`(j, k)` is listed. -/
-def Arc (i : TwoProcessorFlowShopChainsInstance) (j k : Fin i.1.2.1.length) : Prop :=
-  ((j : ℕ), (k : ℕ)) ∈ i.2
-
-/-- Well-formedness of an instance: the [SS15] instance is well-formed (`0 < m`, every job has
-`m` tasks, `0 < D`), `m = 2`, every arc names two jobs, no two distinct arcs share their tail
-(at most one immediate successor) or their head (at most one immediate predecessor), and the
-arcs have no cycle. -/
-def WellFormed (i : TwoProcessorFlowShopChainsInstance) : Prop :=
-  FlowShopScheduling.WellFormed i.1 ∧ i.1.1 = 2 ∧
-    (∀ a ∈ i.2, a.1 < i.1.2.1.length ∧ a.2 < i.1.2.1.length) ∧
-    (∀ a ∈ i.2, ∀ b ∈ i.2, a.1 = b.1 → a = b) ∧
-    (∀ a ∈ i.2, ∀ b ∈ i.2, a.2 = b.2 → a = b) ∧
-    ∀ j, ¬ Relation.TransGen (Arc i) j j
-
-/-- Some schedule `σ p j` (start of job `j`'s task on processor `p`) ends every task by `D`,
-runs one task at a time on each processor, runs each job's tasks in processor order, and starts
-job `k` (its task on the first processor) no earlier than the completion of its immediate
-predecessor `j` (of `j`'s task on the last processor). -/
-def TwoProcessorFlowShopChainsFeasible (i : TwoProcessorFlowShopChainsInstance) : Prop :=
-  ∃ σ : Fin i.1.1 → Fin i.1.2.1.length → ℕ,
-    (∀ p j, σ p j + FlowShopScheduling.len i.1 p j ≤ i.1.2.2) ∧
-    (∀ p j k, j ≠ k →
-      σ p j + FlowShopScheduling.len i.1 p j ≤ σ p k ∨
-        σ p k + FlowShopScheduling.len i.1 p k ≤ σ p j) ∧
-    (∀ (p : Fin i.1.1) (hp : p.1 + 1 < i.1.1) j,
-      σ p j + FlowShopScheduling.len i.1 p j ≤ σ ⟨p.1 + 1, hp⟩ j) ∧
-    ∀ j k, Arc i j k → ∀ p q : Fin i.1.1, p.1 + 1 = i.1.1 → q.1 = 0 →
-      σ p j + FlowShopScheduling.len i.1 p j ≤ σ q k
-
-open Classical in
-/-- TWO-PROCESSOR FLOW-SHOP SCHEDULING WITH CHAIN PRECEDENCE CONSTRAINTS as a decision problem
-over bitstrings. -/
-noncomputable def twoProcessorFlowShopChainsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorFlowShopChainsInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorFlowShopChainsFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR FLOW-SHOP SCHEDULING WITH CHAIN PRECEDENCE CONSTRAINTS is NP-complete.**
 Source: Lenstra, Rinnooy Kan, and Brucker (1977), Theorem 4(h); Brucker and Knust's

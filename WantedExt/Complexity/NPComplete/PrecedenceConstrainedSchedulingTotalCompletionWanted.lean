@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingTotalCompletionDefs
 
 @[expose] public section
 
@@ -67,23 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some schedule on `m` identical machines that obeys the precedence constraints has total
-completion time `Σ_t (σ(t) + l(t))` at most `K`. -/
-def PrecedenceConstrainedSchedulingTotalCompletionFeasible
-    (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
-  ∃ σ : Task i → ℕ, (∀ u, (running i σ u).card ≤ i.2.1) ∧
-    (∀ t t', Prec i t t' → σ t + taskLength i t ≤ σ t') ∧
-    (∑ t, (σ t + taskLength i t)) ≤ i.2.2.2
-
-open Classical in
-/-- `P|prec;p_i=1|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def precedenceConstrainedSchedulingTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceConstrainedSchedulingTotalCompletionFeasible i)
-  | none => false
 
 /-- **PRECEDENCE CONSTRAINED SCHEDULING with total completion time (`P|prec;p_i=1|ΣC_i`) is
 NP-complete.** Source: Lenstra and Rinnooy Kan (1978); Graham, Lawler, Lenstra and Rinnooy Kan

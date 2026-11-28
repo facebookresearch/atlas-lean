@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopThreeJobsWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopMakespanDefs
 
 @[expose] public section
 
@@ -78,33 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, one list
-`[p_i1, …, p_ir]` of processing times per job (any number of jobs), and the bound `K` (the
-instance type of `MultipurposeFlowShopThreeJobsWanted`). -/
-abbrev MultipurposeOpenShopMakespanInstance := MultipurposeFlowShopThreeJobsInstance
-
-/-- Well-formedness of an instance: the machine environment is well formed (`StagesWellFormed`:
-at least one stage, machine indices below `m`, pairwise different machine sets), every machine
-set is nonempty, and every job lists one processing time per stage. -/
-def WellFormed (i : MultipurposeOpenShopMakespanInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
-    ∀ job ∈ i.2.2.1, job.length = i.2.1.length
-
-/-- Some MPM open-shop schedule of the jobs has makespan at most `K`. -/
-def MultipurposeOpenShopMakespanFeasible (i : MultipurposeOpenShopMakespanInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsMPMOpenShopSchedule i.1 i.2.1 (processingTime i) σ a ∧
-      ∀ j, completionTime (processingTime i) σ j ≤ i.2.2.2
-
-open Classical in
-/-- `OMPM||C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeOpenShopMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopMakespanFeasible i)
-  | none => false
 
 /-- **`OMPM||C_max` is NP-complete.** Source: Brucker and Knust's classification (Lenstra,
 unpublished); Garey and Johnson (1979), [SS14]; Gonzalez and Sahni (1976). -/

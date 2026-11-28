@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeUnitOpenShopReleaseLateJobsDefs
 
 @[expose] public section
 
@@ -72,37 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an `OMPM||C_max` instance (the number `m` of machines, the stage machine sets,
-one list of processing times per job, and the bound `K` on the number of late jobs) and the
-pairs `(r_i, d_i)` of release date and due date, one per job. -/
-abbrev MultipurposeUnitOpenShopReleaseLateJobsInstance :=
-  MultipurposeOpenShopMakespanInstance × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: a well-formed `OMPM||C_max` instance with all processing
-times `1`, and one release date and due date per job. -/
-def WellFormed (i : MultipurposeUnitOpenShopReleaseLateJobsInstance) : Prop :=
-  MultipurposeOpenShopMakespan.WellFormed i.1 ∧ (∀ job ∈ i.1.2.2.1, ∀ p ∈ job, p = 1) ∧
-    i.2.length = i.1.2.2.1.length
-
-/-- Some MPM open-shop schedule of the unit-time jobs starts no operation of job `i` before `r_i`
-and has at most `K` late jobs (jobs `i` with `d_i < C_i`). -/
-def MultipurposeUnitOpenShopReleaseLateJobsFeasible
-    (i : MultipurposeUnitOpenShopReleaseLateJobsInstance) : Prop :=
-  ∃ σ : Job i.1 → Stage i.1 → ℕ, ∃ a : Job i.1 → Stage i.1 → Fin i.1.1,
-    IsMPMOpenShopSchedule i.1.1 i.1.2.1 (processingTime i.1) σ a ∧
-      (∀ (j : Job i.1) (s : Stage i.1), (i.2.getD j (0, 0)).1 ≤ σ j s) ∧
-      (Finset.univ.filter fun j : Job i.1 =>
-        (i.2.getD j (0, 0)).2 < completionTime (processingTime i.1) σ j).card ≤ i.1.2.2.2
-
-open Classical in
-/-- `OMPM|p_ij=1;r_i|ΣU_i` as a decision problem over bitstrings. -/
-noncomputable def multipurposeUnitOpenShopReleaseLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeUnitOpenShopReleaseLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeUnitOpenShopReleaseLateJobsFeasible i)
-  | none => false
 
 /-- **`OMPM|p_ij=1;r_i|ΣU_i` is NP-complete.** Source: Brucker and Knust's classification;
 Kravchenko (2000). -/

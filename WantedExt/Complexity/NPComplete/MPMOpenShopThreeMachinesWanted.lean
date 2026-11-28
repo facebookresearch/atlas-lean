@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MPMFlowShopThreeMachinesWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MPMOpenShopThreeMachinesDefs
 
 @[expose] public section
 
@@ -80,21 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPM open-shop schedule on the three machines (`σ` start times, `a` machines, operation
-`(j, s)` of length `p_js`) completes every job by `K`. -/
-def MPMOpenShopThreeMachinesFeasible (i : MPMFlowShopInstance) : Prop :=
-  ∃ σ : Fin i.1.2.1.length → Fin i.2.length → ℕ, ∃ a : Fin i.1.2.1.length → Fin i.2.length → Fin 3,
-    IsMPMOpenShopSchedule 3 i.2 (fun j s => (i.1.2.1.get j).getD s 0) σ a ∧
-      ∀ j, completionTime (fun j s => (i.1.2.1.get j).getD s 0) σ j ≤ i.1.2.2
-
-open Classical in
-/-- `OMPM3||C_max` as a decision problem over bitstrings. -/
-noncomputable def mpmOpenShopThreeMachinesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MPMFlowShopInstance) x with
-  | some i => decide (WellFormed i ∧ MPMOpenShopThreeMachinesFeasible i)
-  | none => false
 
 /-- **MPM OPEN SHOP WITH THREE MACHINES (OMPM3||C_max) is NP-complete.** Source: Garey and Johnson
 (1979), [SS14]; Gonzalez and Sahni (1976) (`O3||C_max`, the special case `μ_j = {M_j}`); Brucker

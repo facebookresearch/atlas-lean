@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import WantedExt.Complexity.NPComplete.TwoProcessorUnitFlowShopChainsTardinessWanted
-public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysWanted
+public import CSLibExt.Complexity.NPComplete.UnitFlowShopChainsLateJobsDefs
 
 @[expose] public section
 
@@ -75,26 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some unit-time two-machine flow-shop schedule obeys the chains (job `b` starts on `M₁` only
-after its immediate predecessor `a` completes on `M₂`) and has at most `K` late jobs: jobs `j`
-with `d_j < C_j`, where `C_j = σ 1 j + 1`. -/
-def UnitFlowShopChainsLateJobsFeasible (i : TwoProcessorUnitFlowShopChainsTardinessInstance) :
-    Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, IsUnitFlowShopSchedule (fun _ => 0) σ ∧
-    (∀ a b, Arc i a b → σ 1 a + 1 ≤ σ 0 b) ∧
-    (Finset.univ.filter fun j => dueDate i j < σ 1 j + 1).card ≤ i.2.2
-
-open Classical in
-/-- FLOW SHOP `F2|p_ij=1;chains|∑ U_i` as a decision problem over bitstrings. -/
-noncomputable def unitFlowShopChainsLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorUnitFlowShopChainsTardinessInstance) x with
-  | some i =>
-    decide (TwoProcessorUnitFlowShopChainsTardiness.WellFormed i ∧
-      UnitFlowShopChainsLateJobsFeasible i)
-  | none => false
 
 /-- **FLOW SHOP `F2|p_ij=1;chains|∑ U_i` is NP-complete.** Source: Brucker and Knust (1999);
 Brucker and Knust, scheduling classification, class `f_nop`. -/

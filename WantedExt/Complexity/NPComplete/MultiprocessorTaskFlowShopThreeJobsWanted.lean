@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopPrecedenceMakespanWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskFlowShopThreeJobsDefs
 
 @[expose] public section
 
@@ -82,27 +79,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed `FMPM|n = 3|C_max` instance (at least one stage,
-machine indices below `m`, pairwise different sets, exactly three jobs, one processing time per
-stage) whose machine sets are all nonempty. -/
-def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  MultipurposeFlowShopThreeJobs.WellFormed i ∧ ∀ M ∈ i.2.1, M ≠ []
-
-/-- Some MPT flow-shop schedule of the three jobs has makespan at most `K`. -/
-def MultiprocessorTaskFlowShopThreeJobsFeasible (i : MultipurposeFlowShopThreeJobsInstance) :
-    Prop :=
-  ∃ σ : Job i → Stage i → ℕ, IsMPTFlowShopSchedule i.2.1 (processingTime i) σ ∧
-    ∀ j, completionTime (processingTime i) σ j ≤ i.2.2.2
-
-open Classical in
-/-- `FMPT|n = 3|C_max` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskFlowShopThreeJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopThreeJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskFlowShopThreeJobsFeasible i)
-  | none => false
 
 /-- **MPT FLOW SHOP WITH THREE JOBS (`FMPT|n = 3|C_max`) is NP-complete.** Source: Krämer (1995),
 as recorded in the Brucker-Knust classification; Brucker (2007), Chapter 11 (model). -/

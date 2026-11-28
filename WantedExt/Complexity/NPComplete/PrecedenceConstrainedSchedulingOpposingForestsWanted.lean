@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingOpposingForestsDefs
 
 @[expose] public section
 
@@ -68,37 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `t` is an immediate predecessor of `t'` (and `t'` an immediate successor of `t`): `t < t'`,
-and no task `c` has `t < c < t'`. -/
-def ImmediatePredecessor (i : PrecedenceConstrainedSchedulingInstance) (t t' : Task i) : Prop :=
-  Prec i t t' ∧ ∀ c, ¬ (Prec i t c ∧ Prec i c t')
-
-/-- The partial order is an opposing forest: the tasks split into a part `A` and its complement
-with no precedence between the two parts, no task of `A` has more than one immediate successor
-(an in-forest), and no task outside `A` has more than one immediate predecessor (an
-out-forest). -/
-def IsOpposingForest (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
-  ∃ A : Set (Task i), (∀ t t', Prec i t t' → (t ∈ A ↔ t' ∈ A)) ∧
-    (∀ t ∈ A, ∀ a b, ImmediatePredecessor i t a → ImmediatePredecessor i t b → a = b) ∧
-    ∀ t' ∉ A, ∀ a b, ImmediatePredecessor i a t' → ImmediatePredecessor i b t' → a = b
-
-/-- Well-formedness of an instance: it is a well-formed PRECEDENCE CONSTRAINED SCHEDULING
-instance (unit lengths, `m > 0`, the listed pairs name tasks and form a strict partial order,
-`D > 0`), and the partial order is an opposing forest. -/
-def WellFormed (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
-  PrecedenceConstrainedScheduling.WellFormed i ∧ IsOpposingForest i
-
-open Classical in
-/-- PRECEDENCE CONSTRAINED SCHEDULING for opposing forests as a decision problem over
-bitstrings. -/
-noncomputable def precedenceConstrainedSchedulingOpposingForestsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧
-      PrecedenceConstrainedScheduling.PrecedenceConstrainedSchedulingFeasible i)
-  | none => false
 
 /-- **PRECEDENCE CONSTRAINED SCHEDULING is NP-complete for opposing forests.** Source: Garey and
 Johnson (1979), [SS9]; Garey, Johnson, Tarjan and Yannakakis (1983). -/

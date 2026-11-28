@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.RobotFlowShopUnitWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopUnitWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -75,23 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some single-robot schedule has total weight of late jobs, the sum of `wⱼ` over the jobs
-with `dⱼ < Cⱼ = σ 1 j + 1`, at most `K`. -/
-def RobotFlowShopUnitWeightedLateJobsFeasible
-    (i : RobotFlowShopUnitWeightedTardinessInstance) : Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, ∃ ρ : Job i → ℕ,
-    IsUnitRobotFlowShopSchedule (transportTime i) σ ρ ∧
-      ∑ j ∈ Finset.univ.filter (fun j => dueDate i j < σ 1 j + 1), weight i j ≤ i.2
-
-open Classical in
-/-- F2;R1|p_ij=1;t_i|Σw_iU_i as a decision problem over bitstrings. -/
-noncomputable def robotFlowShopUnitWeightedLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RobotFlowShopUnitWeightedTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ RobotFlowShopUnitWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **F2;R1|p_ij=1;t_i|Σw_iU_i is NP-complete.**
 Source: Brucker and Knust's classification, class `f_1ro`, citing Knust (1999); robot model of

@@ -28,9 +28,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopThreeMachinesWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopMakespanDefs
 
 @[expose] public section
 
@@ -94,20 +92,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: at least one processor (`m ≥ 1`), well-formed stage
-processor sets (`StagesWellFormed`), and one processing time per stage for every job. -/
-def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  0 < i.1 ∧ StagesWellFormed i.1 i.2.1 ∧ ∀ job ∈ i.2.2.1, job.length = i.2.1.length
-
-open Classical in
-/-- `OMPT||C_max` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopThreeJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskOpenShopThreeMachinesFeasible i)
-  | none => false
 
 /-- **`OMPT||C_max` is NP-complete.** Source: Brucker (2007), Chapter 11; Garey and Johnson
 (1979), [SS14] (Lenstra, 1977), and Williamson et al. (1997), via the classical open shop;

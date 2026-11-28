@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorChainPrecedenceSchedulingDefs
 
 @[expose] public section
 
@@ -74,23 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: `m = 2`, every task length is positive, the listed pairs are
-the arcs of disjoint chains on the tasks (distinct arcs naming tasks, no task with two immediate
-successors or two immediate predecessors, no cycle), and `D` is positive. -/
-def WellFormed (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
-  i.2.1 = 2 ∧ (∀ l ∈ i.1, 0 < l) ∧ F3UnitChainsLateJobs.ChainsWellFormed i.1.length i.2.2.1 ∧
-    0 < i.2.2.2
-
-open Classical in
-/-- IDENTICAL PARALLEL MACHINE SCHEDULING P2|chains|Cmax as a decision problem over
-bitstrings. -/
-noncomputable def twoProcessorChainPrecedenceSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceConstrainedSchedulingFeasible i)
-  | none => false
 
 /-- **IDENTICAL PARALLEL MACHINE SCHEDULING P2|chains|Cmax is NP-complete.** Source: Du, Leung,
 and Young (1991); Brucker and Knust's classification (`P2|chains|C_max`). -/

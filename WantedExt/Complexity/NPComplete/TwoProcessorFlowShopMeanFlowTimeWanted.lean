@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorFlowShopMeanFlowTimeDefs
 
 @[expose] public section
 
@@ -62,34 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (`0 < m`, every job has `m` tasks, `0 < K`)
-and `m = 2`. -/
-def WellFormed (i : FlowShopScheduling.FlowShopSchedulingInstance) : Prop :=
-  FlowShopScheduling.WellFormed i ∧ i.1 = 2
-
-/-- Some schedule `σ p j` (start of job `j`'s task on processor `p`) is one-to-one on each
-processor, runs one task at a time on each processor and each job's tasks in processor order,
-and the sum over all jobs of the completion times on the last processor is at most `K`. -/
-def TwoProcessorFlowShopMeanFlowTimeFeasible
-    (i : FlowShopScheduling.FlowShopSchedulingInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ,
-    (∀ p, Function.Injective (σ p)) ∧
-    (∀ p j k, j ≠ k →
-      σ p j + FlowShopScheduling.len i p j ≤ σ p k ∨
-        σ p k + FlowShopScheduling.len i p k ≤ σ p j) ∧
-    (∀ (p : Fin i.1) (hp : p.1 + 1 < i.1) j,
-      σ p j + FlowShopScheduling.len i p j ≤ σ ⟨p.1 + 1, hp⟩ j) ∧
-    ∀ p : Fin i.1, p.1 + 1 = i.1 → ∑ j, (σ p j + FlowShopScheduling.len i p j) ≤ i.2.2
-
-open Classical in
-/-- TWO-PROCESSOR FLOW-SHOP MEAN FLOW TIME as a decision problem over bitstrings. -/
-noncomputable def twoProcessorFlowShopMeanFlowTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FlowShopScheduling.FlowShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorFlowShopMeanFlowTimeFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR FLOW-SHOP MEAN FLOW TIME is NP-complete.** Source: Garey and Johnson
 (1979), [SS15], comment; Garey, Johnson and Sethi (1976). -/

@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted
-public import WantedExt.Complexity.NPComplete.TwoMachineFlowShopReleaseDatesWanted
+public import CSLibExt.Complexity.NPComplete.TwoMachineOpenShopReleaseDatesDefs
 
 @[expose] public section
 
@@ -72,28 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some open-shop schedule `σ p j` (start of job `j`'s task on processor `p`) ends every task
-by `K`, runs one task at a time on each processor, never runs the two tasks of a job at the same
-time, and starts both tasks of every job `j` no earlier than its release date `rⱼ`. -/
-def TwoMachineOpenShopReleaseDatesFeasible (i : TwoMachineFlowShopReleaseDatesInstance) :
-    Prop :=
-  ∃ σ : Fin i.1.1 → Fin i.1.2.1.length → ℕ,
-    (∀ p j, σ p j + FlowShopScheduling.len i.1 p j ≤ i.1.2.2) ∧
-    (∀ p j k, j ≠ k → σ p j + FlowShopScheduling.len i.1 p j ≤ σ p k ∨
-      σ p k + FlowShopScheduling.len i.1 p k ≤ σ p j) ∧
-    (∀ j p q, p ≠ q → σ p j + FlowShopScheduling.len i.1 p j ≤ σ q j ∨
-      σ q j + FlowShopScheduling.len i.1 q j ≤ σ p j) ∧
-    ∀ (p : Fin i.1.1) (j : Fin i.1.2.1.length), i.2.getD j 0 ≤ σ p j
-
-open Classical in
-/-- OPEN SHOP O2|r_i|Cmax as a decision problem over bitstrings. -/
-noncomputable def twoMachineOpenShopReleaseDatesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoMachineFlowShopReleaseDatesInstance) x with
-  | some i => decide (WellFormed i ∧ TwoMachineOpenShopReleaseDatesFeasible i)
-  | none => false
 
 /-- **OPEN SHOP O2|r_i|Cmax is NP-complete.** Source: Lawler, Lenstra, and Rinnooy Kan (1981;
 erratum 1982); Brucker and Knust's classification (`O2|r_i|C_max`, strongly NP-hard). -/

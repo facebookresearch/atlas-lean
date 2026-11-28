@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.RobotFlowShopUnitWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopUnitReleaseLatenessDefs
 
 @[expose] public section
 
@@ -77,48 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs, job `j` being the `j`-th triple `(rⱼ, tⱼ, dⱼ)` of its release date,
-transport time and due date, and the bound `y` as a pair `(y⁺, y⁻)` with `y = y⁺ - y⁻`. -/
-abbrev RobotFlowShopUnitReleaseLatenessInstance := List (ℕ × ℕ × ℕ) × (ℕ × ℕ)
-
-/-- The jobs of the instance, `Fin n` for `n` listed triples. -/
-abbrev Job (i : RobotFlowShopUnitReleaseLatenessInstance) : Type := Fin i.1.length
-
-/-- The release date `rⱼ` of job `j`. -/
-def releaseDate (i : RobotFlowShopUnitReleaseLatenessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The transport time `tⱼ` of job `j`. -/
-def transportTime (i : RobotFlowShopUnitReleaseLatenessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.1
-
-/-- The due date `dⱼ` of job `j`. -/
-def dueDate (i : RobotFlowShopUnitReleaseLatenessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.2
-
-/-- Well-formedness: there is at least one job, so that `L_max` is a maximum over a nonempty set
-(release dates, transport times and due dates are non-negative integers, and the bound
-`y⁺ - y⁻` is an arbitrary integer). -/
-def WellFormed (i : RobotFlowShopUnitReleaseLatenessInstance) : Prop := i.1 ≠ []
-
-/-- Some single-robot schedule starts every job on `M₁` no earlier than its release date and
-completes every job `j` with lateness `Cⱼ - dⱼ ≤ y⁺ - y⁻`, where `Cⱼ = σ 1 j + 1`. -/
-def RobotFlowShopUnitReleaseLatenessFeasible (i : RobotFlowShopUnitReleaseLatenessInstance) :
-    Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, ∃ ρ : Job i → ℕ,
-    IsUnitRobotFlowShopSchedule (transportTime i) σ ρ ∧
-      (∀ j, releaseDate i j ≤ σ 0 j) ∧
-      ∀ j, σ 1 j + 1 + i.2.2 ≤ dueDate i j + i.2.1
-
-open Classical in
-/-- F2;R1|p_ij=1;t_i;r_i|L_max as a decision problem over bitstrings. -/
-noncomputable def robotFlowShopUnitReleaseLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RobotFlowShopUnitReleaseLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ RobotFlowShopUnitReleaseLatenessFeasible i)
-  | none => false
 
 /-- **F2;R1|p_ij=1;t_i;r_i|L_max is NP-complete.**
 Source: Brucker and Knust's classification, class `f_1ro`, citing Knust (1999); robot model of

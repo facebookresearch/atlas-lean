@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Dedup
-public import WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.MPMFlowShopThreeMachinesDefs
 
 @[expose] public section
 
@@ -69,54 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An MPM flow shop instance: a FLOW-SHOP SCHEDULING instance `(r, jobs, K)` (the number `r` of
-stages, one list of the `r` operation processing times per job, and the bound `K`) and the
-machine sets `μ₁, …, μᵣ` of the stages, as lists of machine indices. -/
-abbrev MPMFlowShopInstance := FlowShopScheduling.FlowShopSchedulingInstance × List (List ℕ)
-
-/-- The machine set `μ_p` of stage `p`. -/
-def machineSet (i : MPMFlowShopInstance) (p : Fin i.1.1) : List ℕ :=
-  i.2.getD p []
-
-/-- Well-formedness of an MPM flow shop instance with `m` machines: the FLOW-SHOP SCHEDULING
-instance is well-formed (`0 < r`, every job has `r` operations, `0 < K`), there is one machine
-set per stage, every machine set is nonempty and contains only machines `0, …, m - 1`, and the
-machine sets are pairwise different (as sets). -/
-def MPMWellFormed (m : ℕ) (i : MPMFlowShopInstance) : Prop :=
-  FlowShopScheduling.WellFormed i.1 ∧ i.2.length = i.1.1 ∧
-    (∀ μ ∈ i.2, μ ≠ [] ∧ ∀ M ∈ μ, M < m) ∧ (i.2.map List.toFinset).Nodup
-
-/-- `σ` and `a` form an MPM flow shop schedule: the operation of job `j` at stage `p` starts at
-`σ p j` on machine `a p j ∈ μ_p`; two different operations on the same machine do not overlap;
-and each job's operations run in stage order. -/
-def IsMPMFlowShopSchedule (i : MPMFlowShopInstance)
-    (σ a : Fin i.1.1 → Fin i.1.2.1.length → ℕ) : Prop :=
-  (∀ p j, a p j ∈ machineSet i p) ∧
-    (∀ p j q k, (p, j) ≠ (q, k) → a p j = a q k →
-      σ p j + FlowShopScheduling.len i.1 p j ≤ σ q k ∨
-        σ q k + FlowShopScheduling.len i.1 q k ≤ σ p j) ∧
-    ∀ (p : Fin i.1.1) (hp : p.1 + 1 < i.1.1) j,
-      σ p j + FlowShopScheduling.len i.1 p j ≤ σ ⟨p.1 + 1, hp⟩ j
-
-/-- Well-formedness of an instance: a well-formed MPM flow shop instance with `m = 3`
-machines. -/
-def WellFormed (i : MPMFlowShopInstance) : Prop :=
-  MPMWellFormed 3 i
-
-/-- Some MPM flow shop schedule completes every operation by `K`. -/
-def MPMFlowShopThreeMachinesFeasible (i : MPMFlowShopInstance) : Prop :=
-  ∃ σ a : Fin i.1.1 → Fin i.1.2.1.length → ℕ, IsMPMFlowShopSchedule i σ a ∧
-    ∀ p j, σ p j + FlowShopScheduling.len i.1 p j ≤ i.1.2.2
-
-open Classical in
-/-- MULTI-PURPOSE MACHINE FLOW SHOP WITH THREE MACHINES as a decision problem over
-bitstrings. -/
-noncomputable def mpmFlowShopThreeMachinesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MPMFlowShopInstance) x with
-  | some i => decide (WellFormed i ∧ MPMFlowShopThreeMachinesFeasible i)
-  | none => false
 
 /-- **MULTI-PURPOSE MACHINE FLOW SHOP WITH THREE MACHINES (`FMPM3||C_max`) is NP-complete.**
 Source: Garey, Johnson and Sethi (1976) (`F3||C_max`, the special case `μⱼ = {Mⱼ}`); Brucker

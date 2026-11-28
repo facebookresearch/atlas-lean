@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MPMOpenShopTwoMachinesUnitChainsWeightedCompletionWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MPMFlowShopTwoMachinesUnitChainsWeightedCompletionDefs
 
 @[expose] public section
 
@@ -88,24 +84,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPM flow-shop schedule of the unit-time jobs on the two machines obeying the chain arcs has
-total weighted completion time `Σ_j w_j C_j ≤ K`. -/
-def MPMFlowShopTwoMachinesUnitChainsWeightedCompletionFeasible
-    (i : MPMOpenShopTwoMachinesUnitChainsWeightedCompletionInstance) : Prop :=
-  ∃ σ : Fin i.2.1.length → Fin i.1.length → ℕ, ∃ a : Fin i.2.1.length → Fin i.1.length → Fin 2,
-    IsPrecedenceSchedule 2 i.1 i.2.2.1 σ a ∧
-      ∑ j, i.2.1.get j * completionTime (fun _ _ => 1) σ j ≤ i.2.2.2
-
-open Classical in
-/-- `FMPM2|chains;p_ij=1|Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def mpmFlowShopTwoMachinesUnitChainsWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MPMOpenShopTwoMachinesUnitChainsWeightedCompletionInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MPMFlowShopTwoMachinesUnitChainsWeightedCompletionFeasible i)
-  | none => false
 
 /-- **MPM FLOW SHOP FMPM2|chains;p_ij=1|Σw_iC_i is NP-complete.** Source: Tanaev, Sotskov and
 Strusevich (1994), as recorded in the Brucker-Knust classification (with the special case

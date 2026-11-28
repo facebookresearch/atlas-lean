@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopTreeLatenessWanted
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopTreeLatenessDefs
 
 @[expose] public section
 
@@ -87,23 +84,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPT open-shop schedule of the unit-time jobs obeys the tree precedence constraints and
-has `C_j - d_j ≤ K` for every job `j`. -/
-def MultiprocessorTaskOpenShopTreeLatenessFeasible
-    (i : MultiprocessorTaskFlowShopTreeLatenessInstance) : Prop :=
-  ∃ σ : Fin i.2.2.1.length → Fin i.2.1.length → ℕ,
-    IsMPTOpenShopPrecedenceSchedule i.2.1 i.2.2.2.1 σ ∧
-      ∀ j, (completionTime (fun _ _ => 1) σ j : ℤ) - dueDate i j ≤ bound i
-
-open Classical in
-/-- `OMPT|tree; p_ij = 1|L_max` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopTreeLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorTaskFlowShopTreeLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskOpenShopTreeLatenessFeasible i)
-  | none => false
 
 /-- **`OMPT|tree; p_ij = 1|L_max` is NP-complete.** Source: Timkovsky (2003); Brucker and
 Knust, *Complexity results for scheduling problems*; Brucker (2004), Chapter 11. -/

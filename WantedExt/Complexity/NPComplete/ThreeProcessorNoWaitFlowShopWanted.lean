@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.NoWaitFlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.ThreeProcessorNoWaitFlowShopDefs
 
 @[expose] public section
 
@@ -56,21 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (`0 < m`, every job has `m` tasks, `0 < D`)
-and `m = 3`. -/
-def WellFormed (i : NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingInstance) : Prop :=
-  NoWaitFlowShopScheduling.WellFormed i ∧ i.1 = 3
-
-open Classical in
-/-- THREE-PROCESSOR NO-WAIT FLOW-SHOP SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def threeProcessorNoWaitFlowShopDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧
-      NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingFeasible i)
-  | none => false
 
 /-- **THREE-PROCESSOR NO-WAIT FLOW-SHOP SCHEDULING is NP-complete.** Source: Garey and Johnson
 (1979), [SS16], comment; Röck (1984). -/

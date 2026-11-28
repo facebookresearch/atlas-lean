@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Order.Defs.Unbundled
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorPrecedenceSchedulingLengthsOneTwoDefs
 
 @[expose] public section
 
@@ -59,28 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every task has length `1` or `2`, the number `m` of
-processors is `2`, every listed pair names two tasks, the listed pairs form a strict partial
-order, and `D` is positive. -/
-def WellFormed (i : PrecedenceConstrainedScheduling.PrecedenceConstrainedSchedulingInstance) :
-    Prop :=
-  (∀ l ∈ i.1, l = 1 ∨ l = 2) ∧ i.2.1 = 2 ∧
-    (∀ p ∈ i.2.2.1, p.1 < i.1.length ∧ p.2 < i.1.length) ∧
-    IsStrictOrder (PrecedenceConstrainedScheduling.Task i)
-      (PrecedenceConstrainedScheduling.Prec i) ∧ 0 < i.2.2.2
-
-open Classical in
-/-- TWO-PROCESSOR PRECEDENCE CONSTRAINED SCHEDULING (task lengths 1 and 2) as a decision
-problem over bitstrings. -/
-noncomputable def twoProcessorPrecedenceSchedulingLengthsOneTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedScheduling.PrecedenceConstrainedSchedulingInstance) x with
-  | some i =>
-    decide (WellFormed i ∧
-      PrecedenceConstrainedScheduling.PrecedenceConstrainedSchedulingFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR PRECEDENCE CONSTRAINED SCHEDULING (task lengths 1 and 2) is
 NP-complete.** Source: Garey and Johnson (1979), [SS9]; Ullman (1975). -/

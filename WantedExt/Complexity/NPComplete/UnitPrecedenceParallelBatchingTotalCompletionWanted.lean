@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingTotalCompletionWanted
-public import WantedExt.Complexity.NPComplete.UnitPrecedenceParallelBatchingMakespanWanted
+public import CSLibExt.Complexity.NPComplete.UnitPrecedenceParallelBatchingTotalCompletionDefs
 
 @[expose] public section
 
@@ -80,15 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- `1|prec;p_i=1;p-batch;b<n|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def unitPrecedenceParallelBatchingTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceConstrainedSchedulingTotalCompletionFeasible i)
-  | none => false
 
 /-- **PARALLEL BATCHING `1|prec;p_i=1;p-batch;b<n|ΣC_i` is NP-complete.** Source: Brucker and
 Knust's classification (reduction from `P|prec;p_i=1|ΣC_i`, Lenstra and Rinnooy Kan 1978). -/

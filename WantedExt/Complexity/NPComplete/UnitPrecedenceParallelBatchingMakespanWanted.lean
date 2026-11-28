@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.UnitPrecedenceParallelBatchingMakespanDefs
 
 @[expose] public section
 
@@ -75,21 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is well-formed for PRECEDENCE CONSTRAINED SCHEDULING (unit
-lengths, `b > 0`, the listed pairs name jobs and form a strict partial order, `K > 0`), and the
-batch capacity is bounded: `b < n`. -/
-def WellFormed (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
-  PrecedenceConstrainedScheduling.WellFormed i ∧ i.2.1 < i.1.length
-
-open Classical in
-/-- `1|prec;p_i=1;p-batch;b<n|C_max` as a decision problem over bitstrings. -/
-noncomputable def unitPrecedenceParallelBatchingMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceConstrainedSchedulingFeasible i)
-  | none => false
 
 /-- **PARALLEL BATCHING `1|prec;p_i=1;p-batch;b<n|C_max` is NP-complete.** Source: Brucker and
 Knust's classification (reduction from `P|prec;p_i=1|C_max`, Ullman 1975). -/

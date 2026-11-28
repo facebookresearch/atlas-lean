@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Finset.Lattice.Fold
-public import WantedExt.Complexity.NPComplete.OpenShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorOpenShopMeanFlowTimeDefs
 
 @[expose] public section
 
@@ -74,27 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: two processors, every job consists of two tasks, and there
-is at least one job. -/
-def WellFormed (i : OpenShopSchedulingInstance) : Prop :=
-  i.1 = 2 ∧ (∀ job ∈ i.2.1, job.length = i.1) ∧ 0 < i.2.1.length
-
-/-- Some open-shop schedule `σ p j` (start of job `j`'s task on processor `p`), with every task
-ending by `K`, has total completion time `∑_j max_p (σ p j + l(t_p[j]))` at most `K`. -/
-def TwoProcessorOpenShopMeanFlowTimeFeasible (i : OpenShopSchedulingInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsOpenShopSchedule i σ ∧
-    ∑ j, Finset.univ.sup (fun p => σ p j + taskLength i p j) ≤ i.2.2
-
-open Classical in
-/-- TWO-PROCESSOR OPEN-SHOP MEAN FLOW TIME `O2||∑ C_i` as a decision problem over
-bitstrings. -/
-noncomputable def twoProcessorOpenShopMeanFlowTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OpenShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorOpenShopMeanFlowTimeFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR OPEN-SHOP MEAN FLOW TIME `O2||∑ C_i` is NP-complete.** Source: Achugbue
 and Chin (1982); Brucker and Knust, scheduling classification, class `o_nop`. -/

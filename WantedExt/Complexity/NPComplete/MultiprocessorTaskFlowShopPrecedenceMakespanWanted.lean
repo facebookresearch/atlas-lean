@@ -24,12 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Lattice.Fold
-public import Mathlib.Order.Interval.Finset.Nat
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskFlowShopPrecedenceMakespanDefs
 
 @[expose] public section
 
@@ -92,54 +87,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `σ` (start times) is an MPT flow-shop schedule of `n` jobs with processing times `p i s`
-and stage machine sets `μ`: operation `(i, s + 1)` starts no earlier than operation `(i, s)` is
-completed, and two different operations whose machine sets share a machine occupy disjoint time
-intervals `[σ i s, σ i s + p i s)`. -/
-def IsMPTFlowShopSchedule {n : ℕ} (μ : List (List ℕ)) (p σ : Fin n → Fin μ.length → ℕ) :
-    Prop :=
-  (∀ i (s : Fin μ.length) (hs : s.1 + 1 < μ.length), σ i s + p i s ≤ σ i ⟨s.1 + 1, hs⟩) ∧
-    ∀ i s i' s', (i, s) ≠ (i', s') → (∃ k, k ∈ μ.get s ∧ k ∈ μ.get s') →
-      Disjoint (Finset.Ico (σ i s) (σ i s + p i s)) (Finset.Ico (σ i' s') (σ i' s' + p i' s'))
-
-/-- `σ` is an MPT flow-shop schedule of `n` unit-time jobs (`p_ij = 1`) with stage machine sets
-`μ` that obeys the precedence constraints of the listed arcs: if `i → k`, then no operation of
-`k` starts before `C_i`. -/
-def IsMPTPrecedenceSchedule {n : ℕ} (μ : List (List ℕ)) (prs : List (ℕ × ℕ))
-    (σ : Fin n → Fin μ.length → ℕ) : Prop :=
-  IsMPTFlowShopSchedule μ (fun _ _ => 1) σ ∧
-    ∀ i k, Prec prs i k → ∀ s, completionTime (fun _ _ => 1) σ i ≤ σ k s
-
-/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, the jobs
-(job `i` listed by its processing times `(p_i1, …, p_ir)`), the arcs `(i, k)` with `i → k`, and
-the bound `K`. -/
-abbrev MultiprocessorTaskFlowShopPrecedenceMakespanInstance :=
-  ℕ × List (List ℕ) × List (List ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the machine environment is well formed
-(`StagesWellFormed`), every job has `r` unit processing times (`UnitJobs`), and the listed arcs
-describe an acyclic precedence digraph on the jobs (`PrecWellFormed`). -/
-def WellFormed (i : MultiprocessorTaskFlowShopPrecedenceMakespanInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ UnitJobs i.2.1.length i.2.2.1 ∧
-    PrecWellFormed i.2.2.1.length i.2.2.2.1
-
-/-- Some MPT flow-shop schedule of the unit-time jobs obeys the precedence constraints and has
-makespan at most `K`. -/
-def MultiprocessorTaskFlowShopPrecedenceMakespanFeasible
-    (i : MultiprocessorTaskFlowShopPrecedenceMakespanInstance) : Prop :=
-  ∃ σ : Fin i.2.2.1.length → Fin i.2.1.length → ℕ,
-    IsMPTPrecedenceSchedule i.2.1 i.2.2.2.1 σ ∧
-      ∀ j, completionTime (fun _ _ => 1) σ j ≤ i.2.2.2.2
-
-open Classical in
-/-- `FMPT|prec; p_ij = 1|C_max` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskFlowShopPrecedenceMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorTaskFlowShopPrecedenceMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskFlowShopPrecedenceMakespanFeasible i)
-  | none => false
 
 /-- **`FMPT|prec; p_ij = 1|C_max` is NP-complete.** Source: Brucker (2004), Chapter 11;
 Timkovsky (2003); Brucker and Knust, *Complexity results for scheduling problems*. -/
