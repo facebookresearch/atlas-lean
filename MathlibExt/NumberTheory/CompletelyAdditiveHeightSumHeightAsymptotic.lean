@@ -15,8 +15,10 @@ import Mathlib.Data.Nat.Digits.Lemmas
 /-!
 # Prime reduction for summatory heights
 
-The summatory value of a completely additive function differs from its prime main term
-by at most a constant times the logarithm and the sum of its prime values.
+For $H : \mathbb{N} \to \mathbb{N}$ completely additive on the positive integers there is a real
+constant $C$ such that for every real $x \ge 2$ the sum of $H(m)$ over $1 \le m \le x$ differs from
+its prime main term $x \sum_{p \le x} H(p)/(p - 1)$ by at most $C \log x \sum_{p \le x} H(p)$, where
+both sums run over the primes $p \le x$.
 
 Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
 and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 7, "In particular" display.
