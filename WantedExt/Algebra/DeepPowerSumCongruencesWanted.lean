@@ -19,8 +19,10 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
+public import MathlibExt.Algebra.DeepPowerSumCongruences.ArtinHasse
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerSpan
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdeal
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdealPow
 public import MathlibExt.Algebra.DeepPowerSumCongruences.Moebius
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PadicInt
@@ -173,17 +175,6 @@ Congruences*, INTEGERS 24 (2024), Article A46, Corollary 6 (`integers-2024-A46-c
 public theorem_wanted IsDividedPowerIdeal.mul {A : Type*} [CommRing A] {I : Ideal A}
     (hI : IsDividedPowerIdeal I) (J : Ideal A) : IsDividedPowerIdeal (I * J)
 
-/-- **When the maximal ideal of a DVR is a divided-power ideal.** Let $p$ be a prime and let $O$ be
-a discrete valuation ring with maximal ideal $\mathfrak{m}$ such that $pO = \mathfrak{m}^e$ for
-some integer $e \ge 1$. Then $\mathfrak{m}$ is a divided-power ideal if and only if $e \le p - 1$.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8 (`integers-2024-A46-cor-8`). -/
-public theorem_wanted isDividedPowerIdeal_maximalIdeal_iff {p : ℕ} [Fact p.Prime]
-    {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {e : ℕ} (he0 : e ≠ 0)
-    (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) :
-    IsDividedPowerIdeal (IsLocalRing.maximalIdeal O) ↔ e ≤ p - 1
-
 /-- **Congruent elementary symmetric functions give deep power-sum congruences.** Let $p$ be a
 prime and let $A$ be a commutative ring without additive torsion in which every natural number
 not divisible by $p$ is a unit (a torsion-free $\mathbb{Z}_{(p)}$-algebra). Let
@@ -244,26 +235,6 @@ public theorem_wanted artinHasse_coeff_den_not_dvd (p : ℕ) [Fact p.Prime] (n :
     ¬ p ∣ (PowerSeries.coeff n (PowerSeries.subst
       (PowerSeries.mk fun m : ℕ => if p ^ Nat.log p m = m then (m : ℚ)⁻¹ else 0)
       (PowerSeries.exp ℚ) : PowerSeries ℚ)).den
-
-/-- **The Artin–Hasse exponential as a product.** Let $p$ be a prime, let $\mu$ be the Möbius
-function and let $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the
-Artin–Hasse exponential. For $d \ge 1$ and $a \in \mathbb{Q}$ write
-$(1 - z^d)^a = \exp\big(a \log(1 - z^d)\big)$, where $\log(1 - z^d) = -\sum_{k \ge 1} z^{dk}/k$.
-Then for every $N \ge 0$, $F$ has the same coefficients of $z^0, \dots, z^N$ as the finite product
-of the series $(1 - z^d)^{-\mu(d)/d}$ over the integers $1 \le d \le N$ not divisible by $p$.
-Since the factors with $d > N$ are $1 + O(z^{N+1})$, this is the identity
-$F(z) = \prod_{p \nmid d} (1 - z^d)^{-\mu(d)/d}$ read coefficientwise.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Proposition 27 (`integers-2024-A46-prop-27`). -/
-public theorem_wanted artinHasse_eq_prod_one_sub_pow (p : ℕ) [Fact p.Prime] (N : ℕ) :
-    PowerSeries.trunc (N + 1) (PowerSeries.subst
-      (PowerSeries.mk fun m : ℕ => if p ^ Nat.log p m = m then (m : ℚ)⁻¹ else 0)
-      (PowerSeries.exp ℚ) : PowerSeries ℚ) =
-    PowerSeries.trunc (N + 1) (∏ d ∈ Finset.Icc 1 N with ¬ p ∣ d,
-      (PowerSeries.subst (PowerSeries.mk fun m : ℕ => if m ≠ 0 ∧ d ∣ m then
-          (-(ArithmeticFunction.moebius d : ℚ) / d) * (-(d : ℚ) / m) else 0)
-        (PowerSeries.exp ℚ) : PowerSeries ℚ))
 
 /-- **Multiplicativity of $g_\lambda$ over disjoint parts.** Let $p$ be a prime, $\sigma$ a finite
 set of variables, and for a multiset $\lambda$ of parts let $g_\lambda$ be its $p$-equivalence class

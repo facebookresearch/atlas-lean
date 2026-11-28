@@ -12,7 +12,9 @@ where $\gamma$ is an explicit function of $s_u$, $\mu_u$, $s_v$ and $\delta_i$ w
 
 At intermediate sizes, where the Poisson approximation for the appearance of intermediate lineages still holds, the crossing probability instead splits as $P_{\mathrm{cross}} = P_{v,1} + (1 - P_{v,1}) P_{v,2}$, with $P_{v,1}$ the probability that a successful valley-crossing lineage appears before the uphill mutant establishes — a race between two exponential clocks of rates $\lambda_v = N\mu_i p_v$ and $\lambda_u = N \mu_u \pi_{wu} \approx 2 N \mu_u s_u$, offset by the delay $\Delta\tau = \tau_{\mathrm{drift}} - \tau_{\mathrm{est}}$:
 
-$$P_{v,1} = \begin{cases} \dfrac{\lambda_v}{\lambda_v + \lambda_u} e^{-\lambda_u \Delta\tau}, & \Delta\tau > 0, \\[6pt] 1 - \dfrac{\lambda_u}{\lambda_v + \lambda_u} e^{\lambda_v \Delta\tau}, & \Delta\tau < 0. \end{cases}$$ (Note: Ochs and Desai (2015), Eq. (17), prints $e^{-\lambda_v\Delta\tau}$ for $\Delta\tau < 0$; the exponential-race derivation gives $e^{\lambda_v\Delta\tau} = e^{-\lambda_v|\Delta\tau|}$.)
+$$P_{v,1} = \begin{cases} \dfrac{\lambda_v}{\lambda_v + \lambda_u} e^{-\lambda_u \Delta\tau}, & \Delta\tau > 0, \\[6pt] 1 - \dfrac{\lambda_u}{\lambda_v + \lambda_u} e^{\lambda_v \Delta\tau}, & \Delta\tau < 0. \end{cases}$$
+
+(Note: Ochs and Desai (2015), Eq. (17), prints $e^{-\lambda_v\Delta\tau}$ for $\Delta\tau < 0$; the exponential-race derivation gives $e^{\lambda_v\Delta\tau} = e^{-\lambda_v\lvert\Delta\tau\rvert}$.)
 
 ## Depends on
 

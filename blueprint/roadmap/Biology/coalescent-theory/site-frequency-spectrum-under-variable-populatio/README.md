@@ -54,4 +54,10 @@
 - [Time-ordered product limit for near-identity matrices](time-ordered-product-limit-for-near-identity-mat.md)
 
 - [Coalescence manifold and step-function moments](coalescence-manifold-and-step-function-moments/README.md)
+- [Information limits of coalescent demographic inference](information-limits-of-coalescent-demographic-inference/README.md)
+- [Minimax limits of SFS-based demographic inference](minimax-limits-of-sfs-based-demographic-inference/README.md)
+- [Sign-change complexity and demographic identifiability](sign-change-complexity-and-demographic-identifiability/README.md)
+- [Site frequency spectrum of sampled birth–death processes](site-frequency-spectrum-of-sampled-birth-death-processes/README.md)
+- [Stairway plot: composite likelihood of the SFS under epoch-wise sizes](stairway-plot-composite-likelihood.md)
+- [Total tree length under variable population size](total-tree-length-under-variable-population-size/README.md)
 - [Scale invariance of coalescent time, population size and mutation rate](scale-invariance-of-coalescent-parameters.md)

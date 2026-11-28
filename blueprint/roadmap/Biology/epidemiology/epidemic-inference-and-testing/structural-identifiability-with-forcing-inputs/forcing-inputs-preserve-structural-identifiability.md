@@ -1,0 +1,15 @@
+# Forcing inputs preserve structural identifiability
+
+**Setting.** A model $M(\theta)$ is a rational-function ODE system $\dot x=f(x,u(t),\theta)$, $x(0)=x_0(\theta)$, $y=g(x,\theta)$ with known inputs $u$. Eliminating the states by Ritt's pseudo-division under the standard ranking gives monic *input-output relations* $P(M)$: polynomial differential equations in $y$, $u$ and their derivatives whose coefficients form the *coefficient map* $c(\theta)$. A parameter $\theta_k$ is globally identifiable if $c(\theta)=c(\theta')$ forces $\theta_k=\theta_k'$ (for almost every $\theta$), locally identifiable if this holds within a neighborhood, i.e. the fiber has finitely many values of $\theta_k$; the model is (locally, globally) identifiable if every parameter is. A *forcing input function* $\tilde u$ is a bounded, non-constant, known $C^n$ function of time. *Scaling* a parameter $\tilde\theta$ means replacing $\tilde\theta$ by $\tilde\theta\,\tilde u(t)$ in the state equations; *replacement* means replacing $\tilde\theta$ by $\tilde u(t)$ (scaling with $\tilde\theta$ fixed to $1$).
+
+**Theorem.** Let $M$ be a rational-function model as above and let $\tilde M$ be obtained by scaling one parameter $\tilde\theta$ with a forcing input $\tilde u$. Then every parameter that is locally (respectively globally) identifiable in $M$ is locally (respectively globally) identifiable in $\tilde M$ (Theorem 1). Consequently, if $M$ is locally (globally) identifiable, so is $\tilde M$, both after scaling (Corollary 1) and after replacement (Corollary 2).
+
+**Example.** The nondimensional cholera SIWR model $\dot s=-\beta_W sw-\beta_I si$, $\dot i=\beta_W sw+\beta_I si-\gamma i$, $\dot w=\xi(i-w)$, $\dot r=\gamma i$ with output $y=ki$ is structurally identifiable. Scaling the waterborne transmission rate by a rainfall series, $\beta_W\mapsto f(t)\beta_W$, therefore keeps it identifiable, which is what makes such covariates safe to add when fitting outbreak data.
+
+## Expansion
+
+Scaling $\tilde\theta\mapsto\tilde\theta\tilde u$ acts on each input-output precursor term by term: a coefficient $c_0+c_1\tilde\theta+\cdots+c_n\tilde\theta^n$ multiplying a monomial $m$ in the outputs and inputs splits into terms $ac_0m,\ ac_1\tilde\theta\tilde u\,m,\dots,ac_n\tilde\theta^n\tilde u^n m$ with a common factor $a$, and any newly generated terms are never leading (Lemma 1). Because $\tilde u$ is a known non-constant function, the new monomials are distinct, so the coefficient map of $\tilde M$ contains the old coefficient relations split into finer pieces. Hence the parameter solution sets (fibers of $c$) of $\tilde M$ are contained in those of $M$ (Lemma 2): a known time-varying input can only add constraints, never remove them.
+
+## Sources
+
+- Jessica R. Conrad, James M. Hyman, Marisa C. Eisenberg, "Examining the impact of forcing function inputs on structural identifiability", *Mathematical Biosciences* 402 (2026), 109814, Definitions 1-7, Lemmas 1-2, Theorem 1, Corollaries 1-2 and the cholera SIWR example (Section 8.2), <https://doi.org/10.1016/j.mbs.2026.109814> (preprint arXiv:2407.02771).
