@@ -62,7 +62,7 @@ example : generator (0 : Mat) ≠ 0 ∧
       (0 : Mat →₀ R) (0 : Mat) at h'
     have h10 : (1 : R) = 0 := by
       simpa only [Finsupp.single_eq_same, Finsupp.zero_apply] using h'
-    exact one_ne_zero h10
+    norm_num at h10
   · exact LieAlgebra.projectiveFreeCover_lie_eq_zero_of_projection_eq_zero R Mat
       (generator 0) (generator x) (projection_generator 0)
 

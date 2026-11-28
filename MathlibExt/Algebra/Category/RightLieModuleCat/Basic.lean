@@ -159,6 +159,7 @@ theorem toLeft_lie (M : RightLieModuleCat.{w} R L) (x : L) (m : M) :
 
 For a left Lie module `M`, define the right action by `m · x = -[x,m]` on the same scalar-
 module carrier. -/
+@[implicit_reducible]
 def fromLeft (M : LieModuleCat.{w} R L) : RightLieModuleCat.{w} R L where
   carrier := M
   action := -(LieModule.toEnd R L M).toLinearMap

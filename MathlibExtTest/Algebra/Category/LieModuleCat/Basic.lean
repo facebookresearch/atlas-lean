@@ -31,6 +31,7 @@ namespace LieModuleCat.ReviewTests
 open CategoryTheory
 
 abbrev R := ZMod 6
+instance zmodSixNontrivialFact : Fact (1 < 6) := ⟨by norm_num⟩
 abbrev Mat := Matrix (Fin 2) (Fin 2) R
 
 instance matLieRing : LieRing Mat := LieRing.ofAssociativeRing
