@@ -169,7 +169,8 @@ def runLazy (t : Fin Q → α) (d : β) : ℕ → Table P α → OracleComp P α
       -- The new table is `Function.update T p (some (t ⟨n, h⟩))` (`runLazy_liftBind_of_none`),
       -- written with `if` so that the run reduces by `decide` also when `P` is a function type.
       if h : n < Q then
-        runLazy t d (n + 1) (fun p' => if p' = p then some (t ⟨n, h⟩) else T p') (k (t ⟨n, h⟩))
+        let a := t ⟨n, h⟩
+        runLazy t d (n + 1) (fun p' => if p' = p then some a else T p') (k a)
       else d
 
 theorem runLazy_liftBind_of_some (t : Fin Q → α) (d : β) (n : ℕ) {T : Table P α} {p : P} {a : α}
