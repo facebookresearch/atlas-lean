@@ -66,7 +66,9 @@ theorem PowerConstraint.integral_norm_sq_le {Ω E : Type*} {mΩ : MeasurableSpac
         ENNReal.toReal_mono ENNReal.ofReal_ne_top h.2
     _ = P := ENNReal.toReal_ofReal h.1
 
-/-- On a finite measure, a power-constrained input is integrable, so its mean exists. -/
+/-- On a finite measure, an a.e. strongly measurable power-constrained input is integrable.
+No mean in `E` is claimed: `E` is only a normed additive group, and the Bochner integral needs a
+real normed space (a fair coin with values `0` and `1` in `ℤ` has no mean in `ℤ`). -/
 theorem PowerConstraint.integrable {Ω E : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     [IsFiniteMeasure μ] [NormedAddCommGroup E] {X : Ω → E} {P : ℝ}
     (h : PowerConstraint μ X P) (hX : AEStronglyMeasurable X μ) : Integrable X μ := by

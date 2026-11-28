@@ -196,8 +196,12 @@ theorem not_scalarPowerBound_of_lintegral_sq_eq_top (μ : Measure ℝ)
   rw [h] at hb
   exact ENNReal.ofReal_ne_top (top_le_iff.mp hb)
 
-/-- Validation, point-mass input, closed form: at the input `a` the closed form is the scalar
-Gaussian divergence of `N(a, N)` from `N(m, V)`. -/
+/-- Validation, point-mass input, closed form: at the input `δ_a` the closed form equals
+`(log (V / N) + (N + (a - m)²) / V - 1) / 2`, an identity of real expressions for all real `m`,
+`N`, `V` and `a`, with `x / 0 = 0`, `log 0 = 0` and `log t = log |t|` for `t < 0`. When `N > 0`
+and `V > 0` the value is `KL(N(a, N) ‖ N(m, V))` (`klDiv_compProd_gaussianNoiseKernel_dirac`);
+for `N = 0 < V` that divergence is infinite while the expression is finite (`-1 / 2` at
+`m = a = 0` and `V = 1`). -/
 theorem scalarGaussianKernelKLReal_dirac (m N V a : ℝ) :
     scalarGaussianKernelKLReal m N V (Measure.dirac a) =
       (Real.log (V / N) + (N + (a - m) ^ 2) / V - 1) / 2 := by
