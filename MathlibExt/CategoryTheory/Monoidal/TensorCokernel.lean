@@ -141,6 +141,16 @@ variable
   [PreservesColimit (parallelPair f₁ 0) (tensorRight Y₂)]
   [PreservesColimit (parallelPair f₁ 0) (tensorRight X₂)]
 
+private noncomputable def tensorCokernelIsColimit :
+    IsColimit ((CokernelCofork.ofπ (cokernel.π f₁) (cokernel.condition f₁)).tensor
+      (CokernelCofork.ofπ (cokernel.π f₂) (cokernel.condition f₂))) := by
+  let _ : PreservesColimit (parallelPair f₂ 0)
+      (tensorLeft
+        (CokernelCofork.ofπ (cokernel.π f₁) (cokernel.condition f₁)).pt) := by
+    change PreservesColimit (parallelPair f₂ 0) (tensorLeft (cokernel f₁))
+    infer_instance
+  exact CokernelCofork.isColimitTensor (cokernelIsCokernel f₁) (cokernelIsCokernel f₂)
+
 /- Let `C` be preadditive monoidal with tensor additive in both variables,
 and let `f₁ : X₁ → Y₁`, `f₂ : X₂ → Y₂` have cokernels.
 Assume `(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂)` exists,
@@ -151,15 +161,13 @@ descends to `cokernel f₁ ⊗ cokernel f₂ → Z`. -/
 noncomputable def tensorCokernelDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0) :
     cokernel f₁ ⊗ cokernel f₂ ⟶ Z :=
-  (CokernelCofork.isColimitTensor
-    (cokernelIsCokernel f₁) (cokernelIsCokernel f₂)).desc (CokernelCofork.ofπ k hk)
+  (tensorCokernelIsColimit f₁ f₂).desc (CokernelCofork.ofπ k hk)
 
 @[reassoc (attr := simp)]
 lemma tensor_cokernel_π_comp_tensorCokernelDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0) :
     (cokernel.π f₁ ⊗ₘ cokernel.π f₂) ≫ tensorCokernelDesc f₁ f₂ k hk = k :=
-  (CokernelCofork.isColimitTensor
-    (cokernelIsCokernel f₁) (cokernelIsCokernel f₂)).fac
+  (tensorCokernelIsColimit f₁ f₂).fac
       (CokernelCofork.ofπ k hk) WalkingParallelPair.one
 
 omit [HasBinaryCoproduct (X₁ ⊗ Y₂) (Y₁ ⊗ X₂)]
@@ -192,7 +200,7 @@ lemma tensorCokernelDesc_unique {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (d : cokernel f₁ ⊗ cokernel f₂ ⟶ Z)
     (hd : (cokernel.π f₁ ⊗ₘ cokernel.π f₂) ≫ d = k) :
     d = tensorCokernelDesc f₁ f₂ k hk := by
-  letI := epi_tensor_cokernel_π f₁ f₂
+  let _ := epi_tensor_cokernel_π f₁ f₂
   apply (cancel_epi (cokernel.π f₁ ⊗ₘ cokernel.π f₂)).1
   rw [hd, tensor_cokernel_π_comp_tensorCokernelDesc]
 
@@ -238,10 +246,11 @@ lemma tensorCokernelDesc_naturality
   let _ : PreservesColimit (parallelPair f₂' 0) (tensorLeft c₁'.pt) := by
     dsimp [c₁']
     infer_instance
-  exact CokernelCofork.tensorDesc_naturality
-    c₁ (cokernelIsCokernel f₁) c₂ (cokernelIsCokernel f₂)
-    c₁' (cokernelIsCokernel f₁') c₂' (cokernelIsCokernel f₂')
-    a₁ a₂ q₁ q₂ hq₁ hq₂ k hk k' hk' z hz
+  simpa only [tensorCokernelDesc, tensorCokernelIsColimit] using
+    (CokernelCofork.tensorDesc_naturality
+      c₁ (cokernelIsCokernel f₁) c₂ (cokernelIsCokernel f₂)
+      c₁' (cokernelIsCokernel f₁') c₂' (cokernelIsCokernel f₂')
+      a₁ a₂ q₁ q₂ hq₁ hq₂ k hk k' hk' z hz)
 
 variable [HasCokernel (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂))]
 
@@ -256,7 +265,7 @@ noncomputable def tensorCokernelIso :
     cokernel f₁ ⊗ cokernel f₂ ≅
       cokernel (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) :=
   IsColimit.coconePointUniqueUpToIso
-    (CokernelCofork.isColimitTensor (cokernelIsCokernel f₁) (cokernelIsCokernel f₂))
+    (tensorCokernelIsColimit f₁ f₂)
     (cokernelIsCokernel _)
 
 @[reassoc (attr := simp)]
@@ -264,7 +273,7 @@ lemma tensor_cokernel_π_comp_tensorCokernelIso_hom :
     (cokernel.π f₁ ⊗ₘ cokernel.π f₂) ≫ (tensorCokernelIso f₁ f₂).hom =
       cokernel.π (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) :=
   IsColimit.comp_coconePointUniqueUpToIso_hom
-    (CokernelCofork.isColimitTensor (cokernelIsCokernel f₁) (cokernelIsCokernel f₂))
+    (tensorCokernelIsColimit f₁ f₂)
     (cokernelIsCokernel _) WalkingParallelPair.one
 
 end CategoryTheory.Limits
