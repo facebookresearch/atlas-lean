@@ -44,6 +44,17 @@ The fundamental solution of the negative Pell equation and the coordinates of it
 (`MetaMathlibExt.negPellF`, `MetaMathlibExt.negPellG`) satisfy the norm identity
 $f_n^2 - d g_n^2 = (-1)^n$ and the comparison $g_n \le f_n$
 (`MetaMathlibExt.negPellG_le_negPellF`).
+
+## References
+
+- Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+  Rational Slopes*, INTEGERS 24 (2024), Article A111, pp. 1–26. The negative Pell identities
+  used here are Proposition 5, equations (23) and (24), and Proposition 6(a), equations (27)
+  and (28).
+- Thomas Koshy, *Pell and Pell–Lucas Numbers with Applications*, Springer, 2014, §2.4, cited
+  by Hirotsu for Proposition 5.
+- Paulo Ribenboim, *The New Book of Prime Number Records*, Springer, 1996, Chapter 2, IV,
+  cited by Hirotsu for the more general Lucas-sequence formulas behind Proposition 6.
 -/
 
 @[expose] public section
@@ -441,6 +452,23 @@ theorem negPell_succ (d n : ℕ) :
       negPellG d (n + 1) = negPellF d n * negPellFundY d + negPellG d n * negPellFundX d := by
   simp [negPellF, negPellG, pow_succ]
 
+/-- **Addition of indices in the negative Pell sequences.** Let $d$ be a natural number, let
+$(X, Y)$ be the solution of $x^2 - d y^2 = -1$ in natural numbers with least positive $Y$, with
+$X = Y = 0$ if there is none, and define integers $f_n, g_n$ by
+$(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$, computed formally with $(\sqrt{d})^2 = d$. Then for all
+natural numbers $i, j$,
+
+$$f_{i+j} = f_i f_j + d g_i g_j, \qquad g_{i+j} = f_i g_j + g_i f_j.$$
+
+The source assumes that $d > 1$ is square-free and that a solution exists; neither is needed.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 6(a), equations (27) and (28). -/
+theorem negPell_add (d i j : ℕ) :
+    negPellF d (i + j) = negPellF d i * negPellF d j + d * negPellG d i * negPellG d j ∧
+      negPellG d (i + j) = negPellF d i * negPellG d j + negPellG d i * negPellF d j := by
+  constructor <;> simp only [negPellF, negPellG, pow_add, Zsqrtd.re_mul, Zsqrtd.im_mul]
+
 /-- **The negative Pell sequences for d = 2 at n = 1.** Let $(X, Y)$ be the solution of
 $x^2 - 2y^2 = -1$ in natural numbers with the least positive $Y$, and for each $n$ let $f_n$ and
 $g_n$ be the integers with $(X + Y\sqrt 2)^n = f_n + g_n \sqrt 2$. Then $f_1 = g_1 = 1$.
@@ -453,12 +481,8 @@ theorem negPellF_two_one : negPellF 2 1 = 1 ∧ negPellG 2 1 = 1 := by
 
 namespace negPellG_le_negPellF
 
-/-- The fundamental solution is positive and solves the equation, given an
-integral solution. -/
-private theorem fund {d : ℕ} (hd : 1 < d)
-    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) :
-    0 < negPellFundY d ∧ 0 < negPellFundX d ∧
-      negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2 := by
+private theorem fund_spec {d : ℕ} (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) :
+    0 < negPellFundY d ∧ negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2 := by
   obtain ⟨x, y, hxy⟩ := hneg
   have hy0 : y ≠ 0 := by
     rintro rfl
@@ -469,8 +493,15 @@ private theorem fund {d : ℕ} (hd : 1 < d)
     rw [Int.natCast_natAbs, Int.natCast_natAbs, sq_abs, sq_abs]
     exact h1
   have hnat' : x.natAbs ^ 2 + 1 = d * y.natAbs ^ 2 := by exact_mod_cast hnat
-  have hspec := negPellFund_spec (d := d)
-    ⟨y.natAbs, Int.natAbs_pos.mpr hy0, x.natAbs, hnat'⟩
+  exact negPellFund_spec ⟨y.natAbs, Int.natAbs_pos.mpr hy0, x.natAbs, hnat'⟩
+
+/-- The fundamental solution is positive and solves the equation, given an
+integral solution. -/
+private theorem fund {d : ℕ} (hd : 1 < d)
+    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) :
+    0 < negPellFundY d ∧ 0 < negPellFundX d ∧
+      negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2 := by
+  have hspec := fund_spec hneg
   refine ⟨hspec.1, ?_, hspec.2⟩
   rcases Nat.eq_zero_or_pos (negPellFundX d) with h0 | hpos
   · exfalso
@@ -556,6 +587,22 @@ private theorem growth {d : ℕ} (hd : 1 < d)
         linarith [hterm]
 
 end negPellG_le_negPellF
+
+/-- **Signed norm of a negative Pell power.** Let $d$ be a natural number for which
+$x^2 - d y^2 = -1$ has an integer solution. Let $(X, Y)$ be its solution with $X \ge 0$ and $Y$
+least positive. For each natural number $n$, define integers $f_n, g_n$ by
+$(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$, computed formally with $(\sqrt{d})^2 = d$. Then
+
+$$f_n^2 - d g_n^2 = (-1)^n.$$
+
+The identity also holds at $d = 1$, where $(X, Y) = (0, 1)$.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, equation (24). -/
+theorem negPell_norm_of_solvable (d : ℕ)
+    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (n : ℕ) :
+    negPellF d n ^ 2 - d * negPellG d n ^ 2 = (-1) ^ n :=
+  negPellG_le_negPellF.norm (negPellG_le_negPellF.fund_spec hneg).2 n
 
 /-- **Comparison of the negative Pell sequences.** Let $d > 1$ be a natural number such that
 $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its fundamental solution (the one with
