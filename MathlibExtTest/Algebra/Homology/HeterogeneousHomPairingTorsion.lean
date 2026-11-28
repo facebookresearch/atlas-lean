@@ -74,7 +74,9 @@ private def cycleValue (z : C.cycles 0) : ZMod 4 :=
   (show K.X 0 ⟶ M from (C.iCycles 0).hom z).hom sample
 
 private theorem cycleValue_zero : cycleValue 0 = 0 := by
-  simp only [cycleValue, map_zero, ModuleCat.hom_zero, LinearMap.zero_apply]
+  simp only [cycleValue, map_zero]
+  change (0 : K.X 0 ⟶ M).hom sample = 0
+  rfl
 
 private theorem cycleValue_one : cycleValue (cycleMap.hom (1 : ℤ)) = 3 := by
   have h := linearHomCochainUnitOfCounitCycles_i ℤ K (𝟙 K) M coefficientCast
@@ -98,25 +100,35 @@ private def sourceMap : C ⟶ C :=
 private def coefficientMap : C ⟶ C :=
   linearHomCochainComparison ℤ (𝟙 K) doubleCoefficient
 
+private theorem sourceMap_apply (φ : K.X 0 ⟶ M) :
+    (sourceMap.f 0).hom φ = -φ := by
+  simpa only [HomologicalComplex.neg_f_apply, HomologicalComplex.id_f,
+    Preadditive.neg_comp, Category.id_comp, Category.comp_id] using!
+    (linearHomCochainComparison_f_apply ℤ (-𝟙 K) (𝟙 M) 0 φ)
+
+private theorem coefficientMap_apply (φ : K.X 0 ⟶ M) :
+    (coefficientMap.f 0).hom φ = φ ≫ doubleCoefficient := by
+  simpa only [HomologicalComplex.id_f, Category.id_comp] using!
+    (linearHomCochainComparison_f_apply ℤ (𝟙 K) doubleCoefficient 0 φ)
+
 private theorem sourceMap_value :
     ((sourceMap.f 0).hom unitCochain).hom sample = (1 : ZMod 4) := by
-  dsimp only [sourceMap]
-  rw [linearHomCochainComparison_f_apply]
-  simp only [HomologicalComplex.neg_f_apply, HomologicalComplex.id_f,
-    ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_neg, LinearMap.neg_apply,
-    ModuleCat.hom_id, LinearMap.id_apply]
-  rw [map_neg, unitCochain_value]
-  decide
+  have h := congrArg (fun φ : K.X 0 ⟶ M => φ.hom sample)
+    (sourceMap_apply unitCochain)
+  calc
+    _ = (-unitCochain).hom sample := h
+    _ = -(3 : ZMod 4) := by
+      rw [ModuleCat.hom_neg, LinearMap.neg_apply, unitCochain_value]
+    _ = 1 := by decide
 
 private theorem coefficientMap_value :
     ((coefficientMap.f 0).hom unitCochain).hom sample = (2 : ZMod 4) := by
-  dsimp only [coefficientMap]
-  rw [linearHomCochainComparison_f_apply]
-  simp only [HomologicalComplex.id_f, Category.id_comp, ModuleCat.hom_comp,
-    LinearMap.comp_apply]
-  rw [unitCochain_value]
-  change (2 : ℤ) • (3 : ZMod 4) = 2
-  decide
+  have h := congrArg (fun φ : K.X 0 ⟶ M => φ.hom sample)
+    (coefficientMap_apply unitCochain)
+  calc
+    _ = (unitCochain ≫ doubleCoefficient).hom sample := h
+    _ = (2 : ℤ) • unitCochain.hom sample := rfl
+    _ = 2 := by rw [unitCochain_value]; decide
 
 example : ((sourceMap.f 0).hom unitCochain).hom sample ≠
     unitCochain.hom sample := by
@@ -134,32 +146,38 @@ private theorem comparison_routes :
   apply LinearMap.ext
   intro φ
   change (K.X 0 ⟶ M) at φ
-  dsimp only [sourceMap, coefficientMap]
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply,
-    linearHomCochainComparison_f_apply, HomologicalComplex.id_f,
-    Category.id_comp, Category.comp_id, Category.assoc]
+  change (coefficientMap.f 0).hom ((sourceMap.f 0).hom φ) =
+    (sourceMap.f 0).hom ((coefficientMap.f 0).hom φ)
+  calc
+    _ = ((sourceMap.f 0).hom φ) ≫ doubleCoefficient :=
+      coefficientMap_apply ((sourceMap.f 0).hom φ)
+    _ = (-φ) ≫ doubleCoefficient :=
+      congrArg (fun ψ : K.X 0 ⟶ M => ψ ≫ doubleCoefficient) (sourceMap_apply φ)
+    _ = -(φ ≫ doubleCoefficient) := Preadditive.neg_comp φ doubleCoefficient
+    _ = _ := ((sourceMap_apply ((coefficientMap.f 0).hom φ)).trans
+      (congrArg (fun ψ : K.X 0 ⟶ M => -ψ) (coefficientMap_apply φ))).symm
 
 example :
     (((sourceMap.f 0 ≫ coefficientMap.f 0).hom unitCochain).hom sample) =
       (2 : ZMod 4) := by
-  dsimp only [coefficientMap]
-  rw [ModuleCat.hom_comp, LinearMap.comp_apply, linearHomCochainComparison_f_apply]
-  simp only [HomologicalComplex.id_f, Category.id_comp, ModuleCat.hom_comp,
-    LinearMap.comp_apply]
-  rw [sourceMap_value]
-  change (2 : ℤ) • (1 : ZMod 4) = 2
-  decide
+  change ((coefficientMap.f 0).hom ((sourceMap.f 0).hom unitCochain)).hom sample = 2
+  have h := congrArg (fun φ : K.X 0 ⟶ M => φ.hom sample)
+    (coefficientMap_apply ((sourceMap.f 0).hom unitCochain))
+  calc
+    _ = (((sourceMap.f 0).hom unitCochain) ≫ doubleCoefficient).hom sample := h
+    _ = (2 : ℤ) • ((sourceMap.f 0).hom unitCochain).hom sample := rfl
+    _ = 2 := by rw [sourceMap_value]; decide
 
 example :
     (((coefficientMap.f 0 ≫ sourceMap.f 0).hom unitCochain).hom sample) =
       (2 : ZMod 4) := by
   rw [← comparison_routes]
-  dsimp only [coefficientMap]
-  rw [ModuleCat.hom_comp, LinearMap.comp_apply, linearHomCochainComparison_f_apply]
-  simp only [HomologicalComplex.id_f, Category.id_comp, ModuleCat.hom_comp,
-    LinearMap.comp_apply]
-  rw [sourceMap_value]
-  change (2 : ℤ) • (1 : ZMod 4) = 2
-  decide
+  change ((coefficientMap.f 0).hom ((sourceMap.f 0).hom unitCochain)).hom sample = 2
+  have h := congrArg (fun φ : K.X 0 ⟶ M => φ.hom sample)
+    (coefficientMap_apply ((sourceMap.f 0).hom unitCochain))
+  calc
+    _ = (((sourceMap.f 0).hom unitCochain) ≫ doubleCoefficient).hom sample := h
+    _ = (2 : ℤ) • ((sourceMap.f 0).hom unitCochain).hom sample := rfl
+    _ = 2 := by rw [sourceMap_value]; decide
 
 end HeterogeneousHomPairingTorsion
