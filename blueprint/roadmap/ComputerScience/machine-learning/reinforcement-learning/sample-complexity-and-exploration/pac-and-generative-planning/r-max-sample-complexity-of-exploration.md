@@ -31,11 +31,11 @@ With $U(s, a) = V_{\max} = 1/(1-\gamma)$ the counted set has at most $SA$ pairs 
 ## Proof depends on
 
 - [PAC-MDP theorem for optimistic greedy algorithms](pac-mdp-theorem-for-optimistic-algorithms.md)
-- [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
-- [Bellman's operator is a contraction](../../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
-- [The optimal value solves the Bellman optimality equation](../../../heuristic-search-and-planning/value-iteration/bellman-optimal-value.md)
-- [A policy's value satisfies its Bellman equation](../../../heuristic-search-and-planning/value-iteration/policy-bellman-policy-value.md)
+- [Hoeffding's inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
+- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
+- [Bellman's operator is a contraction](../../../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
+- [The optimal value solves the Bellman optimality equation](../../../../heuristic-search-and-planning/value-iteration/bellman-optimal-value.md)
+- [A policy's value satisfies its Bellman equation](../../../../heuristic-search-and-planning/value-iteration/policy-bellman-policy-value.md)
 
 ## Expansion
 

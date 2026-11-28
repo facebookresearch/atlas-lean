@@ -13,15 +13,15 @@ $$\|Q^\star_{s,u} - Q^\star_{s,u'}\|_\infty \le |u - u'| \quad\text{and}\quad \|
 
 ## Depends on
 
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
-- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
-- [Q-value of an action](../../../heuristic-search-and-planning/value-iteration/q-value.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Value of a policy](../../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Q-value of an action](../../../../heuristic-search-and-planning/value-iteration/q-value.md)
 
 ## Proof depends on
 
-- [Uniqueness of the solution of the Bellman optimality equation](../../../heuristic-search-and-planning/value-iteration/eq-optimal-value-of-bellman-eq.md)
-- [Uniqueness of the solution of a policy's Bellman equation](../../../heuristic-search-and-planning/value-iteration/eq-policy-value-of-policy-bellman-eq.md)
-- [No deterministic policy beats the optimal value](../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
+- [Uniqueness of the solution of the Bellman optimality equation](../../../../heuristic-search-and-planning/value-iteration/eq-optimal-value-of-bellman-eq.md)
+- [Uniqueness of the solution of a policy's Bellman equation](../../../../heuristic-search-and-planning/value-iteration/eq-policy-value-of-policy-bellman-eq.md)
+- [No deterministic policy beats the optimal value](../../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
 
 ## Expansion
 

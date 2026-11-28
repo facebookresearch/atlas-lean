@@ -37,6 +37,6 @@ Sample-efficient exploration in unknown MDPs (explicit and implicit explore-or-e
 
 ## Related topics
 
-- [Generative-model sample bound (restricted, non-minimax)](../sample-complexity-and-exploration/generative-model-sample-bound.md)
-- [Simulation lemma](../simulation-lemma/README.md)
-- [Value iteration](../../../heuristic-search-and-planning/value-iteration/README.md)
+- [Generative-model sample bound (restricted, non-minimax)](../generative-model-sample-bound.md)
+- [Simulation lemma](../../simulation-lemma/README.md)
+- [Value iteration](../../../../heuristic-search-and-planning/value-iteration/README.md)

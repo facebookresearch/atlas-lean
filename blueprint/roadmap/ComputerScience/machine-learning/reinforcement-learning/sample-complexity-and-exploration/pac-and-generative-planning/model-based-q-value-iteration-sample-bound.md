@@ -15,25 +15,25 @@ The initialization matters: the iteration count rests on the contraction bound $
 ## Depends on
 
 - [Generative model of an MDP](generative-model-of-an-mdp.md)
-- [Q-value of an action](../../../heuristic-search-and-planning/value-iteration/q-value.md)
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
-- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
-- [Policy iteration](../../../heuristic-search-and-planning/policy-iteration/policy-iteration.md)
+- [Q-value of an action](../../../../heuristic-search-and-planning/value-iteration/q-value.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Value of a policy](../../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Policy iteration](../../../../heuristic-search-and-planning/policy-iteration/policy-iteration.md)
 
 ## Proof depends on
 
 - [Bellman equation for the return variance](bellman-equation-for-the-return-variance.md)
 - [Total-variance bound](total-variance-bound.md)
-- [Bernstein's bound on the moment generating function of a bounded variable](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/mgf-le-of-abs-le.md)
-- [Sums of independent sub-exponential variables](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/sum-of-i-indep-fun.md)
-- [Sub-exponential tail bound, Gaussian regime](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-le.md)
-- [Sub-exponential tail bound, exponential regime](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-ge.md)
-- [Negation of a sub-exponential variable](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/neg.md)
-- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
-- [Bellman's operator is a contraction](../../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
-- [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
-- [No deterministic policy beats the optimal value](../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
-- [Policy iteration never decreases the value](../../../heuristic-search-and-planning/policy-iteration/policy-value-policy-iteration-mono.md)
+- [Bernstein's bound on the moment generating function of a bounded variable](../../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/mgf-le-of-abs-le.md)
+- [Sums of independent sub-exponential variables](../../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/sum-of-i-indep-fun.md)
+- [Sub-exponential tail bound, Gaussian regime](../../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-le.md)
+- [Sub-exponential tail bound, exponential regime](../../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-ge.md)
+- [Negation of a sub-exponential variable](../../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/neg.md)
+- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
+- [Bellman's operator is a contraction](../../../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
+- [Simulation lemma](../../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
+- [No deterministic policy beats the optimal value](../../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
+- [Policy iteration never decreases the value](../../../../heuristic-search-and-planning/policy-iteration/policy-value-policy-iteration-mono.md)
 
 ## Expansion
 

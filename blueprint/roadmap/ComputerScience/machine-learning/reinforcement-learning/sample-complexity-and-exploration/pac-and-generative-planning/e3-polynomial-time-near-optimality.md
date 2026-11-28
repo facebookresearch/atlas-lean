@@ -15,15 +15,15 @@ The source's proof constructs $A$ from the E3 algorithm, with a known-state visi
 
 - [Explicit Explore or Exploit algorithm](explicit-explore-or-exploit-algorithm.md)
 - [Epsilon-return mixing time](epsilon-return-mixing-time.md)
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 
 - [Explore or Exploit Lemma](explore-or-exploit-lemma.md)
 - [Epsilon-horizon time truncation](epsilon-horizon-time-truncation.md)
-- [The dynamic programming policy attains the value iterate](../../../heuristic-search-and-planning/optimality-of-stationary-policies/n-stage-value-dp-policy.md)
-- [Multiplicative Chernoff bounds](../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
-- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
+- [The dynamic programming policy attains the value iterate](../../../../heuristic-search-and-planning/optimality-of-stationary-policies/n-stage-value-dp-policy.md)
+- [Multiplicative Chernoff bounds](../../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
+- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
 
 ## Expansion
 

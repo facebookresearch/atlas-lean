@@ -12,7 +12,7 @@ When the rewards are not known in advance, the source definition also returns a 
 
 ## Depends on
 
-- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Markov decision process](../../../../heuristic-search-and-planning/value-iteration/mdp.md)
 
 ## Proof depends on
 
@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The generative model removes the exploration problem: samples can be taken at any pair, so the only question is how many to take. Unknown or random rewards add only a lower-order number of samples, which is why the sources take the reward as known. A restricted, non-minimax accuracy bound for uniform sampling, through an $\ell_1$ estimate of each empirical row and the simulation lemma, is the [generative-model sample bound](../sample-complexity-and-exploration/generative-model-sample-bound.md).
+The generative model removes the exploration problem: samples can be taken at any pair, so the only question is how many to take. Unknown or random rewards add only a lower-order number of samples, which is why the sources take the reward as known. A restricted, non-minimax accuracy bound for uniform sampling, through an $\ell_1$ estimate of each empirical row and the simulation lemma, is the [generative-model sample bound](../generative-model-sample-bound.md).
 
 ## Sources
 

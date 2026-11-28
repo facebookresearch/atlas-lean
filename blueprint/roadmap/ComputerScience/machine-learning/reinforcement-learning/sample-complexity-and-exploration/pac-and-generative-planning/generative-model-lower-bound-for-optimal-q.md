@@ -13,8 +13,8 @@ The authors note that the argument does not depend on how samples are collected,
 ## Depends on
 
 - [Generative model of an MDP](generative-model-of-an-mdp.md)
-- [Q-value of an action](../../../heuristic-search-and-planning/value-iteration/q-value.md)
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Q-value of an action](../../../../heuristic-search-and-planning/value-iteration/q-value.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 

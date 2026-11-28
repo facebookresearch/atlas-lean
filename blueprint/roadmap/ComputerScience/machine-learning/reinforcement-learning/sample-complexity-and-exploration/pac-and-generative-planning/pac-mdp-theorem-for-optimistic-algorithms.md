@@ -21,13 +21,13 @@ The source concludes "when run on any MDP $M$"; since the hypotheses refer to th
 ## Depends on
 
 - [Sample complexity of exploration](sample-complexity-of-exploration.md)
-- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Value of a policy](../../../../heuristic-search-and-planning/value-iteration/policy-value.md)
 
 ## Proof depends on
 
 - [Epsilon-horizon time truncation](epsilon-horizon-time-truncation.md)
-- [Multiplicative Chernoff bounds](../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
-- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
+- [Multiplicative Chernoff bounds](../../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
+- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
 
 ## Expansion
 

@@ -14,7 +14,7 @@ The notion is weaker than the usual mixing time of the state distribution: only 
 
 ## Depends on
 
-- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Markov decision process](../../../../heuristic-search-and-planning/value-iteration/mdp.md)
 
 ## Proof depends on
 

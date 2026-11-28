@@ -16,8 +16,8 @@ The definition places no restriction on when the non-$\varepsilon$-optimal steps
 
 ## Depends on
 
-- [History-dependent randomized policies and trajectory laws](../../../heuristic-search-and-planning/markov-decision-processes/history-dependent-randomized-policies-and-trajectory-laws.md)
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [History-dependent randomized policies and trajectory laws](../../../../heuristic-search-and-planning/markov-decision-processes/history-dependent-randomized-policies-and-trajectory-laws.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 

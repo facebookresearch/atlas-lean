@@ -14,7 +14,7 @@ The right-hand side of the condition on $T$ is called the $\varepsilon$-horizon 
 
 ## Depends on
 
-- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Markov decision process](../../../../heuristic-search-and-planning/value-iteration/mdp.md)
 
 ## Proof depends on
 

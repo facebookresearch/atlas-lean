@@ -12,13 +12,13 @@ In the scaling with $\sigma_{V^\pi} = \gamma^2\mathrm{Var}_P(V^\pi)$ and $\beta 
 
 ## Depends on
 
-- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Value of a policy](../../../../heuristic-search-and-planning/value-iteration/policy-value.md)
 - [Bellman equation for the return variance](bellman-equation-for-the-return-variance.md)
 
 ## Proof depends on
 
 - [Bellman equation for the return variance](bellman-equation-for-the-return-variance.md)
-- [Finite Jensen inequality for concave functions](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/finite-jensen-inequality-for-concave-functions.md)
+- [Finite Jensen inequality for concave functions](../../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/finite-jensen-inequality-for-concave-functions.md)
 
 ## Expansion
 

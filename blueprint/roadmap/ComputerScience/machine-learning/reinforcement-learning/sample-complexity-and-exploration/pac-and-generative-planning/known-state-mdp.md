@@ -18,7 +18,7 @@ Since $M_S$ agrees with $M$ on paths inside $S$, payoffs are nonnegative and $s_
 
 ## Depends on
 
-- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Markov decision process](../../../../heuristic-search-and-planning/value-iteration/mdp.md)
 
 ## Proof depends on
 

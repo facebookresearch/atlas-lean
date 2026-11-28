@@ -35,7 +35,7 @@ None.
 
 *What an expansion contains.* The step "compute an optimal $T$-step policy" presupposes that a finite-horizon fixed-sum stochastic game has a $T$-step maximin value from each state and an agent policy attaining it. A sound expansion adds:
 
-1. a page stating that for a fixed-sum stochastic game with finitely many states and actions and every $T \ge 1$, backward induction over the $T$ stages, solving at each stage and state the matrix game of stage payoffs plus continuation values, yields an agent policy (history-dependent through the time step, mixed at each stage) maximizing $\min_\rho U_M(s, \pi, \rho, T)$ from every state $s$; its stage step is [von Neumann's minimax theorem](../../../algebraic-and-numerical-algorithms/linear-programs-as-symmetric-zero-sum-games/minimax-theorem-over-ordered-fields.md);
+1. a page stating that for a fixed-sum stochastic game with finitely many states and actions and every $T \ge 1$, backward induction over the $T$ stages, solving at each stage and state the matrix game of stage payoffs plus continuation values, yields an agent policy (history-dependent through the time step, mixed at each stage) maximizing $\min_\rho U_M(s, \pi, \rho, T)$ from every state $s$; its stage step is [von Neumann's minimax theorem](../../../../algebraic-and-numerical-algorithms/linear-programs-as-symmetric-zero-sum-games/minimax-theorem-over-ordered-fields.md);
 2. a page for the induced game $M_L$ of a set $L$ of unknown entries, defined above, so that the algorithm and the [Implicit Explore or Exploit Lemma](implicit-explore-or-exploit-lemma.md) share it.
 
 With these pages listed under the dependency sections, the algorithm page no longer needs to be held.

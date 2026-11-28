@@ -21,15 +21,15 @@ With $\varepsilon_{\mathrm{opt}}$ of order $(1-\gamma)\varepsilon$ this finds an
 ## Depends on
 
 - [Generative model of an MDP](generative-model-of-an-mdp.md)
-- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Value of a policy](../../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 
 - [Decoupled Bernstein bound for empirical optimal values](decoupled-bernstein-bound-for-empirical-values.md)
 - [Total-variance bound](total-variance-bound.md)
-- [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
-- [No deterministic policy beats the optimal value](../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
+- [Simulation lemma](../../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
+- [No deterministic policy beats the optimal value](../../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
 
 ## Expansion
 

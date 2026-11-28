@@ -30,18 +30,18 @@ The paper fixes no convention for logarithms that would change these endpoints: 
 ## Depends on
 
 - [Generative model of an MDP](generative-model-of-an-mdp.md)
-- [Bellman operator of a policy](../../../heuristic-search-and-planning/value-iteration/policy-bellman.md)
-- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Bellman operator of a policy](../../../../heuristic-search-and-planning/value-iteration/policy-bellman.md)
+- [Value of a policy](../../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 
 - [Total-variance bound](total-variance-bound.md)
-- [A policy's Bellman operator is monotone](../../../heuristic-search-and-planning/value-iteration/policy-bellman-mono.md)
-- [A policy's Bellman operator is a contraction](../../../heuristic-search-and-planning/value-iteration/policy-bellman-contracting.md)
-- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
-- [Freedman's maximal inequality for adaptive supermartingales](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/freedman-maximal-inequality.md)
-- [No deterministic policy beats the optimal value](../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
+- [A policy's Bellman operator is monotone](../../../../heuristic-search-and-planning/value-iteration/policy-bellman-mono.md)
+- [A policy's Bellman operator is a contraction](../../../../heuristic-search-and-planning/value-iteration/policy-bellman-contracting.md)
+- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
+- [Freedman's maximal inequality for adaptive supermartingales](../../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/freedman-maximal-inequality.md)
+- [No deterministic policy beats the optimal value](../../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
 
 ## Expansion
 

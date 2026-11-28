@@ -21,8 +21,8 @@ The source normalizes payoffs to $[0, R_{\max}]$ for a constant $R_{\max}$, so t
 
 - [Implicit Explore or Exploit Lemma](implicit-explore-or-exploit-lemma.md)
 - [Simulation lemma for T-step average returns](simulation-lemma-for-t-step-average-returns.md)
-- [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
+- [Hoeffding's inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
+- [Azuma-Hoeffding inequality for adaptive processes with bounded conditional ranges](../../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/azuma-hoeffding-bounded-conditional-ranges.md)
 
 ## Expansion
 
