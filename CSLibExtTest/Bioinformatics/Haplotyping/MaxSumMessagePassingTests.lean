@@ -69,7 +69,7 @@ private theorem err_eq (i : Fin 2) (j : Fin 4) : table3.err i j = 1 / 10 := rfl
 -- With the constant error probability `1/10`, `h₀` and its reads maximize the likelihood.
 private theorem isMax_h₀ (h' : Fin 4 → Bool) (r' : Fin 2 → Bool) :
     table3.logLikelihood h' r' ≤ table3.logLikelihood h₀ r₀ :=
-  (table3.isMaxOn_iff_isMEC (by norm_num) (by norm_num) err_eq h₀ _).2 isMEC_h₀ h' r'
+  (table3.forall_logLikelihood_le_iff_isMEC (by norm_num) (by norm_num) err_eq h₀ _).2 isMEC_h₀ h' r'
 
 private theorem logLikelihood_h₀ :
     table3.logLikelihood h₀ r₀ = ((6 * Real.log (9 / 10) : ℝ) : EReal) := by
@@ -103,7 +103,7 @@ example : table3.likelihood ![true, false, true, true] ![true, true] =
     table3.likelihood h₀ r₀ :=
   table3.likelihood_not h₀ r₀
 
-example : table3.jointProb ![true, false, true, true] ![false, false] = 0 := by
+example : table3.jointProb ![true, false, true, true] ![true, true] = 0 := by
   rw [jointProb_eq]
   simp
 

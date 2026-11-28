@@ -47,16 +47,18 @@ Main results:
 * `ReadData.likelihood_not`, `ReadData.sup_log_jointProb`: the likelihood is invariant under
   complementing the haplotype and the origins, and with the priors the maximum of the joint law is
   the maximum likelihood times the prior mass `2^(-(n + m - 1))`.
-* `ReadData.logLikelihood_eq_of_err_eq`, `ReadData.isMaxOn_iff_isMEC`: with a constant error
-  probability `q ∈ (0, 1/2)`, the log-likelihood is a constant minus `log ((1 - q) / q)` times the
-  number of allele flips, so maximum likelihood is minimum error correction (Section 5.1).
+* `ReadData.logLikelihood_eq_of_err_eq`, `ReadData.forall_logLikelihood_le_iff_isMEC`: with a
+  constant error probability `q ∈ (0, 1/2)`, the log-likelihood is a constant minus
+  `log ((1 - q) / q)` times the number of allele flips, so maximum likelihood is minimum error
+  correction (Section 5.1).
 * `ReadData.maxSum_haplotyping`: all of these together.
 
 ## Cost model
 
-`maxSumTimed` charges one unit for each term `log P(o_ij | r_i, h_j)` that a site score adds.
-Maxima, the addition of the previous message, and the construction and lookup of message tables
-are free: each term is followed by a constant amount of such work. Message `j + 1` takes a value
+`maxSumTimed` counts only evaluations of terms `log P(o_ij | r_i, h_j)`, one unit for each term
+that a site score adds. Maxima, the addition of the previous message, and the construction and
+lookup of message tables are not charged, so a site that no read spans costs nothing, and with no
+reads the cost is `0`. Message `j + 1` takes a value
 for each of the `2^|R_j ∩ R_{j+1}|` assignments of the reads spanning `j` and `j + 1`,
 maximising over the `2` alleles `h_j` and the `2^|R_j \ R_{j+1}|` assignments of the other reads
 spanning `j`, each a sum of `|R_j|` terms: `|R_j| 2^(|R_j| + 1)` units in all.
@@ -891,7 +893,7 @@ theorem logLikelihood_eq_of_err_eq {q : ℝ} (hq0 : 0 < q) (hq1 : q < 1)
     sum_const, nsmul_eq_mul, sum_ite, sum_const_zero, add_zero, sum_const, nsmul_eq_mul]
   ring
 
-theorem isMaxOn_iff_isMEC {q : ℝ} (hq0 : 0 < q) (hq : q < 1 / 2)
+theorem forall_logLikelihood_le_iff_isMEC {q : ℝ} (hq0 : 0 < q) (hq : q < 1 / 2)
     (hQ : ∀ i j, D.err i j = q) (h : Fin m → Bool) (r : Fin n → Bool) :
     (∀ h' r', D.logLikelihood h' r' ≤ D.logLikelihood h r) ↔ D.IsMEC h r := by
   have hK : 0 < Real.log ((1 - q) / q) :=
@@ -1021,7 +1023,7 @@ theorem maxSum_haplotyping :
     ⟨D.nonempty_argmaxTable, D.logLikelihood_backtrack⟩,
     ⟨D.maxSumTimed_ret, D.maxSumTimed_time_le⟩,
     fun _ hq0 hq hQ => ⟨D.logLikelihood_eq_of_err_eq hq0 (by linarith) hQ,
-      D.isMaxOn_iff_isMEC hq0 hq hQ⟩⟩
+      D.forall_logLikelihood_le_iff_isMEC hq0 hq hQ⟩⟩
 
 end ReadData
 
