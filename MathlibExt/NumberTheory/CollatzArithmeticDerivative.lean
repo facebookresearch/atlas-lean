@@ -24,6 +24,22 @@ compatible semiprimes, the equations for the sums and products of the prime fact
 residues modulo three up to the order of each pair. The factors of the first semiprime have
 opposite odd residues modulo four. A semiprime solution `pq` with `q < p` satisfies the prime gap
 bound `p - q ≥ 2 √(30 p² + 2) - 10 p`; its proof uses `D(m)² ≥ 4m` for composite `m`.
+For every positive solution `n` and prime `p`, `n ≠ p²`; if `p + 2`, `p + 4`, or `2p + 1`
+is prime, `n` cannot be the product of `p` with that prime.
+
+## References
+
+* Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
+  Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
+  pp. 1–21, Sections 2–3, in particular Propositions 2, 3 and 5 and Corollary 6.
+  <https://cs.uwaterloo.ca/journals/JIS/VOL28/Bradshaw/bradshaw3.html>
+* E. J. Barbeau, *Remarks on an Arithmetic Derivative*, Canadian Mathematical Bulletin
+  4 (1961), pp. 117–122, Section 2(b), for the lower bound underlying Bradshaw's Lemma 1.
+* Niklas Dahl, Jonas Olsson, and Alexander Loiko, *Investigations on the Properties of the
+  Arithmetic Derivative*, arXiv:1108.4762 (2011), Theorem 2.1.2, also cited in Bradshaw's Lemma 1.
+
+The proof of Corollary 6 shares the intermediate estimate from the proof of
+`prime_gap_bound_of_arithmeticDerivative_collatz_comm` in this module.
 -/
 
 namespace MetaMathlibExt
@@ -225,22 +241,16 @@ private theorem four_mul_le_arithmeticDerivative_sq {m : ℕ} (hm : 2 ≤ m) (hm
     nlinarith [sq_nonneg ((a : ℤ) - b)]
   omega
 
-/-- **Prime gap bound for semiprime solutions.** Let $D$ be the arithmetic derivative and let $C$
-be the accelerated Collatz map, $C(n) = n/2$ for even $n$ and $C(n) = (3n + 1)/2$ for odd $n$.
-If $p$ and $q$ are primes with $q < p$ and $D(C(pq)) = C(D(pq))$, then
-$p - q \ge 2\sqrt{30p^2 + 2} - 10p$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 5 (`jis-2025-25.1.8-prop-5`). -/
-theorem prime_gap_bound_of_arithmeticDerivative_collatz_comm (p q : ℕ)
-    (hp : p.Prime) (hq : q.Prime) (hqp : q < p)
+/-- If $p$ and $q$ are primes and $D(C(pq)) = C(D(pq))$, then $8(3pq + 1) \le (q + p)^2$.
+This intermediate estimate from the proof of Proposition 5 also holds when $p = q$. -/
+private theorem semiprime_collatz_comm_bound {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hn : 0 < p * q)
     (h : arithmeticDerivative (collatzAccelerated (p * q)) =
       collatzAccelerated (arithmeticDerivative (p * q))) :
-    2 * Real.sqrt (30 * (p : ℝ) ^ 2 + 2) - 10 * p ≤ (p : ℝ) - q := by
+    8 * (3 * (p * q) + 1) ≤ (q + p) ^ 2 := by
   -- The solution `pq` is odd, so `p` and `q` are odd primes, `D(pq) = p + q` is even, and the
   -- equation reads `D(m) = (p + q) / 2` for `m = C(pq) = (3pq + 1) / 2`.
-  have hodd := odd_of_arithmeticDerivative_collatz_comm _ (Nat.mul_pos hp.pos hq.pos) h
+  have hodd := odd_of_arithmeticDerivative_collatz_comm _ hn h
   have hpodd : p % 2 = 1 := Nat.odd_iff.mp (Nat.odd_mul.mp hodd).1
   have hqodd : q % 2 = 1 := Nat.odd_iff.mp (Nat.odd_mul.mp hodd).2
   have hpq : p * q % 2 = 1 := Nat.odd_iff.mp hodd
@@ -262,14 +272,27 @@ theorem prime_gap_bound_of_arithmeticDerivative_collatz_comm (p q : ℕ)
     omega
   have key := four_mul_le_arithmeticDerivative_sq hm2 hmp
   rw [h] at key
-  -- Clearing the halves gives `8 (3pq + 1) ≤ (p + q)²`, that is `x² + 20px - 20p² - 8 ≥ 0`
-  -- for `x = p - q`.
-  have hkey : 8 * (3 * (p * q) + 1) ≤ (q + p) ^ 2 := by
-    obtain ⟨k, hk⟩ : ∃ k, q + p = 2 * k := ⟨(q + p) / 2, by omega⟩
-    have hm' : 2 * ((3 * (p * q) + 1) / 2) = 3 * (p * q) + 1 := by omega
-    rw [hk, Nat.mul_div_cancel_left _ two_pos] at key
-    rw [hk]
-    nlinarith
+  -- Clear the two exact divisions by two.
+  obtain ⟨k, hk⟩ : ∃ k, q + p = 2 * k := ⟨(q + p) / 2, by omega⟩
+  have hm' : 2 * ((3 * (p * q) + 1) / 2) = 3 * (p * q) + 1 := by omega
+  rw [hk, Nat.mul_div_cancel_left _ two_pos] at key
+  rw [hk]
+  nlinarith
+
+/-- **Prime gap bound for semiprime solutions.** Let $D$ be the arithmetic derivative and let $C$
+be the accelerated Collatz map, $C(n) = n/2$ for even $n$ and $C(n) = (3n + 1)/2$ for odd $n$.
+If $p$ and $q$ are primes with $q < p$ and $D(C(pq)) = C(D(pq))$, then
+$p - q \ge 2\sqrt{30p^2 + 2} - 10p$.
+
+Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
+Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
+Proposition 5 (`jis-2025-25.1.8-prop-5`). -/
+theorem prime_gap_bound_of_arithmeticDerivative_collatz_comm (p q : ℕ)
+    (hp : p.Prime) (hq : q.Prime) (hqp : q < p)
+    (h : arithmeticDerivative (collatzAccelerated (p * q)) =
+      collatzAccelerated (arithmeticDerivative (p * q))) :
+    2 * Real.sqrt (30 * (p : ℝ) ^ 2 + 2) - 10 * p ≤ (p : ℝ) - q := by
+  have hkey := semiprime_collatz_comm_bound hp hq (Nat.mul_pos hp.pos hq.pos) h
   have hR : 8 * (3 * ((p : ℝ) * q) + 1) ≤ ((q : ℝ) + p) ^ 2 := by exact_mod_cast hkey
   have hqpR : (q : ℝ) < p := by exact_mod_cast hqp
   have hA : (0 : ℝ) ≤ 30 * (p : ℝ) ^ 2 + 2 := by positivity
@@ -278,6 +301,37 @@ theorem prime_gap_bound_of_arithmeticDerivative_collatz_comm (p q : ℕ)
   -- With `B = x + 10p ≥ 0`, the inequality says `B² ≥ 4 (30p² + 2)`, so `B ≥ 2 √(30p² + 2)`.
   have hB : 4 * (30 * (p : ℝ) ^ 2 + 2) ≤ ((p : ℝ) - q + 10 * p) ^ 2 := by nlinarith
   nlinarith
+
+/-- **No special semiprime solves the derivative–Collatz equation.** Let $D$ be the arithmetic
+derivative and let $C$ be the accelerated Collatz map, $C(n) = n/2$ for even $n$ and
+$C(n) = (3n + 1)/2$ for odd $n$. Let $n$ be a positive integer with $D(C(n)) = C(D(n))$ and let
+$p$ be a prime. Then $n \ne p^2$; if $p + 2$ is prime then $n \ne p(p + 2)$; if $p + 4$ is prime
+then $n \ne p(p + 4)$; and if $2p + 1$ is prime then $n \ne p(2p + 1)$. Thus no such $n$ is the
+square of a prime, a product of twin primes, a product of cousin primes, or the product of a
+Sophie Germain prime and its safe prime.
+
+Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
+Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
+Corollary 6 (`jis-2025-25.1.8-cor-6`). -/
+theorem not_special_semiprime_of_arithmeticDerivative_collatz_comm (n : ℕ)
+    (hn : 0 < n)
+    (h : arithmeticDerivative (collatzAccelerated n) =
+      collatzAccelerated (arithmeticDerivative n))
+    (p : ℕ) (hp : p.Prime) :
+    n ≠ p ^ 2 ∧ ((p + 2).Prime → n ≠ p * (p + 2)) ∧ ((p + 4).Prime → n ≠ p * (p + 4)) ∧
+      ((2 * p + 1).Prime → n ≠ p * (2 * p + 1)) := by
+  have hp2 := hp.two_le
+  have exclude {q : ℕ} (hq : q.Prime) (hpq : p ≤ q) (hqp : q ≤ 3 * p) : n ≠ p * q := by
+    rintro rfl
+    have hlower := semiprime_collatz_comm_bound hp hq hn h
+    -- In this range, `(p + q)² ≤ (2q)² ≤ 12pq`, contradicting the commutation bound.
+    have hsquare : (q + p) ^ 2 ≤ (2 * q) ^ 2 := Nat.pow_le_pow_left (by omega) 2
+    have hmul : q * q ≤ (3 * p) * q := Nat.mul_le_mul_right q hqp
+    have hupper : (q + p) ^ 2 ≤ 12 * (p * q) := by nlinarith only [hsquare, hmul]
+    omega
+  refine ⟨?_, fun hq => exclude hq (by omega) (by omega),
+    fun hq => exclude hq (by omega) (by omega), fun hq => exclude hq (by omega) (by omega)⟩
+  simpa only [pow_two] using exclude hp le_rfl (by omega)
 
 end
 

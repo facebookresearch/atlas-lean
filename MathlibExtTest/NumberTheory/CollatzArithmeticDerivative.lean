@@ -95,3 +95,62 @@ example : arithmeticDerivative (collatzAccelerated (5 * 3)) ≠
     Real.lt_sqrt_of_sq_lt (by norm_num)
   push_cast at hb h26
   linarith
+
+-- Prime square `3²`: the two compositions are 9 and 3.
+example : Nat.Prime 3 ∧ arithmeticDerivative (collatzAccelerated (3 ^ 2)) ≠
+    collatzAccelerated (arithmeticDerivative (3 ^ 2)) := by
+  refine ⟨by decide, ?_⟩
+  rw [show collatzAccelerated (3 ^ 2) = 2 * 7 from rfl, pow_two]
+  simp only [arithmeticDerivative_mul, arithmeticDerivative_prime Nat.prime_two,
+    arithmeticDerivative_prime (by decide : Nat.Prime 3),
+    arithmeticDerivative_prime (by decide : Nat.Prime 7)]
+  decide
+
+-- Twin primes `3` and `5`: the two compositions are 1 and 4.
+example : Nat.Prime 3 ∧ Nat.Prime (3 + 2) ∧
+    arithmeticDerivative (collatzAccelerated (3 * (3 + 2))) ≠
+      collatzAccelerated (arithmeticDerivative (3 * (3 + 2))) := by
+  refine ⟨by decide, by decide, ?_⟩
+  rw [show collatzAccelerated (3 * (3 + 2)) = 23 from rfl,
+    arithmeticDerivative_prime (by decide : Nat.Prime 23), arithmeticDerivative_mul,
+    arithmeticDerivative_prime (by decide : Nat.Prime 3),
+    arithmeticDerivative_prime (by decide : Nat.Prime (3 + 2))]
+  decide
+
+-- Cousin primes `3` and `7`: the two compositions are 80 and 5.
+example : Nat.Prime 3 ∧ Nat.Prime (3 + 4) ∧
+    arithmeticDerivative (collatzAccelerated (3 * (3 + 4))) ≠
+      collatzAccelerated (arithmeticDerivative (3 * (3 + 4))) := by
+  refine ⟨by decide, by decide, ?_⟩
+  rw [show collatzAccelerated (3 * (3 + 4)) = 2 * (2 * (2 * (2 * 2))) from rfl]
+  simp only [arithmeticDerivative_mul, arithmeticDerivative_prime Nat.prime_two,
+    arithmeticDerivative_prime (by decide : Nat.Prime 3),
+    arithmeticDerivative_prime (by decide : Nat.Prime (3 + 4))]
+  decide
+
+-- Sophie Germain prime `5` and its safe prime `11`: the two compositions are 1 and 8.
+example : Nat.Prime 5 ∧ Nat.Prime (2 * 5 + 1) ∧
+    arithmeticDerivative (collatzAccelerated (5 * (2 * 5 + 1))) ≠
+      collatzAccelerated (arithmeticDerivative (5 * (2 * 5 + 1))) := by
+  refine ⟨by decide, by decide, ?_⟩
+  rw [show collatzAccelerated (5 * (2 * 5 + 1)) = 83 from rfl,
+    arithmeticDerivative_prime (by decide : Nat.Prime 83), arithmeticDerivative_mul,
+    arithmeticDerivative_prime (by decide : Nat.Prime 5),
+    arithmeticDerivative_prime (by decide : Nat.Prime (2 * 5 + 1))]
+  decide
+
+-- The public corollary applies to a genuine solution from Table 1.
+example : 71 * 2029 ≠ 3 ^ 2 ∧ 71 * 2029 ≠ 3 * 5 ∧ 71 * 2029 ≠ 3 * 7 ∧
+    71 * 2029 ≠ 3 * (2 * 3 + 1) := by
+  have h : arithmeticDerivative (collatzAccelerated (71 * 2029)) =
+      collatzAccelerated (arithmeticDerivative (71 * 2029)) := by
+    rw [show collatzAccelerated (71 * 2029) = 281 * 769 from rfl,
+      arithmeticDerivative_mul, arithmeticDerivative_mul,
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 281),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 769),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 71),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 2029)]
+    rfl
+  obtain ⟨hsq, htwin, hcousin, hsafe⟩ :=
+    not_special_semiprime_of_arithmeticDerivative_collatz_comm _ (by decide) h 3 (by decide)
+  exact ⟨hsq, htwin (by decide), hcousin (by decide), hsafe (by decide)⟩
