@@ -12,15 +12,14 @@ Authors: @toskua, Avocado
 module
 
 public import Mathlib.LinearAlgebra.TensorPower.Basic
-public import MathlibExt.LinearAlgebra.PiTensorProduct.FinSnoc
 
 /-!
 # Native tensor powers and categorical leading-unit coherence
 
 The first native tensor power is identified with a leading-unit tensor by the canonical
-single-factor and tensor-unit equivalences. Higher positive powers use the ordered last-factor
-splitting. These are transport maps for actual categorical tensor-power clients, rather than
-another recursive tensor-power carrier.
+single-factor and tensor-unit equivalences. This coefficient-natural first-power comparison
+is used by the actual categorical representation tensor-power carrier transport; it does not
+introduce a recursive carrier.
 -/
 
 @[expose] public section

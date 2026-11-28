@@ -77,19 +77,4 @@ theorem finSnocEquiv_tprod (n : ℕ) (V : Fin (n + 1) → Type v)
     subsingletonEquiv_apply_tprod]
   rfl
 
-/-- The ordered last-factor splitting commutes with a family of linear maps. -/
-theorem finSnocEquiv_naturality (n : ℕ)
-    (V : Fin (n + 1) → Type v) (W : Fin (n + 1) → Type w)
-    [∀ j, AddCommMonoid (V j)] [∀ j, Module R (V j)]
-    [∀ j, AddCommMonoid (W j)] [∀ j, Module R (W j)]
-    (f : ∀ j, V j →ₗ[R] W j) :
-    (finSnocEquiv R n W).toLinearMap.comp (PiTensorProduct.map f) =
-      (TensorProduct.map (PiTensorProduct.map (fun j : Fin n => f j.castSucc))
-        (f (Fin.last n))).comp (finSnocEquiv R n V).toLinearMap := by
-  apply PiTensorProduct.ext
-  apply MultilinearMap.ext
-  intro x
-  simp only [LinearMap.compMultilinearMap_apply, LinearMap.comp_apply,
-    PiTensorProduct.map_tprod, finSnocEquiv_tprod, TensorProduct.map_tmul]
-
 end PiTensorProduct

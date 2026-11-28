@@ -13,6 +13,7 @@ module
 
 public import Mathlib.LinearAlgebra.TensorPower.Basic
 public import MathlibExt.LinearAlgebra.TensorProduct.DirectLimit.Finite
+public import MathlibExt.LinearAlgebra.TensorPower.Cons
 
 /-!
 # Positive native tensor powers and directed limits
@@ -22,8 +23,8 @@ module direct limit indexed by a directed preorder. Its transitions apply the or
 linear map in each factor. Scalar, stage and carrier universes are independent. No nonempty
 index, injectivity, flatness or additive-inverse assumption is required.
 
-The comparison uses the finite-family tensor comparison and the native ordered last-factor
-splitting. It does not introduce another tensor-power carrier or recursive map encoding.
+The comparison uses the finite-family tensor comparison and the existing native first-factor
+cons splitting. It does not introduce another tensor-power carrier or recursive map encoding.
 -/
 
 @[expose] public section
@@ -70,43 +71,16 @@ instance directedSystem (n : ℕ) :
       ← PiTensorProduct.map_comp, h]
     rfl
 
-/-- Put the last factor first while retaining the ordered native prefix. -/
-def lastFactorFirst (M : Type w) [AddCommMonoid M] [Module R M] (n : ℕ) :
-    TensorPower R (n + 1) M ≃ₗ[R] M ⊗[R] TensorPower R n M :=
-  PiTensorProduct.finSnocEquiv R n (fun _ => M) ≪≫ₗ
-    TensorProduct.comm R (TensorPower R n M) M
-
-@[simp]
-theorem lastFactorFirst_tprod (M : Type w) [AddCommMonoid M] [Module R M]
-    (n : ℕ) (x : Fin (n + 1) → M) :
-    lastFactorFirst (R := R) M n (PiTensorProduct.tprod R x) =
-      x (Fin.last n) ⊗ₜ[R] PiTensorProduct.tprod R (fun j : Fin n => x j.castSucc) := by
-  simp [lastFactorFirst]
-
-omit [DirectedSystem G (f · · ·)] in
-/-- The last-factor splitting commutes with simultaneous transition maps. -/
-theorem lastFactorFirst_transition (n : ℕ) (i j : ι) (hij : i ≤ j) :
-    (lastFactorFirst (R := R) (G j) n).toLinearMap.comp (directedTransition f n i j hij) =
-      (TensorProduct.finiteDiagonalTransition f (fun _ : Fin n => f) i j hij).comp
-        (lastFactorFirst (R := R) (G i) n).toLinearMap := by
-  apply PiTensorProduct.ext
-  apply MultilinearMap.ext
-  intro x
-  simp only [LinearMap.compMultilinearMap_apply, LinearMap.comp_apply,
-    directedTransition, PiTensorProduct.map_tprod, lastFactorFirst_tprod,
-    TensorProduct.finiteDiagonalTransition, TensorProduct.map_tmul]
-
 variable [IsDirectedOrder ι]
 
 /-- Native positive tensor powers commute with a directed module limit. -/
 def directLimit (n : ℕ) :
     TensorPower R (n + 1) (Module.DirectLimit G f) ≃ₗ[R]
       Module.DirectLimit (fun i => TensorPower R (n + 1) (G i)) (directedTransition f n) :=
-  lastFactorFirst (R := R) (Module.DirectLimit G f) n ≪≫ₗ
+  (consEquiv R (Module.DirectLimit G f) n).symm ≪≫ₗ
     TensorProduct.directLimitFinite f (fun _ : Fin n => f) ≪≫ₗ
-      (Module.DirectLimit.congr
-        (fun i => lastFactorFirst (R := R) (G i) n)
-        (lastFactorFirst_transition f n)).symm
+      Module.DirectLimit.congr (fun i => consEquiv R (G i) n)
+        (fun i j h => consEquiv_naturality (f i j h) n)
 
 /-- The inverse comparison preserves every pure tensor represented at one stage. -/
 @[simp]
@@ -115,9 +89,10 @@ theorem directLimit_symm_of_tprod (n : ℕ) (i : ι) (x : Fin (n + 1) → G i) :
         (Module.DirectLimit.of R ι (fun j => TensorPower R (n + 1) (G j))
           (directedTransition f n) i (PiTensorProduct.tprod R x)) =
       PiTensorProduct.tprod R (fun a => Module.DirectLimit.of R ι G f i (x a)) := by
-  apply (lastFactorFirst (R := R) (Module.DirectLimit G f) n).injective
-  simp only [directLimit, LinearEquiv.trans_symm, LinearEquiv.symm_symm, LinearEquiv.trans_apply,
-    LinearEquiv.apply_symm_apply, Module.DirectLimit.congr_apply_of, lastFactorFirst_tprod,
+  apply (consEquiv R (Module.DirectLimit G f) n).symm.injective
+  simp only [directLimit, LinearEquiv.trans_symm, LinearEquiv.symm_symm,
+    LinearEquiv.trans_apply, LinearEquiv.symm_apply_apply,
+    Module.DirectLimit.congr_symm_apply_of, consEquiv_symm_tprod,
     TensorProduct.directLimitFinite_symm_of_tprod]
 
 /-- The comparison sends a pure tensor of same-stage classes to its stage tensor. -/
