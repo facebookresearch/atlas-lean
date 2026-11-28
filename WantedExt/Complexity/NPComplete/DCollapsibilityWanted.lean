@@ -17,11 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Logic.Relation
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.RationalSimplicialHomologyShared
+public import CSLibExt.Complexity.NPComplete.DCollapsibilityDefs
 
 @[expose] public section
 
@@ -64,40 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the faces of the complex, each a list of vertex labels. -/
-abbrev DCollapsibilityInstance := List (List ℕ)
-
-/-- The complex of the instance as a set system: the set of its faces. -/
-def complex (i : DCollapsibilityInstance) : Finset (Finset ℕ) :=
-  (i.map List.toFinset).toFinset
-
-/-- Well-formedness of an instance: every face lists distinct vertices, no face is listed
-twice, and the faces are closed under taking subsets, so they form a simplicial complex. -/
-def WellFormed (i : DCollapsibilityInstance) : Prop :=
-  (∀ f ∈ i, f.Nodup) ∧ (i.map List.toFinset).Nodup ∧ IsSimplicialComplex (complex i)
-
-/-- `K'` arises from `K` by an elementary `d`-collapse: some face `σ` of `K` with `|σ| ≤ d`
-(dimension at most `d - 1`) lies in a unique maximal face `τ` of `K` (`τ = σ` allowed), and `K'`
-is `K` with the faces `η`, `σ ⊆ η ⊆ τ`, removed. -/
-def ElementaryCollapse (d : ℕ) (K K' : Finset (Finset ℕ)) : Prop :=
-  ∃ σ ∈ K, σ.card ≤ d ∧ ∃ τ ∈ K, IsFacet K τ ∧ σ ⊆ τ ∧
-    (∀ τ' ∈ K, IsFacet K τ' → σ ⊆ τ' → τ' = τ) ∧
-    K' = K.filter fun η => ¬ (σ ⊆ η ∧ η ⊆ τ)
-
-/-- The complex is `d`-collapsible: a finite sequence of elementary `d`-collapses reduces it to
-the empty complex. -/
-def DCollapsibilityFeasible (d : ℕ) (i : DCollapsibilityInstance) : Prop :=
-  Relation.ReflTransGen (ElementaryCollapse d) (complex i) ∅
-
-open Classical in
-/-- d-COLLAPSIBILITY, for the fixed `d`, as a decision problem over bitstrings. -/
-noncomputable def dCollapsibilityDec (d : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DCollapsibilityInstance) x with
-  | some i => decide (WellFormed i ∧ DCollapsibilityFeasible d i)
-  | none => false
 
 /-- **d-COLLAPSIBILITY is NP-complete for every fixed `d ≥ 4`.** Source: Tancer (2010),
 Theorem 1.1(ii). -/

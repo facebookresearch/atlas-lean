@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasWanted
+public import CSLibExt.Complexity.NPComplete.FirstOrderSubsumptionDefs
 
 @[expose] public section
 
@@ -65,40 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the arities of the function symbols of `C`, the number `|U|` of variables, the
-token lists of `E₁, ..., Eₘ` and the token lists of `F₁, ..., Fₙ`. -/
-abbrev FirstOrderSubsumptionInstance :=
-  List ℕ × ℕ × List (List (ℕ × ℕ)) × List (List (ℕ × ℕ))
-
-/-- The expressions `E₁, ..., Eₘ` over `U ∪ C` whose token lists are those of the instance. -/
-def Patterns (i : FirstOrderSubsumptionInstance) (es : List ((lang i.1).Term (Fin i.2.1))) :
-    Prop :=
-  es.map (tokens Fin.val) = i.2.2.1
-
-/-- The expressions `F₁, ..., Fₙ` over `C` whose token lists are those of the instance. -/
-def Targets (i : FirstOrderSubsumptionInstance) (fs : List ((lang i.1).Term Empty)) : Prop :=
-  fs.map (tokens Empty.elim) = i.2.2.2
-
-/-- Well-formedness of an instance: the token lists of `E` are those of expressions over `U ∪ C`
-and the token lists of `F` are those of expressions over `C`. -/
-def WellFormed (i : FirstOrderSubsumptionInstance) : Prop :=
-  (∃ es, Patterns i es) ∧ ∃ fs, Targets i fs
-
-/-- Some substitution `s` of expressions over `C` for the variables maps every `Eᵢ` to one of the
-`Fⱼ`. -/
-def FirstOrderSubsumptionFeasible (i : FirstOrderSubsumptionInstance) : Prop :=
-  ∃ es, Patterns i es ∧ ∃ fs, Targets i fs ∧
-    ∃ s : Fin i.2.1 → (lang i.1).Term Empty, ∀ e ∈ es, e.subst s ∈ fs
-
-open Classical in
-/-- FIRST ORDER SUBSUMPTION as a decision problem over bitstrings. -/
-noncomputable def firstOrderSubsumptionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FirstOrderSubsumptionInstance) x with
-  | some i => decide (WellFormed i ∧ FirstOrderSubsumptionFeasible i)
-  | none => false
 
 /-- **FIRST ORDER SUBSUMPTION is NP-complete.** Source: Garey and Johnson (1979), [LO18];
 Baxter (1976, 1977). -/

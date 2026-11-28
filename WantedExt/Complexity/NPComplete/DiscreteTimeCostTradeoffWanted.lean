@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.DiscreteTimeCostTradeoffDefs
 
 @[expose] public section
 
@@ -59,53 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of activities, the precedence arcs `(u, v)` among them, for
-each activity `v` the list of its alternatives `(t(v, j), c(v, j))`, the due date `d`, and the
-budget `b`. -/
-abbrev DiscreteTimeCostTradeoffInstance :=
-  ℕ × List (ℕ × ℕ) × List (List (ℕ × ℕ)) × ℕ × ℕ
-
-/-- The alternatives `(time, cost)` of activity `v`. -/
-def alternatives (i : DiscreteTimeCostTradeoffInstance) (v : ℕ) : List (ℕ × ℕ) :=
-  i.2.2.1.getD v []
-
-/-- The time of activity `v` under the realization `σ` (alternative `σ v` chosen). -/
-def time (i : DiscreteTimeCostTradeoffInstance) (σ : ℕ → ℕ) (v : ℕ) : ℕ :=
-  ((alternatives i v).getD (σ v) (0, 0)).1
-
-/-- The cost of activity `v` under the realization `σ`. -/
-def cost (i : DiscreteTimeCostTradeoffInstance) (σ : ℕ → ℕ) (v : ℕ) : ℕ :=
-  ((alternatives i v).getD (σ v) (0, 0)).2
-
-/-- Well-formedness of an instance: every arc `(u, v)` joins activities with `u < v < n` (the
-source's numbering of the nodes), there is one alternative list per activity, and every
-alternative list is nonempty with strictly increasing times and strictly decreasing costs. -/
-def WellFormed (i : DiscreteTimeCostTradeoffInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.1 < a.2 ∧ a.2 < i.1) ∧ i.2.2.1.length = i.1 ∧
-    ∀ l ∈ i.2.2.1, l ≠ [] ∧ l.Pairwise fun x y => x.1 < y.1 ∧ y.2 < x.2
-
-/-- The early finish time of the project under `σ` is at most `d`: some start times `S`
-(nonnegative, after the dummy start) respect every precedence arc and let every activity
-complete by `d` (before the dummy finish). -/
-def EarlyFinishAtMost (i : DiscreteTimeCostTradeoffInstance) (σ : ℕ → ℕ) (d : ℕ) : Prop :=
-  ∃ S : ℕ → ℕ, (∀ a ∈ i.2.1, S a.1 + time i σ a.1 ≤ S a.2) ∧
-    ∀ v < i.1, S v + time i σ v ≤ d
-
-/-- Some realization `σ` (an alternative `σ v` of every activity `v`) has early finish time
-at most `d` and cost at most `b`. -/
-def DiscreteTimeCostTradeoffFeasible (i : DiscreteTimeCostTradeoffInstance) : Prop :=
-  ∃ σ : ℕ → ℕ, (∀ v < i.1, σ v < (alternatives i v).length) ∧
-    EarlyFinishAtMost i σ i.2.2.2.1 ∧ ∑ v ∈ Finset.range i.1, cost i σ v ≤ i.2.2.2.2
-
-open Classical in
-/-- DISCRETE TIME-COST TRADEOFF as a decision problem over bitstrings. -/
-noncomputable def discreteTimeCostTradeoffDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DiscreteTimeCostTradeoffInstance) x with
-  | some i => decide (WellFormed i ∧ DiscreteTimeCostTradeoffFeasible i)
-  | none => false
 
 /-- **DISCRETE TIME-COST TRADEOFF is NP-complete.** Source: De, Dunne, Ghosh, and Wells
 (1997). -/

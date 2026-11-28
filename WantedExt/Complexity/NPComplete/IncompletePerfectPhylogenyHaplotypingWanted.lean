@@ -20,11 +20,8 @@ Journal of Classification 9 (1992), 91-116, doi:10.1007/BF02618470.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Bioinformatics.Phylogenetics.Splits
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HaplotypeInferencePureParsimonyWanted
+public import CSLibExt.Complexity.NPComplete.IncompletePerfectPhylogenyHaplotypingDefs
 
 @[expose] public section
 
@@ -79,38 +76,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of sites and the genotypes, each a list of `m` entries in
-`{0, 1, 2, 3}` (`3` stands for the missing entry `?`). -/
-abbrev IncompletePerfectPhylogenyHaplotypingInstance := ℕ × List (List ℕ)
-
-/-- Well-formedness of an instance: there is at least one genotype, and every genotype has `m`
-entries, each in `{0, 1, 2, ?}`. -/
-def WellFormed (i : IncompletePerfectPhylogenyHaplotypingInstance) : Prop :=
-  i.2 ≠ [] ∧ ∀ g ∈ i.2, g.length = i.1 ∧ ∀ x ∈ g, x ≤ 3
-
-/-- `g'` completes the incomplete genotype `g`: it has the same length, its entries are in
-`{0, 1, 2}`, and it agrees with `g` at every site where `g` is not `?` (`3`). -/
-def Completes (g g' : List ℕ) : Prop :=
-  g'.length = g.length ∧ (∀ x ∈ g', x ≤ 2) ∧
-    ∀ k < g.length, g.getD k 0 ≠ 3 → g'.getD k 0 = g.getD k 0
-
-/-- Some completion `c` of the genotypes has an expansion `H` (two haplotypes `H (j, false)`
-and `H (j, true)` explaining each completed genotype `c j`) that admits a perfect phylogeny. -/
-def IncompletePerfectPhylogenyHaplotypingFeasible
-    (i : IncompletePerfectPhylogenyHaplotypingInstance) : Prop :=
-  ∃ c : Fin i.2.length → List ℕ, ∃ H : Fin i.2.length × Bool → Fin i.1 → Bool,
-    (∀ j, Completes (i.2.get j) (c j) ∧ Explains (c j) (H (j, false)) (H (j, true))) ∧
-      ∃ T : UnrootedBinaryTree (Fin i.2.length × Bool), IsPerfectPhylogeny T H
-
-open Classical in
-/-- INCOMPLETE PERFECT PHYLOGENY HAPLOTYPING as a decision problem over bitstrings. -/
-noncomputable def incompletePerfectPhylogenyHaplotypingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IncompletePerfectPhylogenyHaplotypingInstance) x with
-  | some i => decide (WellFormed i ∧ IncompletePerfectPhylogenyHaplotypingFeasible i)
-  | none => false
 
 /-- **INCOMPLETE PERFECT PHYLOGENY HAPLOTYPING is NP-complete.** Source: Kimmel and Shamir
 (2005), Problem 2, Section 1 and Theorems 1-2; Steel (1992). -/

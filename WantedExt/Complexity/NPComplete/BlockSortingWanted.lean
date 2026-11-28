@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.List.Infix
-public import Mathlib.Data.List.Perm.Basic
+public import CSLibExt.Complexity.NPComplete.BlockSortingDefs
 
 @[expose] public section
 
@@ -60,45 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the permutation `π` as the list `[π₁, …, πₙ]`, and the bound `m`. -/
-abbrev BlockSortingInstance := List ℕ × ℕ
-
-/-- The identity permutation `id = 1 2 … n`. -/
-def identity (n : ℕ) : List ℕ := List.range' 1 n
-
-/-- `B` is a block of `π`: a maximal substring of `π` that is also a substring of the identity
-permutation of the same length (every substring of `π` that contains `B` and is a substring of
-the identity is `B` itself). Blocks are nonempty. -/
-def IsBlock (π B : List ℕ) : Prop :=
-  B ≠ [] ∧ B <:+: π ∧ B <:+: identity π.length ∧
-    ∀ B' : List ℕ, B <:+: B' → B' <:+: π → B' <:+: identity π.length → B' = B
-
-/-- A block move from `π` to `π'`: pick up a block `B` of `π = A ++ B ++ C` and place it
-elsewhere, `π' = X ++ B ++ Y` with `X ++ Y = A ++ C` and `π' ≠ π`. -/
-def BlockMove (π π' : List ℕ) : Prop :=
-  ∃ A B C X Y : List ℕ, π = A ++ B ++ C ∧ IsBlock π B ∧ X ++ Y = A ++ C ∧
-    π' = X ++ B ++ Y ∧ π' ≠ π
-
-/-- Well-formedness of an instance: `π` is a permutation of `[1, 2, …, n]`, for `n` its
-length. -/
-def WellFormed (i : BlockSortingInstance) : Prop :=
-  i.1.Perm (identity i.1.length)
-
-/-- `bs(π) ≤ m`: a sequence `π, π₁, …, π_k` with `k ≤ m`, each a block move from the previous
-one, ends in the identity permutation. -/
-def BlockSortingFeasible (i : BlockSortingInstance) : Prop :=
-  ∃ s : List (List ℕ), s.length ≤ i.2 ∧ (i.1 :: s).IsChain BlockMove ∧
-    (i.1 :: s).getLast (List.cons_ne_nil _ _) = identity i.1.length
-
-open Classical in
-/-- BLOCK SORTING as a decision problem over bitstrings. -/
-noncomputable def blockSortingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BlockSortingInstance) x with
-  | some i => decide (WellFormed i ∧ BlockSortingFeasible i)
-  | none => false
 
 /-- **BLOCK SORTING is NP-complete.** Source: Bein, Larmore, Latifi and Sudborough (2002, 2003);
 Narayanaswamy and Roy (2011), Section 2. -/

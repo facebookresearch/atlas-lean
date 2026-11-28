@@ -1,0 +1,68 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# EUCLIDEAN 2-MEANS: definitions
+
+Source:
+D. Aloise, A. Deshpande, P. Hansen and P. Popat, "NP-hardness of Euclidean sum-of-squares
+clustering", Machine Learning 75 (2009), 245-248, doi:10.1007/s10994-009-5103-0
+(sum-of-squares clustering into two clusters is NP-hard when the dimension is part of the input).
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.QuadraticProgrammingDefs
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.EuclideanTwoMeans
+
+open QuadraticProgramming (RatCode ratVal)
+
+/-- An instance: the dimension `d`, the points (each a list of `d` coordinates), and the bound
+`B`. -/
+abbrev EuclideanTwoMeansInstance := ℕ × List (List RatCode) × RatCode
+
+/-- The points of the instance, `Fin n` for `n` listed points. -/
+abbrev Point (i : EuclideanTwoMeansInstance) : Type := Fin i.2.1.length
+
+/-- Coordinate `c` of point `x`. -/
+def coord (i : EuclideanTwoMeansInstance) (x : Point i) (c : Fin i.1) : ℚ :=
+  ratVal ((i.2.1.get x).getD c ((0, 0), 1))
+
+/-- Coordinate `c` of the centroid `(1 / |C|) ∑_{x ∈ C} x` of the cluster `C`. -/
+def centroid (i : EuclideanTwoMeansInstance) (C : Finset (Point i)) (c : Fin i.1) : ℚ :=
+  (∑ x ∈ C, coord i x c) / C.card
+
+/-- The sum of squared Euclidean distances `∑_{x ∈ C} ‖x - μ_C‖²` of the points of `C` to its
+centroid. -/
+def clusterCost (i : EuclideanTwoMeansInstance) (C : Finset (Point i)) : ℚ :=
+  ∑ x ∈ C, ∑ c, (coord i x c - centroid i C c) ^ 2
+
+/-- Well-formedness of an instance: at least two points, every point has `d` coordinates, and
+every encoded rational has a positive denominator. -/
+def WellFormed (i : EuclideanTwoMeansInstance) : Prop :=
+  2 ≤ i.2.1.length ∧ (∀ x ∈ i.2.1, x.length = i.1 ∧ ∀ q ∈ x, 0 < q.2) ∧ 0 < i.2.2.2
+
+/-- Some partition of the points into two nonempty clusters `S`, `Sᶜ` has total
+within-cluster sum of squares at most `B`. -/
+def EuclideanTwoMeansFeasible (i : EuclideanTwoMeansInstance) : Prop :=
+  ∃ S : Finset (Point i), S.Nonempty ∧ Sᶜ.Nonempty ∧
+    clusterCost i S + clusterCost i Sᶜ ≤ ratVal i.2.2
+
+open Classical in
+/-- EUCLIDEAN 2-MEANS as a decision problem over bitstrings. -/
+noncomputable def euclideanTwoMeansDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode (α := EuclideanTwoMeansInstance) x with
+  | some i => decide (WellFormed i ∧ EuclideanTwoMeansFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.EuclideanTwoMeans

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OddHoleThroughVertexWanted
+public import CSLibExt.Complexity.NPComplete.EvenHoleThroughVertexDefs
 
 @[expose] public section
 
@@ -58,26 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, given vertex `v`, as in
-`OddHoleThroughVertex`. -/
-abbrev EvenHoleThroughVertexInstance := OddHoleThroughVertex.OddHoleThroughVertexInstance
-
-/-- The graph has an even hole through `v`: an induced cycle `cycleGraph k ↪g G` of even length
-`k ≥ 4` one of whose vertices is mapped to `v`. -/
-def EvenHoleThroughVertexFeasible (i : EvenHoleThroughVertexInstance) : Prop :=
-  ∃ k : ℕ, 4 ≤ k ∧ Even k ∧
-    ∃ f : SimpleGraph.cycleGraph k ↪g OddHoleThroughVertex.Graph i,
-      ∃ x, ((f x : Fin i.1) : ℕ) = i.2.2
-
-open Classical in
-/-- EVEN HOLE THROUGH A GIVEN VERTEX as a decision problem over bitstrings. -/
-noncomputable def evenHoleThroughVertexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EvenHoleThroughVertexInstance) x with
-  | some i => decide (OddHoleThroughVertex.WellFormed i ∧ EvenHoleThroughVertexFeasible i)
-  | none => false
 
 /-- **EVEN HOLE THROUGH A GIVEN VERTEX is NP-complete.** Source: Bienstock (1991, 1992); Cheong
 and Lu (2022). -/

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle
+public import CSLibExt.Complexity.NPComplete.DodgsonScoreDefs
 
 @[expose] public section
 
@@ -60,46 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of candidates `m`, the candidate `c`, the voters' preference lists
-(most preferred first), and the bound `k`. -/
-abbrev DodgsonScoreInstance := ℕ × ℕ × List (List ℕ) × ℕ
-
-/-- Exchange the entries at positions `p` and `p + 1` of a preference list. -/
-def switchAt (l : List ℕ) (p : ℕ) : List ℕ :=
-  (l.set p (l.getD (p + 1) 0)).set (p + 1) (l.getD p 0)
-
-/-- Apply the switch `(v, p)`: exchange the candidates at positions `p` and `p + 1` of voter
-`v`'s preference list. -/
-def applySwitch (V : List (List ℕ)) (s : ℕ × ℕ) : List (List ℕ) :=
-  V.set s.1 (switchAt (V.getD s.1 []) s.2)
-
-/-- `c` is a Condorcet winner for the preference lists `V` over `m` candidates: the lists are
-the orders of a profile `R` (voter `v` strictly prefers `a` to `b` exactly when `a` comes before
-`b` in `v`'s list), and in `R` the candidate `c` beats every other candidate by pairwise
-majority. -/
-def IsCondorcetWinner (m : ℕ) (V : List (List ℕ)) (c : ℕ) : Prop :=
-  ∃ R : Profile (Fin m) (Fin V.length),
-    (∀ v a b, (R v).lt a b ↔ (V.get v).idxOf a.1 < (V.get v).idxOf b.1) ∧
-      ∀ a d : Fin m, a.1 = c → d ≠ a → MajorityPrefers R a d
-
-/-- Well-formedness of an instance: `c` is a candidate, every voter's list contains every
-candidate exactly once, and `k` is positive. -/
-def WellFormed (i : DodgsonScoreInstance) : Prop :=
-  i.2.1 < i.1 ∧ (∀ l ∈ i.2.2.1, l.Perm (List.range i.1)) ∧ 0 < i.2.2.2
-
-/-- At most `k` switches of adjacent candidates make `c` a Condorcet winner. -/
-def DodgsonScoreFeasible (i : DodgsonScoreInstance) : Prop :=
-  ∃ S : List (ℕ × ℕ), S.length ≤ i.2.2.2 ∧
-    (∀ s ∈ S, s.1 < i.2.2.1.length ∧ s.2 + 1 < i.1) ∧
-      IsCondorcetWinner i.1 (S.foldl applySwitch i.2.2.1) i.2.1
-
-open Classical in
-/-- DODGSON SCORE as a decision problem over bitstrings. -/
-noncomputable def dodgsonScoreDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := DodgsonScoreInstance) x with
-  | some i => decide (WellFormed i ∧ DodgsonScoreFeasible i)
-  | none => false
 
 /-- **DODGSON SCORE is NP-complete.** Source: Bartholdi, Tovey and Trick (1989); Hemaspaandra,
 Hemaspaandra and Rothe (1997), Section 3. -/

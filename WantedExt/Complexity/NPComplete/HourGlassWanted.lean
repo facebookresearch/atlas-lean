@@ -17,9 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.HourGlassDefs
 
 @[expose] public section
 
@@ -56,35 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the width `m` of the first row, the rows of numbers (top to bottom, each left to
-right), and the target sum `t`. -/
-abbrev HourGlassInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: `0 < m`, there are `2m - 1` rows, and row `r` has width
-`m - r` for `r < m` and `r + 2 - m` otherwise. -/
-def WellFormed (i : HourGlassInstance) : Prop :=
-  0 < i.1 ∧ i.2.1.length = 2 * i.1 - 1 ∧
-    ∀ r < i.2.1.length,
-      (i.2.1.getD r []).length = if r < i.1 then i.1 - r else r + 2 - i.1
-
-/-- A path `p` (cell `p r` in row `r`) moving diagonally down from the first row to the last
-row, whose numbers add up to `t`. -/
-def HourGlassFeasible (i : HourGlassInstance) : Prop :=
-  ∃ p : ℕ → ℕ, (∀ r < i.2.1.length, p r < (i.2.1.getD r []).length) ∧
-    (∀ r, r + 1 < i.2.1.length →
-      if r + 1 < i.1 then p (r + 1) + 1 = p r ∨ p (r + 1) = p r
-      else p (r + 1) = p r ∨ p (r + 1) = p r + 1) ∧
-    ∑ r ∈ Finset.range i.2.1.length, (i.2.1.getD r []).getD (p r) 0 = i.2.2
-
-open Classical in
-/-- THE HOUR-GLASS as a decision problem over bitstrings. -/
-noncomputable def hourGlassDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HourGlassInstance) x with
-  | some i => decide (WellFormed i ∧ HourGlassFeasible i)
-  | none => false
 
 /-- **THE HOUR-GLASS is NP-complete.** Source: Petersen (2015), Theorem 2. -/
 public theorem_wanted hourGlass_npComplete :

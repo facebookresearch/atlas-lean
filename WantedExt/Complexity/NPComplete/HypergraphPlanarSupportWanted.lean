@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import CSLibExt.Complexity.NPComplete.HypergraphPlanarSupportDefs
 
 @[expose] public section
 
@@ -62,33 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and the list of hyperedges, each a list of
-vertex numbers. -/
-abbrev HypergraphPlanarSupportInstance := ℕ × List (List ℕ)
-
-/-- The vertex set of a hyperedge. -/
-def hyperedgeSet (n : ℕ) (c : List ℕ) : Set (Fin n) :=
-  {v | (v : ℕ) ∈ c}
-
-/-- Well-formedness of an instance: every hyperedge is nonempty and lists only vertices
-`0, …, n - 1`. -/
-def WellFormed (i : HypergraphPlanarSupportInstance) : Prop :=
-  ∀ c ∈ i.2, c ≠ [] ∧ ∀ v ∈ c, v < i.1
-
-/-- Some planar graph on the vertices induces a connected subgraph on every hyperedge. -/
-def HypergraphPlanarSupportFeasible (i : HypergraphPlanarSupportInstance) : Prop :=
-  ∃ G : SimpleGraph (Fin i.1), G.IsPlanar ∧
-    ∀ c ∈ i.2, (G.induce (hyperedgeSet i.1 c)).Connected
-
-open Classical in
-/-- PLANAR SUPPORT OF A HYPERGRAPH as a decision problem over bitstrings. -/
-noncomputable def hypergraphPlanarSupportDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HypergraphPlanarSupportInstance) x with
-  | some i => decide (WellFormed i ∧ HypergraphPlanarSupportFeasible i)
-  | none => false
 
 /-- **PLANAR SUPPORT OF A HYPERGRAPH (PLANAR VENN DIAGRAM) is NP-complete.** Source: Johnson
 and Pollak (1987); Buchin et al. (2011). -/

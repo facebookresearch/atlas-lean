@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.Field.Rat
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.QuadraticProgrammingDefs
 
 @[expose] public section
 
@@ -56,42 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The code `((p, q), r)` of the rational number `(p - q) / r`. -/
-abbrev RatCode := (ℕ × ℕ) × ℕ
-
-/-- The rational number `(p - q) / r` encoded by `((p, q), r)`. -/
-def ratVal (q : RatCode) : ℚ := ((q.1.1 : ℚ) - q.1.2) / q.2
-
-/-- An instance: the dimension `m`, the constraint pairs `(x, b)`, the tuples `c` and `d`, and
-the bound `B`. -/
-abbrev QuadraticProgrammingInstance :=
-  ℕ × List (List RatCode × RatCode) × List RatCode × List RatCode × RatCode
-
-/-- Well-formedness of an instance: every tuple has length `m`, and every encoded rational has
-a positive denominator. -/
-def WellFormed (i : QuadraticProgrammingInstance) : Prop :=
-  (∀ xb ∈ i.2.1, xb.1.length = i.1 ∧ (∀ q ∈ xb.1, 0 < q.2) ∧ 0 < xb.2.2) ∧
-    i.2.2.1.length = i.1 ∧ (∀ q ∈ i.2.2.1, 0 < q.2) ∧
-    i.2.2.2.1.length = i.1 ∧ (∀ q ∈ i.2.2.2.1, 0 < q.2) ∧ 0 < i.2.2.2.2.2
-
-/-- A rational point `y` satisfying every constraint `x · y ≤ b` at which the objective
-`∑ᵢ (cᵢ yᵢ² + dᵢ yᵢ)` is at least `B`. -/
-def QuadraticProgrammingFeasible (i : QuadraticProgrammingInstance) : Prop :=
-  ∃ y : Fin i.1 → ℚ,
-    (∀ xb ∈ i.2.1, ∑ j : Fin i.1, ratVal (xb.1.getD j ((0, 0), 1)) * y j ≤ ratVal xb.2) ∧
-      ratVal i.2.2.2.2 ≤ ∑ j : Fin i.1,
-        (ratVal (i.2.2.1.getD j ((0, 0), 1)) * y j ^ 2 +
-          ratVal (i.2.2.2.1.getD j ((0, 0), 1)) * y j)
-
-open Classical in
-/-- QUADRATIC PROGRAMMING as a decision problem over bitstrings. -/
-noncomputable def quadraticProgrammingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := QuadraticProgrammingInstance) x with
-  | some i => decide (WellFormed i ∧ QuadraticProgrammingFeasible i)
-  | none => false
 
 /-- **QUADRATIC PROGRAMMING is NP-complete.** Source: Garey and Johnson (1979), [MP2];
 Sahni (1974); Vavasis (1990). -/

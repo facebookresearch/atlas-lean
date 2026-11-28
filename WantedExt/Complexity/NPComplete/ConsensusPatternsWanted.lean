@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ClosestSubstringWanted
+public import CSLibExt.Complexity.NPComplete.ConsensusPatternsDefs
 
 @[expose] public section
 
@@ -57,28 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: CLOSEST SUBSTRING's (at least one string, every letter in
-the alphabet, `0 < L`, `L ≤ |sᵢ|` for every string), the strings are pairwise distinct, and all
-strings have the same length. -/
-def WellFormed (i : ClosestSubstringInstance) : Prop :=
-  ClosestSubstring.WellFormed i ∧ i.2.1.Nodup ∧ ∀ s ∈ i.2.1, ∀ s' ∈ i.2.1, s.length = s'.length
-
-/-- A median string `s` of length `L` over the alphabet and start positions `jᵢ` of
-length-`L` substrings `tᵢ` of the strings `sᵢ` with `∑ᵢ d_H(s, tᵢ) ≤ D`. -/
-def ConsensusPatternsFeasible (i : ClosestSubstringInstance) : Prop :=
-  ∃ t : Fin i.2.2.1 → ℕ, (∀ k, t k < i.1) ∧
-    ∃ js : List ℕ, js.length = i.2.1.length ∧ (∀ p ∈ i.2.1.zip js, p.2 + i.2.2.1 ≤ p.1.length) ∧
-      ((i.2.1.zip js).map fun p => hammingDist t (substringAt p.1 p.2 i.2.2.1)).sum ≤ i.2.2.2
-
-open Classical in
-/-- CONSENSUS PATTERNS as a decision problem over bitstrings. -/
-noncomputable def consensusPatternsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ClosestSubstringInstance) x with
-  | some i => decide (WellFormed i ∧ ConsensusPatternsFeasible i)
-  | none => false
 
 /-- **CONSENSUS PATTERNS is NP-complete.** Source: Li, Ma and Wang (2002), Theorem 1. -/
 public theorem_wanted consensusPatterns_npComplete :

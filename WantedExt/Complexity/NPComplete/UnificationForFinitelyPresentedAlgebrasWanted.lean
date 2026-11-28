@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.ModelTheory.Encoding
+public import CSLibExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasDefs
 
 @[expose] public section
 
@@ -69,69 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The first-order language whose function symbols of arity `l` are the indices `s` with
-`ar[s] = l`, and which has no relation symbols. -/
-def lang (ar : List ℕ) : Language where
-  Functions l := {s : Fin ar.length // ar[s] = l}
-  Relations _ := Empty
-
-/-- The token list of a term: Mathlib's prefix encoding `Term.listEncode`, with `(0, v)` for the
-variable `v` (through `f`) and `(1, s)` for the function symbol `s`. -/
-def tokens {ar : List ℕ} {α : Type} (f : α → ℕ) (t : (lang ar).Term α) : List (ℕ × ℕ) :=
-  t.listEncode.map (Sum.elim (fun a => (0, f a)) (fun s => (1, s.2.1.val)))
-
-/-- Two closed terms are congruent modulo the relations `Γ`: they are related by every
-equivalence relation that contains `Γ` and is compatible with every function symbol. -/
-def Congruent {ar : List ℕ} (Γ : List ((lang ar).Term Empty × (lang ar).Term Empty))
-    (s t : (lang ar).Term Empty) : Prop :=
-  ∀ R : (lang ar).Term Empty → (lang ar).Term Empty → Prop, Equivalence R →
-    (∀ p ∈ Γ, R p.1 p.2) →
-    (∀ {l : ℕ} (f : (lang ar).Functions l) (u v : Fin l → (lang ar).Term Empty),
-      (∀ k, R (u k) (v k)) → R (Term.func f u) (Term.func f v)) →
-    R s t
-
-/-- An instance: the number of generators `|G|`, the arities of the operators in `O`, the
-defining relations `Γ` as pairs of token lists, the number of variables `|V|`, and the token
-lists of `x` and `y`. -/
-abbrev UnificationForFinitelyPresentedAlgebrasInstance :=
-  ℕ × List ℕ × List (List (ℕ × ℕ) × List (ℕ × ℕ)) × ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- The arities of the function symbols: `|G|` generators of arity `0`, then the operators. -/
-def symbolArities (i : UnificationForFinitelyPresentedAlgebrasInstance) : List ℕ :=
-  List.replicate i.1 0 ++ i.2.1
-
-/-- The defining relations whose token lists are those of the instance. -/
-def DefiningRelations (i : UnificationForFinitelyPresentedAlgebrasInstance)
-    (Γ : List ((lang (symbolArities i)).Term Empty × (lang (symbolArities i)).Term Empty)) :
-    Prop :=
-  Γ.map (fun p => (tokens Empty.elim p.1, tokens Empty.elim p.2)) = i.2.2.1
-
-/-- Well-formedness of an instance: the relations are pairs of closed terms, and `x` and `y` are
-terms with variables `Fin |V|`, all over the symbols of `symbolArities`. -/
-def WellFormed (i : UnificationForFinitelyPresentedAlgebrasInstance) : Prop :=
-  (∃ Γ, DefiningRelations i Γ) ∧
-    (∃ x : (lang (symbolArities i)).Term (Fin i.2.2.2.1), tokens Fin.val x = i.2.2.2.2.1) ∧
-    ∃ y : (lang (symbolArities i)).Term (Fin i.2.2.2.1), tokens Fin.val y = i.2.2.2.2.2
-
-/-- Some assignment `I` of closed terms to the variables makes `I(x)` and `I(y)` congruent
-modulo the defining relations. -/
-def UnificationForFinitelyPresentedAlgebrasFeasible
-    (i : UnificationForFinitelyPresentedAlgebrasInstance) : Prop :=
-  ∃ Γ, DefiningRelations i Γ ∧
-    ∃ x y : (lang (symbolArities i)).Term (Fin i.2.2.2.1),
-      tokens Fin.val x = i.2.2.2.2.1 ∧ tokens Fin.val y = i.2.2.2.2.2 ∧
-        ∃ I : Fin i.2.2.2.1 → (lang (symbolArities i)).Term Empty,
-          Congruent Γ (x.subst I) (y.subst I)
-
-open Classical in
-/-- UNIFICATION FOR FINITELY PRESENTED ALGEBRAS as a decision problem over bitstrings. -/
-noncomputable def unificationForFinitelyPresentedAlgebrasDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnificationForFinitelyPresentedAlgebrasInstance) x with
-  | some i => decide (WellFormed i ∧ UnificationForFinitelyPresentedAlgebrasFeasible i)
-  | none => false
 
 /-- **UNIFICATION FOR FINITELY PRESENTED ALGEBRAS is NP-complete.** Source: Garey and Johnson
 (1979), [AN17]; Kozen (1977); Gallier, Narendran, Plaisted, and Snyder (1990). -/

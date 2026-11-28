@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CommonSubtreeDefs
 
 @[expose] public section
 
@@ -60,35 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the trees `T₁, …, T_n` (each a vertex count and an edge list) and the bound
-`K`. -/
-abbrev CommonSubtreeInstance := List (ℕ × List (ℕ × ℕ)) × ℕ
-
-/-- The graph on `Fin t.1` with edge list `t.2`. -/
-def Graph (t : ℕ × List (ℕ × ℕ)) : SimpleGraph (Fin t.1) :=
-  Cslib.Complexity.Karp.edgeGraph t.1 t.2
-
-/-- Well-formedness of an instance: the collection is nonempty, every edge list is simple and
-every graph is a tree, and `K` is positive. -/
-def WellFormed (i : CommonSubtreeInstance) : Prop :=
-  i.1 ≠ [] ∧
-    (∀ t ∈ i.1, t.2.Nodup ∧
-      (∀ e ∈ t.2, e.1 < t.1 ∧ e.2 < t.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ t.2) ∧ (Graph t).IsTree) ∧
-    0 < i.2
-
-/-- Some tree `T'` with at least `K` vertices embeds as an induced subgraph into every `Tᵢ`. -/
-def CommonSubtreeFeasible (i : CommonSubtreeInstance) : Prop :=
-  ∃ m, i.2 ≤ m ∧ ∃ T' : SimpleGraph (Fin m), T'.IsTree ∧ ∀ t ∈ i.1, Nonempty (T' ↪g Graph t)
-
-open Classical in
-/-- COMMON SUBTREE as a decision problem over bitstrings. -/
-noncomputable def commonSubtreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CommonSubtreeInstance) x with
-  | some i => decide (WellFormed i ∧ CommonSubtreeFeasible i)
-  | none => false
 
 /-- **COMMON SUBTREE is NP-complete.** Source: Crescenzi and Kann, MAXIMUM COMMON SUBTREE;
 Akutsu and Halldórsson (2000). -/

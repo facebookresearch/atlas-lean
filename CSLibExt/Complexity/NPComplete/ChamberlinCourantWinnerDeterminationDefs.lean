@@ -1,0 +1,58 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# CHAMBERLIN-COURANT WINNER DETERMINATION: definitions
+
+Source:
+T. Lu and C. Boutilier, "Budgeted social choice: From consensus to personalized decision
+making", Proceedings of the 22nd International Joint Conference on Artificial Intelligence
+(IJCAI 2011), 280-286, https://www.ijcai.org/Proceedings/11/Papers/057.pdf, Theorem 8
+(stated for the Borda score `∑ᵥ maxₐ (m - 1 - posᵥ(a)) ≥ t`, which is the bound
+`B = n (m - 1) - t` on the misrepresentation below);
+N. Betzler, A. Slinko, and J. Uhlmann, "On the computation of fully proportional
+representation", Journal of Artificial Intelligence Research 47 (2013), 475-519,
+doi:10.1613/jair.3896, Theorem 2.
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Fin
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.ChamberlinCourantWinnerDetermination
+
+/-- An instance: the number `m` of candidates, the votes, the committee size `k`, and the bound
+`B`. -/
+abbrev ChamberlinCourantWinnerDeterminationInstance := ℕ × List (List ℕ) × ℕ × ℕ
+
+/-- Well-formedness of an instance: every vote is a strict ranking of all `m` candidates, and
+the committee size satisfies `0 < k ≤ m`. -/
+def WellFormed (i : ChamberlinCourantWinnerDeterminationInstance) : Prop :=
+  (∀ v ∈ i.2.1, v.Perm (List.range i.1)) ∧ 0 < i.2.2.1 ∧ i.2.2.1 ≤ i.1
+
+/-- A committee `W` of `k` candidates and an assignment `r` of a representative in `W` to each
+voter whose total Borda misrepresentation is at most `B`. -/
+def ChamberlinCourantWinnerDeterminationFeasible
+    (i : ChamberlinCourantWinnerDeterminationInstance) : Prop :=
+  ∃ W : Finset (Fin i.1), W.card = i.2.2.1 ∧
+    ∃ r : Fin i.2.1.length → Fin i.1, (∀ j, r j ∈ W) ∧
+      ∑ j : Fin i.2.1.length, i.2.1[j].idxOf (r j : ℕ) ≤ i.2.2.2
+
+open Classical in
+/-- CHAMBERLIN-COURANT WINNER DETERMINATION as a decision problem over bitstrings. -/
+noncomputable def chamberlinCourantWinnerDeterminationDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := ChamberlinCourantWinnerDeterminationInstance) x with
+  | some i => decide (WellFormed i ∧ ChamberlinCourantWinnerDeterminationFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.ChamberlinCourantWinnerDetermination

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ExpectedRetrievalCostWanted
+public import CSLibExt.Complexity.NPComplete.ExpectedRetrievalCostFixedSectorsDefs
 
 @[expose] public section
 
@@ -74,33 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance (for a fixed number `m` of sectors): the records' probabilities `p(r)` as pairs
-`(a, b)` meaning `a / b`, and the bound `K` as a pair `(a, b)` meaning `a / b`. -/
-abbrev ExpectedRetrievalCostFixedSectorsInstance := List (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- Well-formedness of an instance: every probability is a fraction `a / b` with `0 < b` and
-`a ≤ b` (so it lies in `[0, 1]`), the probabilities sum to `1`, and the bound `K = a / b` has
-`0 < b` and `0 < a` (so `K` is a positive rational). -/
-def WellFormed (i : ExpectedRetrievalCostFixedSectorsInstance) : Prop :=
-  (∀ q ∈ i.1, 0 < q.2 ∧ q.1 ≤ q.2) ∧ (i.1.map toRat).sum = 1 ∧ 0 < i.2.2 ∧ 0 < i.2.1
-
-/-- Some allocation of the records to the `m` sectors, with every sector nonempty, has expected
-retrieval cost at most `K` (the parent's `retrievalCost` of the records with `m` sectors; it
-does not read the third component, the parent's integer bound, set to `0` here). -/
-def ExpectedRetrievalCostFixedSectorsFeasible (m : ℕ)
-    (i : ExpectedRetrievalCostFixedSectorsInstance) : Prop :=
-  ∃ f : Fin i.1.length → Fin m, Function.Surjective f ∧
-    retrievalCost (i.1, m, 0) f ≤ toRat i.2
-
-open Classical in
-/-- EXPECTED RETRIEVAL COST with `m` sectors as a decision problem over bitstrings. -/
-noncomputable def expectedRetrievalCostFixedSectorsDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExpectedRetrievalCostFixedSectorsInstance) x with
-  | some i => decide (WellFormed i ∧ ExpectedRetrievalCostFixedSectorsFeasible m i)
-  | none => false
 
 /-- **EXPECTED RETRIEVAL COST with a fixed number `m ≥ 2` of sectors is NP-complete.** Source:
 Garey and Johnson (1979), [SR4], comment; Cody and Coffman (1976); for the rational bound, Garey

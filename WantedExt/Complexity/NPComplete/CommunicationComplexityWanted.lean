@@ -23,8 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CommunicationComplexityDefs
 
 @[expose] public section
 
@@ -71,53 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the column count `n`, the matrix as a list of rows, and the bound `K`. -/
-abbrev CommunicationComplexityInstance := ℕ × List (List Bool) × ℕ
-
-/-- Well-formedness of an instance: every row has `n` entries, and `0 < K`. -/
-def WellFormed (i : CommunicationComplexityInstance) : Prop :=
-  (∀ row ∈ i.2.1, row.length = i.1) ∧ 0 < i.2.2
-
-/-- The entry `f(x, y)` of the matrix, in row `x` and column `y`. -/
-def entry (i : CommunicationComplexityInstance) (x : Fin i.2.1.length) (y : Fin i.1) : Bool :=
-  (i.2.1.get x).getD y false
-
-/-- A deterministic two-party protocol tree for inputs `x : Fin m` (first player) and
-`y : Fin n` (second player): a leaf with an output, or a node at which one player sends the bit
-`send x` (resp. `send y`) and the protocol continues in the subtree for that bit. -/
-inductive Protocol (m n : ℕ) : Type where
-  /-- A leaf: the protocol outputs `b`. -/
-  | output (b : Bool) : Protocol m n
-  /-- The first player sends `send x`; continue in `ifFalse` or `ifTrue`. -/
-  | alice (send : Fin m → Bool) (ifFalse ifTrue : Protocol m n) : Protocol m n
-  /-- The second player sends `send y`; continue in `ifFalse` or `ifTrue`. -/
-  | bob (send : Fin n → Bool) (ifFalse ifTrue : Protocol m n) : Protocol m n
-
-/-- The output of a protocol on the input pair `(x, y)`. -/
-def Protocol.eval {m n : ℕ} : Protocol m n → Fin m → Fin n → Bool
-  | .output b, _, _ => b
-  | .alice send p q, x, y => if send x then q.eval x y else p.eval x y
-  | .bob send p q, x, y => if send y then q.eval x y else p.eval x y
-
-/-- The cost of a protocol: the depth of its tree, the number of bits sent on the worst input. -/
-def Protocol.depth {m n : ℕ} : Protocol m n → ℕ
-  | .output _ => 0
-  | .alice _ p q => max p.depth q.depth + 1
-  | .bob _ p q => max p.depth q.depth + 1
-
-/-- Some protocol of depth at most `K` outputs `f(x, y)` on every input pair. -/
-def CommunicationComplexityFeasible (i : CommunicationComplexityInstance) : Prop :=
-  ∃ P : Protocol i.2.1.length i.1, P.depth ≤ i.2.2 ∧ ∀ x y, P.eval x y = entry i x y
-
-open Classical in
-/-- COMMUNICATION COMPLEXITY as a decision problem over bitstrings. -/
-noncomputable def communicationComplexityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CommunicationComplexityInstance) x with
-  | some i => decide (WellFormed i ∧ CommunicationComplexityFeasible i)
-  | none => false
 
 /-- **COMMUNICATION COMPLEXITY is NP-complete.** Source: Hirahara, Ilango and Loff (2025);
 Gaspers, He and Mackenzie (2025); Yao (1979); Johnson (1984), NP-completeness column. -/

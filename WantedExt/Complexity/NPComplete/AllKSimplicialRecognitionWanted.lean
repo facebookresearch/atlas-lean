@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.AllKSimplicialRecognitionDefs
 
 @[expose] public section
 
@@ -65,39 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev AllKSimplicialRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : AllKSimplicialRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, …, n - 1` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : AllKSimplicialRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `G` is all-`k`-simplicial: for every vertex `v`, the neighborhood of `v` is partitioned into
-at most `k` cliques, given by a labeling `c` of the neighbors of `v` with `k` labels in which any
-two distinct neighbors with the same label are adjacent. -/
-def IsAllKSimplicial {n : ℕ} (k : ℕ) (G : SimpleGraph (Fin n)) : Prop :=
-  ∀ v : Fin n, ∃ c : {a : Fin n // G.Adj v a} → Fin k, ∀ a b : {a : Fin n // G.Adj v a},
-    a ≠ b → c a = c b → G.Adj a b
-
-/-- The graph of the instance is all-`k`-simplicial. -/
-def AllKSimplicialRecognitionFeasible (k : ℕ) (i : AllKSimplicialRecognitionInstance) : Prop :=
-  IsAllKSimplicial k (Graph i)
-
-open Classical in
-/-- ALL-K-SIMPLICIAL GRAPH RECOGNITION, for the fixed `k`, as a decision problem over
-bitstrings. -/
-noncomputable def allKSimplicialRecognitionDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := AllKSimplicialRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ AllKSimplicialRecognitionFeasible k i)
-  | none => false
 
 /-- **ALL-K-SIMPLICIAL GRAPH RECOGNITION is NP-complete for every fixed `K ≥ 3`.** Source:
 Gambette and Vialette (2007), Theorem 3. -/

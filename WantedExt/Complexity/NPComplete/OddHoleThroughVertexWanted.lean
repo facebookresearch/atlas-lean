@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.OddHoleThroughVertexDefs
 
 @[expose] public section
 
@@ -58,34 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, given vertex `v`. -/
-abbrev OddHoleThroughVertexInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : OddHoleThroughVertexInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `v < n`. -/
-def WellFormed (i : OddHoleThroughVertexInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2 < i.1
-
-/-- The graph has an odd hole through `v`: an induced cycle `cycleGraph k ↪g G` of odd length
-`k ≥ 4` (hence `k ≥ 5`) one of whose vertices is mapped to `v`. -/
-def OddHoleThroughVertexFeasible (i : OddHoleThroughVertexInstance) : Prop :=
-  ∃ k : ℕ, 4 ≤ k ∧ Odd k ∧
-    ∃ f : SimpleGraph.cycleGraph k ↪g Graph i, ∃ x, ((f x : Fin i.1) : ℕ) = i.2.2
-
-open Classical in
-/-- ODD HOLE THROUGH A GIVEN VERTEX as a decision problem over bitstrings. -/
-noncomputable def oddHoleThroughVertexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OddHoleThroughVertexInstance) x with
-  | some i => decide (WellFormed i ∧ OddHoleThroughVertexFeasible i)
-  | none => false
 
 /-- **ODD HOLE THROUGH A GIVEN VERTEX is NP-complete.** Source: Bienstock (1991, 1992);
 Chudnovsky, Scott, Seymour and Spirkl (2020), Section 1. -/

@@ -19,8 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ExemplarBreakpointDistanceDefs
 
 @[expose] public section
 
@@ -64,49 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the genomes `G` and `H`, lists of signed genes `(symbol, sign)` with `true`
-for `+`, and the bound `K`. -/
-abbrev ExemplarBreakpointDistanceInstance := List (ℕ × Bool) × List (ℕ × Bool) × ℕ
-
-/-- The gene `-x`: the same symbol with the opposite sign. -/
-def neg (x : ℕ × Bool) : ℕ × Bool := (x.1, !x.2)
-
-/-- An exemplar string `x` of the genome `X`: a sublist of `X` that contains exactly one gene of
-every gene family of `X`. -/
-def IsExemplar (X x : List (ℕ × Bool)) : Prop :=
-  x.Sublist X ∧ (x.map Prod.fst).Nodup ∧ ∀ a ∈ X.map Prod.fst, a ∈ x.map Prod.fst
-
-/-- The pairs `(x_j, x_{j+1})` of consecutive genes of a string. -/
-def adjacencies (x : List (ℕ × Bool)) : List ((ℕ × Bool) × (ℕ × Bool)) :=
-  x.zip x.tail
-
-/-- The breakpoint distance between exemplar strings `g` and `h`: the consecutive pairs `a b` of
-`g` such that neither `a` precedes `b` nor `-b` precedes `-a` in `h`, plus one if `g₁ ≠ h₁` and
-one if `gₙ ≠ hₙ`. -/
-def breakpointDistance (g h : List (ℕ × Bool)) : ℕ :=
-  ((adjacencies g).filter fun ab =>
-      ab ∉ adjacencies h ∧ (neg ab.2, neg ab.1) ∉ adjacencies h).length +
-    (if g.head? = h.head? then 0 else 1) + (if g.getLast? = h.getLast? then 0 else 1)
-
-/-- Well-formedness of an instance: every symbol occurs in both genomes. -/
-def WellFormed (i : ExemplarBreakpointDistanceInstance) : Prop :=
-  (∀ a ∈ i.1.map Prod.fst, a ∈ i.2.1.map Prod.fst) ∧
-    ∀ a ∈ i.2.1.map Prod.fst, a ∈ i.1.map Prod.fst
-
-/-- Some exemplar strings `g` of `G` and `h` of `H` have breakpoint distance at most `K`. -/
-def ExemplarBreakpointDistanceFeasible (i : ExemplarBreakpointDistanceInstance) : Prop :=
-  ∃ g h : List (ℕ × Bool), IsExemplar i.1 g ∧ IsExemplar i.2.1 h ∧
-    breakpointDistance g h ≤ i.2.2
-
-open Classical in
-/-- EXEMPLAR BREAKPOINT DISTANCE as a decision problem over bitstrings. -/
-noncomputable def exemplarBreakpointDistanceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExemplarBreakpointDistanceInstance) x with
-  | some i => decide (WellFormed i ∧ ExemplarBreakpointDistanceFeasible i)
-  | none => false
 
 /-- **EXEMPLAR BREAKPOINT DISTANCE is NP-complete.** Source: Bryant (2000), Theorem 1. -/
 public theorem_wanted exemplarBreakpointDistance_npComplete :

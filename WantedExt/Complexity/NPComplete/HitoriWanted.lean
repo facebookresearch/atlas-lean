@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
+public import CSLibExt.Complexity.NPComplete.HitoriDefs
 
 @[expose] public section
 
@@ -66,51 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the grid row by row, each entry the number in the cell. -/
-abbrev HitoriInstance := List (List ℕ)
-
-/-- The number of rows `m`. -/
-abbrev rows (i : HitoriInstance) : ℕ := i.length
-
-/-- The number of columns `n` (the length of the first row). -/
-abbrev cols (i : HitoriInstance) : ℕ := (i.headD []).length
-
-/-- A cell `(row, column)` of the grid. -/
-abbrev Cell (i : HitoriInstance) := Fin (rows i) × Fin (cols i)
-
-/-- The grid graph on the cells: cells sharing an edge are adjacent. -/
-abbrev Grid (i : HitoriInstance) : SimpleGraph (Cell i) :=
-  SimpleGraph.pathGraph (rows i) □ SimpleGraph.pathGraph (cols i)
-
-/-- The number in cell `x`. -/
-def cell (i : HitoriInstance) (x : Cell i) : ℕ :=
-  (i.getD x.1 []).getD x.2 0
-
-/-- Well-formedness: at least one row and one column, and rows of equal length. -/
-def WellFormed (i : HitoriInstance) : Prop :=
-  0 < rows i ∧ 0 < cols i ∧ ∀ row ∈ i, row.length = cols i
-
-/-- The shading `s` (`true` = shaded) satisfies the three conditions. -/
-def Solves (i : HitoriInstance) (s : Cell i → Bool) : Prop :=
-  -- 1. uniqueness: no number appears more than once unshaded in any row or column
-  (∀ x y, x ≠ y → (x.1 = y.1 ∨ x.2 = y.2) → cell i x = cell i y →
-    s x = true ∨ s y = true) ∧
-  -- 2. separation: shaded cells do not share an edge
-  (∀ x y, (Grid i).Adj x y → ¬ (s x = true ∧ s y = true)) ∧
-  -- 3. connection: the unshaded cells form an edge-connected region
-  ((Grid i).induce {x | s x = false}).Connected
-
-/-- Some shading satisfies the conditions. -/
-def HitoriFeasible (i : HitoriInstance) : Prop :=
-  ∃ s : Cell i → Bool, Solves i s
-
-open Classical in
-/-- HITORI as a decision problem over bitstrings. -/
-noncomputable def hitoriDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := HitoriInstance) x with
-  | some i => decide (WellFormed i ∧ HitoriFeasible i)
-  | none => false
 
 /-- **HITORI is NP-complete.** Source: Hearn and Demaine (2009), Section 9.2. -/
 public theorem_wanted hitori_npComplete :

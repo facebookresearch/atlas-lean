@@ -1,0 +1,61 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# DISTINGUISHING SUBSTRING SELECTION: definitions
+
+Source:
+J. K. Lanctot, M. Li, B. Ma, S. Wang and L. Zhang, "Distinguishing string selection problems",
+Information and Computation 185 (2003), 41-55, doi:10.1016/S0890-5401(03)00057-9;
+J. Gramm, J. Guo and R. Niedermeier, "Parameterized intractability of distinguishing substring
+selection", Theory of Computing Systems 39 (2006), 545-560, doi:10.1007/s00224-004-1185-z.
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ClosestSubstringDefs
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.DistinguishingSubstringSelection
+
+open ClosestSubstring (substringAt)
+
+/-- An instance: alphabet size `q` (letters `0, ..., q - 1`), substring length `L`, the bad
+strings, the good strings, `k_b`, `k_g`. -/
+abbrev DistinguishingSubstringSelectionInstance :=
+  ℕ × ℕ × List (List ℕ) × List (List ℕ) × ℕ × ℕ
+
+/-- Well-formedness of an instance: every bad and every good string has length at least `L`
+and letters in the alphabet `{0, ..., q - 1}`. -/
+def WellFormed (i : DistinguishingSubstringSelectionInstance) : Prop :=
+  (∀ s ∈ i.2.2.1, i.2.1 ≤ s.length ∧ ∀ x ∈ s, x < i.1) ∧
+    ∀ s ∈ i.2.2.2.1, i.2.1 ≤ s.length ∧ ∀ x ∈ s, x < i.1
+
+/-- A string `t` of length `L` over the alphabet such that every bad string has a length-`L`
+substring within Hamming distance `k_b` of `t`, and every length-`L` substring of every good
+string is at Hamming distance at least `k_g` from `t`. -/
+def DistinguishingSubstringSelectionFeasible
+    (i : DistinguishingSubstringSelectionInstance) : Prop :=
+  ∃ t : Fin i.2.1 → ℕ, (∀ k, t k < i.1) ∧
+    (∀ s ∈ i.2.2.1, ∃ j, j + i.2.1 ≤ s.length ∧
+      hammingDist t (substringAt s j i.2.1) ≤ i.2.2.2.2.1) ∧
+    ∀ s ∈ i.2.2.2.1, ∀ j, j + i.2.1 ≤ s.length →
+      i.2.2.2.2.2 ≤ hammingDist t (substringAt s j i.2.1)
+
+open Classical in
+/-- DISTINGUISHING SUBSTRING SELECTION as a decision problem over bitstrings. -/
+noncomputable def distinguishingSubstringSelectionDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := DistinguishingSubstringSelectionInstance) x with
+  | some i => decide (WellFormed i ∧ DistinguishingSubstringSelectionFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.DistinguishingSubstringSelection
