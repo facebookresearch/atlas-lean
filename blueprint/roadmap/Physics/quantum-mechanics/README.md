@@ -26,3 +26,6 @@ Nonrelativistic quantum mechanics: states, observables and the Born rule in fini
 - [Laughlin charge gap bounds the rescaled neutral gap](spherical-laughlin-charge-neutral-gap-comparison.md)
 - [Strict positivity of the finite spherical Laughlin charge gap](spherical-laughlin-charge-gap-positive.md)
 - [Eventual lower bound for the spherical Laughlin charge gap](spherical-laughlin-eventual-charge-gap-lower-bound.md)
+- [Finite fermionic Fock space](finite-fermionic-fock-space/README.md)
+- [Localized-carrier transport](localized-carrier-transport/README.md)
+- [Tight-binding lattice models](tight-binding-lattice-models/README.md)

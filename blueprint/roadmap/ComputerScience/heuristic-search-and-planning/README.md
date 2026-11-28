@@ -22,6 +22,7 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [Monte Carlo tree search](monte-carlo-tree-search/README.md)
 - [Trajectory generation and time scaling](trajectory-generation-and-time-scaling/README.md)
 - [Feedback plans and navigation functions](feedback-plans-and-navigation-functions/README.md)
+- [Black-box objective construction](black-box-objective-construction/README.md)
 
 ## Related topics
 

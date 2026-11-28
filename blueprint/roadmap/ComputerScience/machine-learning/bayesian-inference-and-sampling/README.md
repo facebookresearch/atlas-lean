@@ -12,3 +12,4 @@ Bayes' rule and conjugate models, expectation-maximization for mixtures and late
 - [Rejection sampling](rejection-sampling/README.md)
 - [Markov chain Monte Carlo](markov-chain-monte-carlo/README.md)
 - [Langevin Monte Carlo](langevin-monte-carlo/README.md)
+- [Kernel-density acquisition](kernel-density-acquisition/README.md)

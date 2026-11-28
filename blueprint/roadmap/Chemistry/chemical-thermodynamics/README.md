@@ -13,3 +13,7 @@ Equilibrium thermodynamics of gases and chemical systems: equations of state and
 - [Rankine cycle](rankine-cycle/README.md)
 - [Thermochemistry and Hess's law](thermochemistry-and-hess-s-law/README.md)
 - [Equilibrium-stage separations](equilibrium-stage-separations/README.md)
+- [Adsorption equilibria in porous solids](adsorption-equilibria-in-porous-solids/README.md)
+- [Galvanic cells and the Nernst equation](galvanic-cells-and-the-nernst-equation/README.md)
+- [Lattice-gas models of intercalation electrodes](lattice-gas-models-of-intercalation-electrodes/README.md)
+- [Reaction Gibbs energy and equilibrium constants](reaction-gibbs-energy-and-equilibrium-constants/README.md)

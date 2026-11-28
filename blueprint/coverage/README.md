@@ -47,6 +47,7 @@ source modules; planned destinations are listed separately when added.
 
 **Related mathematical topics**, whose links do not assign library membership:
 
+- [Mathematical chemistry route](../roadmap/Chemistry/README.md), from equilibrium electrochemistry and adsorption to electronic structure and molecular design
 - [Queueing theory](../roadmap/Probability/queueing-theory/README.md)
 - [Birth–death balance weights](../roadmap/Probability/markov-chains/birth-death-processes/README.md)
 - [Population genetics](../roadmap/Biology/population-genetics/README.md), including selection, inbreeding, effective size and diffusion models.

@@ -1,5 +1,8 @@
 # Rate laws
 
+- [Marcus theory of electron transfer](marcus-theory-of-electron-transfer/README.md)
+- [Sorption kinetics models](sorption-kinetics-models/README.md)
+
 ## Extent-rate convention
 
 - [Positive reactor volume](reactor-volume.md)

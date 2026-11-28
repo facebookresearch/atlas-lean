@@ -9,3 +9,5 @@ Concentrations of solutions and the equilibria of aqueous systems: charge and ma
 - [Dissociation of a monoprotic acid](dissociation-of-a-monoprotic-acid/README.md)
 - [Henry's law](henry-s-law/README.md)
 - [Interphase mass transfer](interphase-mass-transfer/README.md)
+- [Debye–Hückel theory of electrolytes](debye-hueckel-theory-of-electrolytes/README.md)
+- [Electric double-layer capacitance](electric-double-layer-capacitance/README.md)
