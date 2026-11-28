@@ -8,4 +8,4 @@ The satisfiability, realizability and alternation-level problems of HyperLTL and
 - [HyperLTL satisfiability is Σ¹₁-complete](hyperltl-satisfiability-is-sigma-1-1-complete.md)
 - [HyperLTL satisfiability over ultimately periodic traces is Σ¹₁-complete](hyperltl-satisfiability-over-ultimately-periodic.md)
 - [Satisfiability of ∀∃ HyperLTL is undecidable](satisfiability-of-forall-exists-hyperltl.md)
-- [Realizability of HyperLTL is undecidable for the universal and the ∀∃ fragments](hyperltl-realizability-undecidable.md)
+- [Realizability of ∀∃ HyperLTL is undecidable](hyperltl-realizability-undecidable.md)

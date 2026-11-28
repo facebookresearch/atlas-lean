@@ -15,6 +15,7 @@ The source also identifies a fragment of HyperLTL$_C$ with decidable model check
 ## Depends on
 
 - [HyperLTL](../hyperltl.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

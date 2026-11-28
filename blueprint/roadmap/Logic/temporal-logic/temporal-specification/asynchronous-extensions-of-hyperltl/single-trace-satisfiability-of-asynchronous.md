@@ -6,7 +6,7 @@ Whether an asynchronous HyperLTL sentence, which compares traces along fair traj
 
 **Problem.** The *single-trace satisfiability problem* asks whether a given A-HLTL sentence is satisfied by a set consisting of exactly one trace.
 
-**Theorem (Bozzelli, Peron and Sánchez).** The single-trace satisfiability problem of A-HLTL is $\Sigma^1_1$-hard.
+**Theorem (Bozzelli, Peron and Sánchez).** The single-trace satisfiability problem of A-HLTL is $\Sigma^1_1$-hard: every set of natural numbers definable by a formula $\exists f\, \forall n\, R(f, n, x)$ of second-order arithmetic, with $f$ ranging over functions $\mathbb N \to \mathbb N$ and $R$ recursive, many-one reduces to it. In particular it is undecidable and not in the arithmetical hierarchy.
 
 The proof constructs sentences with only two trace variables.
 
@@ -15,6 +15,7 @@ For HyperLTL, single-trace satisfiability coincides with LTL satisfiability and 
 ## Depends on
 
 - [HyperLTL](../hyperltl.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

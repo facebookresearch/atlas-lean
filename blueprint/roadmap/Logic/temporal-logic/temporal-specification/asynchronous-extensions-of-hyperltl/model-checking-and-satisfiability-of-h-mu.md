@@ -12,6 +12,7 @@ Both problems are therefore not arithmetical, and no approximation procedure tha
 ## Depends on
 
 - [The fixpoint calculus H_μ for asynchronous hyperproperties](the-fixpoint-calculus-h-mu.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -19,7 +20,7 @@ None.
 
 ## Expansion
 
-The proof passes through *alternating asynchronous parity automata* (AAPA), alternating parity automata reading a tuple of infinite words in which each transition advances only one of the input words. For each AAPA one can effectively build an $H_\mu$ formula equivalent to it over a fixed path assignment, and conversely. AAPA are closed under union, intersection and complement, and they simulate two-tape Büchi automata; since the inclusion problem for two-tape Büchi automata is $\Pi^1_2$-complete (Finkel and Lecomte), the emptiness problem for AAPA is $\Sigma^1_2$-hard, by reducing non-inclusion $R(\mathcal T)\not\subseteq R(\mathcal T')$ to non-emptiness of an AAPA for $R(\mathcal T)\cap\overline{R(\mathcal T')}$. Model checking the corresponding formula against a Kripke structure generating all words over the alphabet, or checking its satisfiability, then decides AAPA emptiness. A good expansion links pages for the $\Pi^1_2$-completeness of inclusion of two-tape Büchi automata and for the equivalence between AAPA and $H_\mu$; neither has a page yet.
+The proof passes through *alternating asynchronous parity automata* (AAPA), alternating parity automata reading a tuple of infinite words in which each transition advances only one of the input words. For each AAPA one can effectively build an $H_\mu$ formula equivalent to it over a fixed path assignment, and conversely. AAPA are closed under union, intersection and complement, and they simulate two-tape Büchi automata; since the inclusion problem for two-tape Büchi automata is $\Pi^1_2$-complete (Finkel and Lecomte), the emptiness problem for AAPA is $\Sigma^1_2$-hard, by reducing non-inclusion $R(\mathcal T)\not\subseteq R(\mathcal T')$ to non-emptiness of an AAPA for $R(\mathcal T)\cap\overline{R(\mathcal T')}$. Model checking the corresponding formula against a Kripke structure generating all words over the alphabet, or checking its satisfiability, then decides AAPA emptiness. A good expansion links pages for the $\Pi^1_2$-completeness of inclusion of two-tape Büchi automata (Proposition A.1 as cited in the source) and for the equivalence between AAPA and $H_\mu$ (Theorem 5.2).
 
 ## Sources
 

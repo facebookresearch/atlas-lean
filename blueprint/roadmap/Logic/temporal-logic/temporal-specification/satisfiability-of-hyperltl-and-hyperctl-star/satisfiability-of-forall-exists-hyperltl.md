@@ -11,6 +11,7 @@ By contrast, HyperLTL-SAT is PSPACE-complete for the alternation-free fragment (
 ## Depends on
 
 - [HyperLTL](../hyperltl.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

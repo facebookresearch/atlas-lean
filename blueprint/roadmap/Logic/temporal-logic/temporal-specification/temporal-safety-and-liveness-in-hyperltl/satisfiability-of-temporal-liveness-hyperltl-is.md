@@ -2,13 +2,14 @@
 
 Unlike temporal safety, restricting HyperLTL bodies to liveness properties does not lower the complexity of satisfiability: it remains $\Sigma^1_1$-hard for formulas with one universal trace quantifier followed by existential ones.
 
-**Theorem (Beutner, Carral, Finkbeiner, Hofmann and Krötzsch).** The satisfiability problem, whether some nonempty set of traces satisfies a given formula, is $\Sigma^1_1$-hard for $\forall\exists^*$ [temporal liveness HyperLTL formulas](temporal-safety-and-temporal-liveness-hyperltl.md): every $\Sigma^1_1$ set many-one reduces to the set of satisfiable closed HyperLTL formulas $\forall\pi_1\exists\pi_2 \dots \exists\pi_m.\,\phi$ whose body $\phi$ describes a liveness property. In particular the problem is undecidable and not arithmetical.
+**Theorem (Beutner, Carral, Finkbeiner, Hofmann and Krötzsch).** The satisfiability problem, whether some nonempty set of traces satisfies a given formula, is $\Sigma^1_1$-hard for $\forall\exists^*$ [temporal liveness HyperLTL formulas](temporal-liveness-hyperltl-formulas.md): every $\Sigma^1_1$ set many-one reduces to the set of satisfiable closed HyperLTL formulas $\forall\pi_1\exists\pi_2 \dots \exists\pi_m.\,\phi$ whose body $\phi$ describes a liveness property. In particular the problem is undecidable and not arithmetical.
 
 With the $\Sigma^1_1$ upper bound for HyperLTL satisfiability (Fortin, Kuijer, Totzke and Zimmermann), the problem is $\Sigma^1_1$-complete, as Table 1 of the source records.
 
 ## Depends on
 
-- [Temporal safety and temporal liveness HyperLTL formulas](temporal-safety-and-temporal-liveness-hyperltl.md)
+- [Temporal liveness HyperLTL formulas](temporal-liveness-hyperltl-formulas.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -10,6 +10,7 @@ With $\Gamma = \emptyset$ the modalities are those of HyperLTL, whose model chec
 
 - [HyperLTL](../hyperltl.md)
 - [Formulas of linear temporal logic](../../linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

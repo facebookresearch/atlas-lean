@@ -10,6 +10,7 @@ Realizability is decidable on the fragment $\exists_{q/\pi}^*\forall_q^*\forall_
 
 - [HyperQPTL](hyperqptl.md)
 - [Realizability of HyperQPTL formulas](realizability-of-hyperqptl-formulas.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

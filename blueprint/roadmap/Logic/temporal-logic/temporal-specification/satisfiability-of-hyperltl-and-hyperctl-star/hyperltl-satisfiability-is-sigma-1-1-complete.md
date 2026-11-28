@@ -2,16 +2,19 @@
 
 Whether a given HyperLTL sentence has a model, an arbitrary set of traces, is a $\Sigma^1_1$-complete problem. In particular it is undecidable, and the set of satisfiable sentences is neither recursively enumerable nor co-recursively enumerable.
 
-**Theorem (Fortin, Kuijer, Totzke and Zimmermann).** Fix a finite set $AP$ of atomic propositions. The *satisfiability problem* for [HyperLTL](../hyperltl.md) asks, given a HyperLTL sentence $\varphi$ over $AP$ (a prenex formula with no free trace variables), whether there is a set $T \subseteq (2^{AP})^\omega$ of traces with $T \models \varphi$. Here $T$ ranges over all sets of traces, finite or infinite, with no finiteness, regularity or periodicity condition. This problem is $\Sigma^1_1$-complete: it lies in $\Sigma^1_1$, and it is $\Sigma^1_1$-hard.
+**Theorem (Fortin, Kuijer, Totzke and Zimmermann).** Fix a finite set $AP$ of atomic propositions. The *satisfiability problem* for [HyperLTL](../hyperltl.md) asks, given a HyperLTL sentence $\varphi$ over $AP$ (a prenex formula with no free trace variables), whether there is a set $T \subseteq (2^{AP})^\omega$ of traces with $T \models \varphi$. Here $T$ ranges over all sets of traces, finite or infinite, with no finiteness, regularity or periodicity condition. This problem is $\Sigma^1_1$-complete: it lies in $\Sigma^1_1$, and it is $\Sigma^1_1$-hard (Theorem 3.1 of the source; hardness reduces the recurrent tiling problem for the positive quadrant). The empty set of traces is allowed as a model.
 
 Here $\Sigma^1_1$ is the class of sets of the form $\{x \in \mathbb N \mid \exists f_0 \cdots \exists f_k\ \psi(x, f_0, \ldots, f_k)\}$, where the $f_i$ range over functions $\mathbb N \to \mathbb N$ and $\psi$ is a formula of arithmetic in the signature $(0, 1, +, \cdot, <)$ with arbitrary quantification over natural numbers only. Since $\Sigma^1_1$ properly contains every level of the [arithmetical hierarchy](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md), a $\Sigma^1_1$-complete set is not arithmetical.
 
-The same paper shows that the problem stays $\Sigma^1_1$-complete when the models are restricted to sets of ultimately periodic traces (a separate page), while the restriction to finite sets of ultimately periodic traces is $\Sigma^0_1$-complete (Finkbeiner, Hahn and Hans, recalled after Theorem 3.1 of the source).
+The same paper shows that the problem stays $\Sigma^1_1$-complete when the models are restricted to [sets of ultimately periodic traces](hyperltl-satisfiability-over-ultimately-periodic.md), while the restriction to finite sets of ultimately periodic traces is $\Sigma^0_1$-complete (Finkbeiner, Hahn and Hans, recalled after Theorem 3.1 of the source).
 
 ## Depends on
 
 - [HyperLTL](../hyperltl.md)
 - [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

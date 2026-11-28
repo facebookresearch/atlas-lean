@@ -2,13 +2,14 @@
 
 Once an arbitrary LTL property that every trace must satisfy is added, satisfiability of temporal safety HyperLTL jumps to $\Sigma^1_1$-complete, already for one universal trace quantifier followed by existential ones and a single globally operator.
 
-**Theorem (Beutner, Carral, Finkbeiner, Hofmann and Krötzsch).** The satisfiability problem for [specifications](temporal-safety-and-temporal-liveness-hyperltl.md) $(\psi, \varphi)$, with $\psi$ an arbitrary LTL formula and $\varphi$ a HyperLTL formula of the form $\forall\exists^*.\,G$, is $\Sigma^1_1$-complete: the set of such satisfiable specifications is in $\Sigma^1_1$ and every $\Sigma^1_1$ set many-one reduces to it. Here $\varphi = \forall\pi_1\exists\pi_2 \dots \exists\pi_m.\,(G\phi) \wedge \phi'$ with $\phi$ and $\phi'$ free of temporal operators, so $\varphi$ is temporal safety; the problem asks for a nonempty set of traces all satisfying $\psi$ that satisfies $\varphi$.
+**Theorem (Beutner, Carral, Finkbeiner, Hofmann and Krötzsch).** The satisfiability problem for [specifications](ltl-and-hyperltl-specifications.md) $(\psi, \varphi)$, with $\psi$ an arbitrary LTL formula and $\varphi$ a HyperLTL formula of the form $\forall\exists^*.\,G$, is $\Sigma^1_1$-complete: the set of such satisfiable specifications is in $\Sigma^1_1$ and every $\Sigma^1_1$ set many-one reduces to it. Here $\varphi = \forall\pi_1\exists\pi_2 \dots \exists\pi_m.\,(G\phi) \wedge \phi'$ with $\phi$ and $\phi'$ free of temporal operators, so $\varphi$ is temporal safety; the problem asks for a nonempty set of traces all satisfying $\psi$ that satisfies $\varphi$.
 
 If $\psi$ is itself a safety property, it can be merged into $\varphi$ and the problem stays co-r.e.; the jump comes from non-safety LTL specifications.
 
 ## Depends on
 
-- [Temporal safety and temporal liveness HyperLTL formulas](temporal-safety-and-temporal-liveness-hyperltl.md)
+- [LTL and HyperLTL specifications](ltl-and-hyperltl-specifications.md)
+- [Temporal safety HyperLTL formulas](temporal-safety-hyperltl-formulas.md)
 
 ## Proof depends on
 

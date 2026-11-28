@@ -7,6 +7,7 @@ Model checking finite transition systems against asynchronous HyperLTL sentences
 ## Depends on
 
 - [Asynchronous HyperLTL](asynchronous-hyperltl.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

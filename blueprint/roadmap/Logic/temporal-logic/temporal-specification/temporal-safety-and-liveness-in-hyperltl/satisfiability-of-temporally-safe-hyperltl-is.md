@@ -2,14 +2,15 @@
 
 Whether a temporal safety HyperLTL formula is satisfied by some nonempty set of traces is a co-r.e.-complete problem, so it is undecidable but, unlike general HyperLTL satisfiability, lies at the first level of the arithmetical hierarchy.
 
-**Theorem (Beutner, Carral, Finkbeiner, Hofmann and Krötzsch).** The satisfiability problem for [temporal safety HyperLTL formulas](temporal-safety-and-temporal-liveness-hyperltl.md), whether a given closed temporal safety HyperLTL formula $\varphi$ is satisfied by some nonempty set of traces, is co-r.e.-complete, that is, complete for the class [$\Pi^0_1$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md). Hardness holds already for formulas of the form $\forall\exists^*.\,G(X^*)$: a single universal and some existential trace quantifiers, and a body $G\phi \wedge \phi'$ with $\phi$ built from propositions, Booleans and $X$ and $\phi'$ propositional (Lemma 3.10).
+**Theorem (Beutner, Carral, Finkbeiner, Hofmann and Krötzsch).** The satisfiability problem for [temporal safety HyperLTL formulas](temporal-safety-hyperltl-formulas.md), whether a given closed temporal safety HyperLTL formula $\varphi$ is satisfied by some nonempty set of traces, is co-r.e.-complete, that is, complete for the class [$\Pi^0_1$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md). Hardness holds already for formulas of the form $\forall\exists^*.\,G(X^*)$: a single universal and some existential trace quantifiers, and a body $G\phi \wedge \phi'$ with $\phi$ built from propositions, Booleans and $X$ and $\phi'$ propositional (Lemma 3.10).
 
 For general HyperLTL, satisfiability is $\Sigma^1_1$-complete (Fortin, Kuijer, Totzke and Zimmermann); temporal safety therefore lowers it from the analytical to the arithmetical hierarchy. For $\forall^*\exists^*.\,G$ formulas without $X$ the problem is NEXPTIME-complete.
 
 ## Depends on
 
-- [Temporal safety and temporal liveness HyperLTL formulas](temporal-safety-and-temporal-liveness-hyperltl.md)
+- [Temporal safety HyperLTL formulas](temporal-safety-hyperltl-formulas.md)
 - [The arithmetical class $\Pi_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

@@ -15,6 +15,7 @@ The source also shows that trace-prefixed formulas with prefix $\forall \pi_1 \m
 ## Depends on
 
 - [Hypertrace logic with constrained and unconstrained trace quantifiers](hypertrace-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

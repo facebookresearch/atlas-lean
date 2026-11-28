@@ -2,13 +2,14 @@
 
 Already for HyperQPTL formulas with one universal trace quantifier followed by one existential trace quantifier, no algorithm decides whether some set of traces satisfies the formula; the $\exists^*\forall^*$ fragment, by contrast, is decidable.
 
-**Theorem (Coenen, Finkbeiner, Hahn and Hofmann).** The satisfiability problem for [HyperQPTL](hyperqptl.md) formulas in the $\forall\exists$ fragment is undecidable: there is no algorithm that decides, for a closed HyperQPTL formula whose trace quantifier prefix is $\forall\pi\,\exists\pi'$, whether some set of traces satisfies it.
+**Theorem (Coenen, Finkbeiner, Hahn and Hofmann).** The satisfiability problem for [HyperQPTL](hyperqptl.md) formulas in the $\forall\exists$ fragment is undecidable: there is no algorithm that decides, for a closed HyperQPTL formula whose trace quantifier prefix is $\forall\pi\,\exists\pi'$, whether some nonempty set of traces satisfies it. The set must be nonempty: the empty set satisfies every formula whose first trace quantifier is universal, so the source's question, whether a trace set $T$ with $T \models \varphi$ exists, is read for nonempty $T$, as in the HyperLTL literature.
 
 The $\exists^*\forall^*$ fragment of HyperQPTL has decidable satisfiability (Theorem 4.2 of the source), so it is the largest decidable fragment determined by the trace quantifier prefix.
 
 ## Depends on
 
 - [HyperQPTL](hyperqptl.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

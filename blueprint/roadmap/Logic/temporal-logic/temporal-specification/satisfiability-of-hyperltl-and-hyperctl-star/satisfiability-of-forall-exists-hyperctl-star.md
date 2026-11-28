@@ -9,6 +9,7 @@ This sharpens the undecidability of general HyperCTL* satisfiability. The $\exis
 ## Depends on
 
 - [HyperCTL*](../hyperctl-star.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
