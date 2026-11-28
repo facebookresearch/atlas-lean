@@ -1,8 +1,9 @@
 # Sequential tests and quickest change detection
 
+- [Group sequential designs and alpha spending](group-sequential-designs-and-alpha-spending/README.md)
 Observations $X_1, X_2, \dots$ arrive one at a time and the statistician decides after each one whether to stop. To test $P_0$ against $P_1$, two mutually absolutely continuous laws, with i.i.d. observations, Wald's sequential probability ratio test stops when the log-likelihood ratio $\Lambda_n$ leaves an interval $(a, b)$; Wald's inequalities bound its error probabilities by the boundaries, and the Wald–Wolfowitz theorem says that no test with error probabilities no larger than those of the SPRT has a smaller expected sample size under either hypothesis. In quickest change detection the law switches from $P_0$ to $P_1$ at an unknown time: with a geometric prior on the change point, Shiryaev's rule (stop when the posterior probability of a change reaches or exceeds a threshold) minimises the expected delay under a false-alarm constraint, and without a prior Page's CUSUM minimises Lorden's worst-case delay for a given mean time to false alarm (Moustakides 1986). Wald's inequalities follow from the likelihood-ratio change of measure on the first $n$ observations. All of these problems reduce to optimal stopping problems (Peskir and Shiryaev, *Optimal Stopping and Free-Boundary Problems*, 2006, Introduction (B) and Chapter VI, where the continuous-time Wiener and Poisson versions are solved).
 
-- [Group sequential designs and alpha spending](group-sequential-designs-and-alpha-spending/README.md)
+- [Anytime-valid confidence sequences](anytime-valid-confidence-sequences/README.md)
 
 ## Observations and likelihood ratios
 

@@ -21,14 +21,11 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 3 of 17](part-03/README.md)
 
-- [Confidence Sequence](part-03/confidence-sequence/README.md)
-- [Confidence Set](part-03/confidence-set/README.md)
 - [Continuous Tightness](part-03/continuous-tightness/README.md)
 
 ## [Part 4 of 17](part-04/README.md)
 
 - [De Groot](part-04/de-groot/README.md)
-- [Difference In Differences](part-04/difference-in-differences/README.md)
 - [Double Robustness](part-04/double-robustness/README.md)
 - [Estimating Equations](part-04/estimating-equations/README.md)
 
@@ -37,22 +34,18 @@ Topics added since this subject's fields were last revised.
 - [Expected Consequence](part-05/expected-consequence/README.md)
 - [Expected Duration](part-05/expected-duration/README.md)
 - [Exposure Mapping](part-05/exposure-mapping/README.md)
-- [Factorial](part-05/factorial/README.md)
 - [Failure Bracket](part-05/failure-bracket/README.md)
 - [Finite Argmin](part-05/finite-argmin/README.md)
 - [Finite Conditioning](part-05/finite-conditioning/README.md)
-- [Finite Consistency](part-05/finite-consistency/README.md)
 - [Finite Covariance PSD](part-05/finite-covariance-psd/README.md)
 
 ## [Part 6 of 17](part-06/README.md)
 
 - [Finite Linking](part-06/finite-linking/README.md)
-- [Finite Posterior](part-06/finite-posterior/README.md)
 - [Finite Prefix](part-06/finite-prefix/README.md)
 - [Finite Prefix Geometric](part-06/finite-prefix-geometric/README.md)
 - [Finite Prefix Stopping](part-06/finite-prefix-stopping/README.md)
 - [Finite Risk](part-06/finite-risk/README.md)
-- [Fisher Randomization](part-06/fisher-randomization/README.md)
 - [Fixed Grid Intervals](part-06/fixed-grid-intervals/README.md)
 - [Gaussian Affine Failure](part-06/gaussian-affine-failure/README.md)
 - [Gaussian Selection](part-06/gaussian-selection/README.md)
@@ -81,17 +74,11 @@ Topics added since this subject's fields were last revised.
 - [Misspecified MLE](part-10/misspecified-mle/README.md)
 - [MLEConsistency](part-10/mleconsistency/README.md)
 - [MNARCounterexample](part-10/mnarcounterexample/README.md)
-- [Multinomial Totals](part-10/multinomial-totals/README.md)
 
 ## [Part 11 of 17](part-11/README.md)
 
-- [Normal Theory](part-11/normal-theory/README.md)
 - [Observed Likelihood](part-11/observed-likelihood/README.md)
-- [Omitted Variable Bias](part-11/omitted-variable-bias/README.md)
 - [One Step](part-11/one-step/README.md)
-- [One Way](part-11/one-way/README.md)
-- [Panel Within](part-11/panel-within/README.md)
-- [Pearson](part-11/pearson/README.md)
 
 ## [Part 12 of 17](part-12/README.md)
 
@@ -99,10 +86,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 13 of 17](part-13/README.md)
 
-- [Regression Discontinuity](part-13/regression-discontinuity/README.md)
-- [Sample Mean Squared Deviation](part-13/sample-mean-squared-deviation/README.md)
-- [Sample Moments](part-13/sample-moments/README.md)
-- [Saturated Two By Two Regression](part-13/saturated-two-by-two-regression/README.md)
 - [Selection Bias](part-13/selection-bias/README.md)
 
 ## [Part 14 of 17](part-14/README.md)
@@ -120,7 +103,6 @@ Topics added since this subject's fields were last revised.
 
 - [True Score](part-15/true-score/README.md)
 - [Value Of Information](part-15/value-of-information/README.md)
-- [Ville](part-15/ville/README.md)
 - [Wald Envelope](part-15/wald-envelope/README.md)
 
 ## [Part 16 of 17](part-16/README.md)

@@ -2,6 +2,7 @@
 
 - [Abstract Gödel–Rosser incompleteness theorem](godel-rosser-abstract-schema.md)
 - [Gödel's second incompleteness theorem, abstract Hilbert–Bernays–Löb form](hilbert-bernays-lob-second-incompletenes.md)
+- [The first-order theory of the ring of integers is undecidable](first-order-theory-of-the-integers-is-undecidable.md)
 
 ## Related topics
 
