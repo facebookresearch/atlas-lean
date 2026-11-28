@@ -10,12 +10,13 @@ module
 
 public import Domains.Biology.Phylogenetics.TreeOfBlobs
 public import Mathlib.Data.Fin.VecNotation
+import Mathlib.Combinatorics.SimpleGraph.Acyclic
 import Mathlib.Tactic.FinCases
 
 /-!
 # Tests for blobs and the reduced unrooted tree of blobs of a phylogenetic network
 
-Three networks witness that the structure is satisfiable:
+Five networks witness that the structure is satisfiable:
 
 * `quartetTree`, the rooted binary tree `((a, b), (c, d))`. Its LSA is the root, and the root is a
   trivial `3`-blob, as the page says. Every edge of its semidirected network is a cut edge, and
@@ -29,6 +30,11 @@ Three networks witness that the structure is satisfiable:
   meeting the four taxa through four cut edges. Its LSA is the root, the cycle is a `4`-blob of the
   semidirected network and a vertex of the reduced tree of blobs, `{a, b, c, d}` is a B-quartet, and
   the semidirected network keeps the direction of a hybrid edge but not of a tree edge.
+* `hybridChildNetwork`, whose root, the LSA, has a tree child and a hybrid child. The edge that
+  replaces the root in the semidirected network is directed from the tree child to the hybrid child.
+* `singleTaxonNetwork`, with a single taxon below a `2`-cycle. Its LSA is the leaf, which has no
+  child; the semidirected network is that leaf alone, and its reduced tree of blobs is a tree with
+  one vertex, labelled by the taxon.
 -/
 
 @[expose] public section
@@ -272,7 +278,7 @@ theorem quartetTree_isBridge (o : Option (Fin 6)) (ho : o ∈ E(quartetTree.semi
 
 theorem quartetTree_mem (v : Fin 7) (hv : v ≠ 0) : v ∈ V(quartetTree.semidirected.graph) := by
   rw [RootedBinaryNetwork.mem_semidirected_vertexSet, quartetTree_lsa]
-  exact ⟨quartetTree.not_transGen_root v, hv⟩
+  exact ⟨quartetTree.not_transGen_root v, fun h ↦ hv h.1⟩
 
 /-- The blob of a node of the semidirected network of `((a, b), (c, d))`: the node alone. -/
 noncomputable def quartetTreeBlob (v : Fin 7) (hv : v ≠ 0) : {H // quartetTree.semidirected.graph.IsBlob H} :=
@@ -295,7 +301,8 @@ theorem quartetTree_blobOf_leaf (x : Fin 4) :
       quartetTreeBlob (quartetTree.leaf x) (by fin_cases x <;> decide) :=
   Subtype.ext ((quartetTreeBlob _ _).2.eq_blobOf rfl).symm
 
-/-- The two inner nodes have degree three in the tree of blobs, so they are not suppressed. -/
+/-- The two inner nodes have three distinct neighbours in the tree of blobs, so their degree is not
+two and they are not suppressed. -/
 theorem quartetTree_ncard_ne_two (v : Fin 7) (hv : v = 1 ∨ v = 2) :
     (quartetTree.unrootedTreeOfBlobs.neighborSet (quartetTreeBlob v (by rcases hv with rfl | rfl <;> decide))).ncard ≠ 2 := by
   have hlink : ∀ e : Fin 6, quartetTree.src e ≠ 0 →
@@ -540,7 +547,7 @@ theorem fourBlobNetwork_not_isBridge (e : Fin 9) (he : e = 2 ∨ e = 3 ∨ e = 5
 
 theorem fourBlobNetwork_mem_one : (1 : Fin 9) ∈ V(fourBlobNetwork.semidirected.graph) := by
   rw [RootedBinaryNetwork.mem_semidirected_vertexSet, fourBlobNetwork_lsa]
-  exact ⟨fourBlobNetwork.not_transGen_root 1, by decide⟩
+  exact ⟨fourBlobNetwork.not_transGen_root 1, fun h ↦ absurd h.1 (by decide)⟩
 
 /-- The blob of the cycle, the blob of the node `1`. -/
 noncomputable def fourBlobNetworkCycle : {H // fourBlobNetwork.semidirected.graph.IsBlob H} :=
@@ -688,5 +695,113 @@ example : fourBlobNetwork.semidirected.IsArc (some 5) 2 4 ∧
   · obtain ⟨e₁, e₂, -, -, h₂, -, -, -, hhyb₂⟩ := h
     rw [fourBlobNetwork_lsa] at h₂
     rcases (hhyb e₂).1 hhyb₂ with rfl | rfl <;> exact absurd h₂ (by decide)
+
+/-! ### A hybrid child of the lowest stable ancestor -/
+
+/-- The root `0` has the tree node `t = 1` and the hybrid node `h = 2` as children, and `t` is the
+other parent of `h`; `t` and `h` are the parents of the leaves `a = 3` and `b = 4`. -/
+def hybridChildNetwork : RootedBinaryNetwork (Fin 2) (Fin 5) (Fin 5) where
+  src := ![0, 0, 1, 1, 2]
+  tgt := ![1, 2, 2, 3, 4]
+  root := 0
+  leaf := ![3, 4]
+  leaf_injective := by decide
+  mem_range_leaf := by simp only [Nat.card_eq_fintype_card, Set.mem_range]; decide
+  indeg_root := by simp only [Nat.card_eq_fintype_card]; decide
+  outdeg_root := by simp only [Nat.card_eq_fintype_card]; decide
+  degree_cases := by simp only [Nat.card_eq_fintype_card]; decide
+  acyclic := acyclic_of_lt _ _ (by decide)
+
+instance : DecidableRel hybridChildNetwork.toDigraph.Adj := fun u v ↦
+  decidable_of_iff (∃ e, hybridChildNetwork.src e = u ∧ hybridChildNetwork.tgt e = v) Iff.rfl
+
+/-- The LSA is the root: the path to `a` avoids `h`, and the path to `b` avoids `t`. -/
+theorem hybridChildNetwork_lsa : hybridChildNetwork.lsa = 0 := by
+  refine lsa_eq_root _ fun u hu ↦ ?_
+  have hpath : ∀ (x : Fin 2) (p : List (Fin 5)), p.IsChain hybridChildNetwork.toDigraph.Adj →
+      p.Nodup → p.head? = some 0 → p.getLast? = some (hybridChildNetwork.leaf x) → u ∉ p →
+      ∃ x, ∃ p ∈ hybridChildNetwork.toDigraph.paths, p.head? = some hybridChildNetwork.root ∧
+        p.getLast? = some (hybridChildNetwork.leaf x) ∧ u ∉ p :=
+    fun x p h₁ h₂ h₃ h₄ h₅ ↦ ⟨x, p, ⟨h₁, h₂⟩, h₃, h₄, h₅⟩
+  fin_cases u
+  · exact absurd rfl hu
+  · exact hpath 1 [0, 2, 4] (by decide) (by decide) rfl rfl (by decide)
+  · exact hpath 0 [0, 1, 3] (by decide) (by decide) rfl rfl (by decide)
+  · exact hpath 1 [0, 2, 4] (by decide) (by decide) rfl rfl (by decide)
+  · exact hpath 0 [0, 1, 3] (by decide) (by decide) rfl rfl (by decide)
+
+/-- **The edge replacing the root takes the direction of its hybrid edge**: it is directed from the
+tree child `t` to the hybrid child `h`, and not from `h` to `t`. -/
+example : hybridChildNetwork.semidirected.IsArc none 1 2 ∧
+    ¬ hybridChildNetwork.semidirected.IsArc none 2 1 := by
+  have hhyb : ∀ e : Fin 5, hybridChildNetwork.IsHybridEdge e ↔ e = 1 ∨ e = 2 := by
+    simp only [RootedBinaryNetwork.IsHybridEdge, Nat.card_eq_fintype_card]
+    decide
+  have harc : hybridChildNetwork.semidirected.IsArc none 1 2 :=
+    ⟨0, 1, by decide, by rw [hybridChildNetwork_lsa]; rfl, by rw [hybridChildNetwork_lsa]; rfl,
+      rfl, rfl, fun h ↦ absurd ((hhyb 0).1 h) (by decide), (hhyb 1).2 (Or.inl rfl)⟩
+  exact ⟨harc, hybridChildNetwork.semidirected.isArc_asymm harc⟩
+
+/-! ### A single taxon -/
+
+/-- The root `0` has two parallel edges to the hybrid node `1`, the parent of the only leaf
+`a = 2`. -/
+def singleTaxonNetwork : RootedBinaryNetwork (Fin 1) (Fin 3) (Fin 3) where
+  src := ![0, 0, 1]
+  tgt := ![1, 1, 2]
+  root := 0
+  leaf := ![2]
+  leaf_injective := by decide
+  mem_range_leaf := by simp only [Nat.card_eq_fintype_card, Set.mem_range]; decide
+  indeg_root := by simp only [Nat.card_eq_fintype_card]; decide
+  outdeg_root := by simp only [Nat.card_eq_fintype_card]; decide
+  degree_cases := by simp only [Nat.card_eq_fintype_card]; decide
+  acyclic := acyclic_of_lt _ _ (by decide)
+
+/-- **With a single taxon, the LSA is its leaf.** -/
+theorem singleTaxonNetwork_lsa : singleTaxonNetwork.lsa = 2 :=
+  singleTaxonNetwork.lsa_eq_leaf 0
+
+/-- The LSA has no child, as there is a single taxon. -/
+example : ¬ ∃ e, singleTaxonNetwork.src e = singleTaxonNetwork.lsa := by
+  rw [singleTaxonNetwork.exists_src_eq_lsa_iff, not_nontrivial_iff_subsingleton]
+  infer_instance
+
+/-- **The semidirected network keeps the leaf**, its only vertex: the LSA has no child, so there
+is nothing to suppress. -/
+theorem singleTaxonNetwork_vertexSet : V(singleTaxonNetwork.semidirected.graph) = {2} := by
+  ext v
+  rw [RootedBinaryNetwork.mem_semidirected_vertexSet, singleTaxonNetwork_lsa,
+    Set.mem_singleton_iff]
+  fin_cases v
+  · exact iff_of_false (fun h ↦ h.1 (.head ⟨0, rfl, rfl⟩ (.single ⟨2, rfl, rfl⟩))) (by decide)
+  · exact iff_of_false (fun h ↦ h.1 (.single ⟨2, rfl, rfl⟩)) (by decide)
+  · exact iff_of_true ⟨singleTaxonNetwork.isAcyclic 2,
+      fun ⟨_, e, he⟩ ↦ singleTaxonNetwork.src_ne_leaf 0 e he⟩ rfl
+
+/-- The semidirected network has a single blob. -/
+theorem singleTaxonNetwork_subsingleton_blob :
+    Subsingleton {H // singleTaxonNetwork.semidirected.graph.IsBlob H} := by
+  refine ⟨fun B₁ B₂ ↦ ?_⟩
+  obtain ⟨⟨x, hx⟩⟩ := B₁.2.connected.nonempty
+  obtain ⟨⟨y, hy⟩⟩ := B₂.2.connected.nonempty
+  have hx' := B₁.2.le.vertexSet_mono hx
+  have hy' := B₂.2.le.vertexSet_mono hy
+  rw [singleTaxonNetwork_vertexSet, Set.mem_singleton_iff] at hx' hy'
+  subst hx' hy'
+  exact Subtype.ext (B₁.2.eq_of_mem B₂.2 hx hy)
+
+/-- **The reduced unrooted tree of blobs of a single-taxon network is a tree with one vertex**,
+the vertex labelled by the taxon. -/
+example : singleTaxonNetwork.reducedUnrootedTreeOfBlobs.IsTree ∧
+    ∀ B, B = singleTaxonNetwork.taxonVertex 0 := by
+  have hsub : ∀ B C : {B // (singleTaxonNetwork.unrootedTreeOfBlobs.neighborSet B).ncard ≠ 2},
+      B = C := fun B C ↦ Subtype.ext (singleTaxonNetwork_subsingleton_blob.elim _ _)
+  have : Nonempty {B // (singleTaxonNetwork.unrootedTreeOfBlobs.neighborSet B).ncard ≠ 2} :=
+    ⟨singleTaxonNetwork.taxonVertex 0⟩
+  refine ⟨⟨⟨fun B C ↦ by rw [hsub B C]⟩, fun v c hc ↦ ?_⟩, fun B ↦ hsub _ _⟩
+  cases c with
+  | nil => exact SimpleGraph.Walk.not_isCycle_nil hc
+  | cons h _ => exact h.ne (hsub _ _)
 
 end DomainsTest.Biology.Phylogenetics.TreeOfBlobs

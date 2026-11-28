@@ -39,8 +39,9 @@ the root as one more incident edge (`Graph.IsRootedMBlob`). These counts are car
 The **tree of blobs** `Graph.treeOfBlobs` contracts every blob to a single vertex: its vertices
 are the blobs, two of them adjacent when an edge of `G` joins them (Xu–Ané 2023 give this
 description; for a connected graph it is a tree). `SimpleGraph.suppressDegreeTwo` suppresses the
-vertices of degree two of a graph, replacing each maximal path through such vertices by one edge;
-applied to the tree of blobs of a phylogenetic network it gives the reduced tree of blobs.
+vertices of degree two of a graph; for a finite tree this replaces each maximal path through such
+vertices by one edge. Applied to the tree of blobs of a phylogenetic network it gives the reduced
+tree of blobs.
 
 ## Main results
 
@@ -100,26 +101,31 @@ theorem toSimpleGraph_reachable_iff {x y : V(G)} :
 
 /-! ### Cut edges -/
 
+-- This is the one declaration of this file that unfolds `Graph.IsEdgeCut`, whose definition
+-- Mathlib does not expose (hence `import all`); the others use its public interface.
 /-- The edges between a set of vertices and its complement form an edge cut. -/
 theorem isEdgeCut_edgeCut (G : Graph α β) (S : Set α) : G.IsEdgeCut (G.edgeCut S) := ⟨S, rfl⟩
 
 /-- An edge is a cut edge exactly when it is the only edge between some set of vertices and its
 complement. -/
-theorem isBridge_iff_exists_edgeCut_eq : G.IsBridge e ↔ ∃ S, G.edgeCut S = {e} := Iff.rfl
+theorem isBridge_iff_exists_edgeCut_eq : G.IsBridge e ↔ ∃ S, G.edgeCut S = {e} :=
+  ⟨fun h ↦ h.isEdgeCut_singleton.exists_edgeCut.imp fun _ hS ↦ hS.2,
+    fun ⟨S, hS⟩ ↦ show G.IsEdgeCut {e} from hS ▸ isEdgeCut_edgeCut G S⟩
 
 /-- **An edge is a cut edge iff deleting it separates its ends**: the edge `e` with ends `u` and
 `v` is a bridge of `G` exactly when no chain of adjacencies of `G` without `e` joins `u` to `v`. -/
 theorem isBridge_iff_not_reachable (he : G.IsLink e u v) :
     G.IsBridge e ↔ ¬ Relation.ReflTransGen (G.deleteEdges {e}).Adj u v := by
   constructor
-  · rintro ⟨S, hS⟩ hreach
+  · intro hbr hreach
+    obtain ⟨S, hS⟩ := isBridge_iff_exists_edgeCut_eq.1 hbr
     -- along a chain avoiding `e`, membership in `S` never changes
     have hstep : ∀ ⦃a b⦄, (G.deleteEdges {e}).Adj a b → (a ∈ S ↔ b ∈ S) := by
       rintro a b ⟨f, hf, hfe⟩
       have hcut : ∀ ⦃p q⦄, G.IsLink f p q → p ∈ S → q ∈ S := by
         intro p q hpq hp
         by_contra hq
-        exact hfe (hS ▸ (show f ∈ G.edgeCut S from ⟨p, q, hpq, hp, hq⟩))
+        exact hfe (hS ▸ mem_edgeCut_iff.2 ⟨p, q, hpq, hp, hq⟩)
       exact ⟨hcut hf, hcut hf.symm⟩
     have hiff : ∀ w, Relation.ReflTransGen (G.deleteEdges {e}).Adj u w → (u ∈ S ↔ w ∈ S) := by
       intro w hw
@@ -131,7 +137,8 @@ theorem isBridge_iff_not_reachable (he : G.IsLink e u v) :
     rw [he.mem_edgeCut_iff] at heS
     tauto
   · intro hreach
-    refine ⟨{w | Relation.ReflTransGen (G.deleteEdges {e}).Adj u w}, ?_⟩
+    refine isBridge_iff_exists_edgeCut_eq.2
+      ⟨{w | Relation.ReflTransGen (G.deleteEdges {e}).Adj u w}, ?_⟩
     ext f
     simp only [mem_edgeCut_iff, mem_ofPred_eq, mem_singleton_iff]
     constructor
@@ -143,7 +150,8 @@ theorem isBridge_iff_not_reachable (he : G.IsLink e u v) :
 
 /-- A loop is not a cut edge. -/
 theorem IsLoopAt.not_isBridge (he : G.IsLoopAt e x) : ¬ G.IsBridge e := by
-  rintro ⟨S, hS⟩
+  intro hbr
+  obtain ⟨S, hS⟩ := isBridge_iff_exists_edgeCut_eq.1 hbr
   have heS : e ∈ G.edgeCut S := hS ▸ rfl
   rw [he.mem_edgeCut_iff] at heS
   tauto
@@ -222,7 +230,8 @@ cut edges (`Graph.isBlob_iff`). -/
 def IsBlob (G H : Graph α β) : Prop :=
   Maximal (fun K : Graph α β ↦ K ≤ G ∧ K.toSimpleGraph.Connected ∧ ∀ e ∈ E(K), ¬ G.IsBridge e) H
 
-/-- A blob is **trivial** if it consists of a single vertex. -/
+/-- A blob is **trivial** if it consists of a single vertex. Loops at that vertex, which are never
+cut edges, may belong to it; a phylogenetic network has none. -/
 def IsTrivialBlob (G H : Graph α β) : Prop :=
   G.IsBlob H ∧ ∃ v, V(H) = {v}
 
@@ -238,7 +247,8 @@ blob with exactly `m` incident cut edges that does not contain the root, or with
 incident cut edges that contains it (the count plus one is `m`, rather than the count is `m - 1`
 in truncated subtraction, so that no blob containing the root is a `0`-blob). The count is a
 cardinality in `ℕ∞`, so a blob with infinitely many incident cut edges is an `m`-blob for no `m`.
-So the root of a rooted binary tree, with its two cut edges, is a trivial `3`-blob. -/
+So the root of a rooted binary tree, with its two cut edges, is a trivial `3`-blob. When `r` is not
+a vertex of `G`, no blob contains it, and every blob is counted as in `Graph.IsMBlob`. -/
 def IsRootedMBlob (G : Graph α β) (r : α) (m : ℕ) (H : Graph α β) : Prop :=
   G.IsBlob H ∧
     (r ∉ V(H) ∧ (G.edgeCut V(H) ∩ {e | G.IsBridge e}).encard = m ∨
@@ -418,7 +428,7 @@ def treeOfBlobs (G : Graph α β) : SimpleGraph {H // G.IsBlob H} where
 it is the only edge at `x`. -/
 theorem isBridge_of_forall_isLink_eq (he : G.IsLink e x y) (hxy : x ≠ y)
     (h : ∀ f z, G.IsLink f x z → f = e) : G.IsBridge e := by
-  refine ⟨{x}, ?_⟩
+  refine isBridge_iff_exists_edgeCut_eq.2 ⟨{x}, ?_⟩
   ext f
   simp only [mem_edgeCut_iff, mem_singleton_iff]
   constructor
@@ -446,7 +456,7 @@ theorem IsBlob.vertexSet_subset (hH : G.IsBlob H) {S : Set α} (hx : x ∈ V(H))
     obtain ⟨f, hf⟩ := hbc
     by_contra hc
     exact hH.not_isBridge hf.edge_mem
-      (hS f ⟨b, c, hf.mono hH.le, ih hf.left_mem, hc⟩)
+      (hS f (mem_edgeCut_iff.2 ⟨b, c, hf.mono hH.le, ih hf.left_mem, hc⟩))
 
 /-- If every edge at `x` is one and the same edge, which is not a loop, then the blob containing `x`
 consists of `x` alone. -/

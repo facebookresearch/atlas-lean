@@ -33,15 +33,18 @@ edge otherwise. Every node lies below the root, so the network is connected
   `RootedBinaryNetwork.lsaNetwork` is its underlying multigraph. The **semidirected unrooted
   network** `N⁻` (`RootedBinaryNetwork.semidirected`) undirects its tree edges, keeps the
   directions of its hybrid edges, and suppresses its root: the root and its two edges are replaced
-  by one edge between the root's two children, directed when one of the two edges is hybrid.
+  by one edge between the root's two children, directed when one of the two edges is hybrid. With a
+  single taxon the LSA is that taxon's leaf (`RootedBinaryNetwork.lsa_eq_leaf`), which has no
+  child, so the LSA network is that leaf alone and there is nothing to suppress; the LSA has
+  children exactly when there are at least two taxa (`RootedBinaryNetwork.exists_src_eq_lsa_iff`).
 * Cut edges, blobs, trivial blobs, incident edges, `m`-blobs and the tree of blobs of a multigraph
   are in `MathlibExt.Combinatorics.Graph.Blob`; the `m`-blobs of the rooted networks `N⁺` and
   `N⊕` are `Graph.IsRootedMBlob` with their roots, those of `N⁻` are `Graph.IsMBlob`.
 * The **tree of blobs** `T(N⁻)` (`RootedBinaryNetwork.unrootedTreeOfBlobs`) contracts every blob
   of `N⁻` to a vertex, and the **reduced unrooted tree of blobs** `T_rd(N⁻)`
-  (`RootedBinaryNetwork.reducedUnrootedTreeOfBlobs`) suppresses its vertices of degree two. When
-  `X` has at least two taxa, the blob of each leaf has degree at most one in `T(N⁻)`, so it is a
-  vertex of `T_rd(N⁻)` (`RootedBinaryNetwork.taxonVertex`).
+  (`RootedBinaryNetwork.reducedUnrootedTreeOfBlobs`) suppresses its vertices of degree two. The
+  blob of each leaf has at most one neighbour in `T(N⁻)`, so it is a vertex of `T_rd(N⁻)`
+  (`RootedBinaryNetwork.taxonVertex`).
 * Four distinct taxa form a **B-quartet** (`RootedBinaryNetwork.IsBQuartet`) when the quartet
   they induce on `T_rd(N⁻)` is unresolved: none of the three pairings `ab|cd`, `ac|bd`, `ad|bc`
   is displayed, a pairing `ab|cd` being displayed (`DisplaysQuartet`) when the path joining `a`
@@ -111,7 +114,8 @@ structure RootedBinaryNetwork (X V E : Type*) [Finite V] [Finite E] where
 
 /-- A **semidirected network**: a multigraph in which some edges carry a direction, `IsArc e x y`
 saying that the edge `e` is directed from `x` to `y`. No edge carries both directions, so no loop
-is directed. -/
+is directed. The structure records only a partial orientation of a multigraph, which need not come
+from a phylogenetic network; `RootedBinaryNetwork.semidirected` builds the one of a network. -/
 structure SemidirectedNetwork (V E : Type*) where
   /-- The underlying undirected multigraph. -/
   graph : Graph V E
@@ -124,8 +128,9 @@ structure SemidirectedNetwork (V E : Type*) where
 
 /-- A graph `T`, in practice a tree, **displays the quartet** `ab|cd` on four of its vertices when
 a path joining `a` and `b` and a path joining `c` and `d` have no vertex in common. In a tree the
-paths are unique, and `T` displays `ab|cd` exactly when the quartet it induces on `a, b, c, d` is
-the resolved quartet with cherries `{a, b}` and `{c, d}`. -/
+paths are unique, and when `a, b, c, d` are four distinct leaves of a tree, `T` displays `ab|cd`
+exactly when the quartet it induces on them is the resolved quartet with cherries `{a, b}` and
+`{c, d}`. -/
 def DisplaysQuartet {W : Type*} (T : SimpleGraph W) (a b c d : W) : Prop :=
   ∃ (p : T.Walk a b) (q : T.Walk c d), p.IsPath ∧ q.IsPath ∧ p.support.Disjoint q.support
 
@@ -352,6 +357,43 @@ theorem leaf_ne_lsa [Nontrivial X] (x : X) : N.leaf x ≠ N.lsa := by
     obtain ⟨e, he, -⟩ := hl.2.1
     exact N.src_ne_leaf x e he
 
+/-- With a single taxon, the lowest stable ancestor is that taxon's leaf. -/
+theorem lsa_eq_leaf [Subsingleton X] (x : X) : N.lsa = N.leaf x := by
+  refine (IsLSA.eq_lsa N ⟨fun y p _ _ hlast ↦ ?_, fun u hu hne ↦ ?_⟩).symm
+  · obtain rfl := Subsingleton.elim x y
+    exact List.mem_of_getLast? hlast
+  · obtain ⟨l, hl, hlast⟩ := List.exists_isChain_cons_of_relationReflTransGen
+      (N.reflTransGen_root (N.leaf x))
+    have hp : N.root :: l ∈ N.toDigraph.paths := ⟨hl, N.isAcyclic.nodup_of_isChain hl⟩
+    have hmem := hu x _ hp rfl (by rw [List.getLast?_eq_some_getLast (by simp), hlast])
+    have hleaf : N.leaf x ∈ N.root :: l := hlast ▸ List.getLast_mem _
+    rcases reflTransGen_or_of_mem_isChain hl hmem hleaf with h | h
+    · exact (Relation.reflTransGen_iff_eq_or_transGen.1 h).resolve_left (Ne.symm hne)
+    · rcases Relation.reflTransGen_iff_eq_or_transGen.1 h with h | h
+      · exact absurd h hne
+      · obtain ⟨_, ⟨e, he, -⟩, -⟩ := Relation.TransGen.head'_iff.1 h
+        exact absurd he (N.src_ne_leaf x e)
+
+/-- **The lowest stable ancestor has a child exactly when there are at least two taxa.** -/
+theorem exists_src_eq_lsa_iff : (∃ e, N.src e = N.lsa) ↔ Nontrivial X := by
+  constructor
+  · rintro ⟨e, he⟩
+    by_contra hX
+    rw [not_nontrivial_iff_subsingleton] at hX
+    obtain ⟨x, -⟩ := N.exists_rootLeafPath
+    exact N.src_ne_leaf x e (he.trans (N.lsa_eq_leaf x))
+  · intro
+    have hpos : 0 < Nat.card {e // N.src e = N.lsa} := by
+      by_cases hroot : N.lsa = N.root
+      · rw [hroot, N.outdeg_root]
+        omega
+      · rcases N.degree_cases _ hroot with h | h | h
+        · obtain ⟨x, hx⟩ := (N.mem_range_leaf _).2 h
+          exact absurd hx (N.leaf_ne_lsa x)
+        all_goals omega
+    obtain ⟨⟨e, he⟩⟩ := Nat.card_pos_iff.1 hpos |>.1
+    exact ⟨e, he⟩
+
 /-! ### The LSA network and the semidirected network -/
 
 /-- The underlying multigraph of the **LSA network** `N⊕` (Baños 2019; Allman–Baños–Mitchell–Rhodes
@@ -389,9 +431,10 @@ theorem not_transGen_tgt_lsa_of_src_eq {e : E} (he : N.src e = N.lsa) :
   N.isAcyclic _ (Relation.TransGen.head ⟨e, he, rfl⟩ h)
 
 /-- The undirected multigraph of the semidirected network `N⁻`: the LSA network without its root,
-whose two edges are replaced by one new edge (`none`) joining the root's two children. -/
+whose two edges are replaced by one new edge (`none`) joining the root's two children. The root is
+removed only when it has children: with a single taxon it is the taxon's leaf, which stays. -/
 noncomputable def semidirectedGraph : Graph V (Option E) where
-  vertexSet := V(N.lsaNetwork) \ {N.lsa}
+  vertexSet := V(N.lsaNetwork) \ {v | v = N.lsa ∧ ∃ e, N.src e = N.lsa}
   IsLink o x y := o.elim (N.IsRootSuppressionLink x y)
     fun e ↦ N.lsaNetwork.IsLink e x y ∧ x ≠ N.lsa ∧ y ≠ N.lsa
   isLink_symm o _ := by
@@ -413,15 +456,16 @@ noncomputable def semidirectedGraph : Graph V (Option E) where
     cases o with
     | none =>
       obtain ⟨e₁, -, -, h₁, -, rfl, -⟩ := h
-      exact ⟨N.not_transGen_tgt_lsa_of_src_eq h₁, N.tgt_ne_lsa_of_src_eq h₁⟩
-    | some e => exact ⟨h.1.left_mem, h.2.1⟩
+      exact ⟨N.not_transGen_tgt_lsa_of_src_eq h₁, fun h ↦ N.tgt_ne_lsa_of_src_eq h₁ h.1⟩
+    | some e => exact ⟨h.1.left_mem, fun h' ↦ h.2.1 h'.1⟩
 
 /-- The **semidirected unrooted network** `N⁻` (Baños 2019; Allman–Baños–Mitchell–Rhodes 2023,
 Definition 5), obtained from the LSA network by undirecting its tree edges, keeping the
 directions of its hybrid edges, and suppressing its root. Suppressing the root replaces it and
 its two edges by a single edge (`none`) between its two children; when one of the two edges is a
 hybrid edge, the new edge takes its direction, from the child along the tree edge to the hybrid
-child. With a single taxon the LSA is its leaf, and `N⁻` has no vertex. -/
+child. With a single taxon the LSA is its leaf (`RootedBinaryNetwork.lsa_eq_leaf`), which has no
+child, so the LSA network is that leaf alone and there is nothing to suppress. -/
 noncomputable def semidirected : SemidirectedNetwork V (Option E) where
   graph := N.semidirectedGraph
   IsArc o x y := o.elim
@@ -449,7 +493,8 @@ noncomputable def semidirected : SemidirectedNetwork V (Option E) where
       exact N.isAcyclic _ (.single ⟨e, rfl, hy.trans (hy'.symm)⟩)
 
 theorem mem_semidirected_vertexSet {v : V} :
-    v ∈ V(N.semidirected.graph) ↔ ¬ Relation.TransGen N.toDigraph.Adj v N.lsa ∧ v ≠ N.lsa :=
+    v ∈ V(N.semidirected.graph) ↔ ¬ Relation.TransGen N.toDigraph.Adj v N.lsa ∧
+      ¬ (v = N.lsa ∧ ∃ e, N.src e = N.lsa) :=
   Iff.rfl
 
 @[simp]
@@ -465,15 +510,14 @@ theorem semidirected_isLink_none {x y : V} :
     N.semidirected.graph.IsLink none x y ↔ N.IsRootSuppressionLink x y :=
   Iff.rfl
 
-/-- With at least two taxa, every leaf is a vertex of `N⁻`. -/
-theorem leaf_mem_semidirected [Nontrivial X] (x : X) :
-    N.leaf x ∈ V(N.semidirected.graph) := by
-  refine ⟨fun h ↦ ?_, N.leaf_ne_lsa x⟩
+/-- Every leaf is a vertex of `N⁻`. -/
+theorem leaf_mem_semidirected (x : X) : N.leaf x ∈ V(N.semidirected.graph) := by
+  refine ⟨fun h ↦ ?_, fun ⟨hx, e, he⟩ ↦ N.src_ne_leaf x e (he.trans hx.symm)⟩
   obtain ⟨_, ⟨e, he, -⟩, -⟩ := Relation.TransGen.head'_iff.1 h
   exact N.src_ne_leaf x e he
 
-/-- With at least two taxa, a leaf has at most one edge in `N⁻`, and it is not a loop. -/
-theorem semidirected_isLink_leaf [Nontrivial X] (x : X) :
+/-- A leaf has at most one edge in `N⁻`, and it is not a loop. -/
+theorem semidirected_isLink_leaf (x : X) :
     (∀ o o' y z, N.semidirected.graph.IsLink o (N.leaf x) y →
       N.semidirected.graph.IsLink o' (N.leaf x) z → o = o') ∧
       ∀ o, ¬ N.semidirected.graph.IsLoopAt o (N.leaf x) := by
@@ -509,7 +553,7 @@ theorem semidirected_isLink_leaf [Nontrivial X] (x : X) :
 /-! ### The reduced unrooted tree of blobs and blob quartets -/
 
 /-- The **tree of blobs** `T(N⁻)` of the network (Allman–Baños–Mitchell–Rhodes 2023,
-Definition 10): the tree obtained from the semidirected network `N⁻` by contracting each of its
+Definition 10): the graph obtained from the semidirected network `N⁻` by contracting each of its
 blobs to a vertex. -/
 noncomputable def unrootedTreeOfBlobs : SimpleGraph {H // N.semidirected.graph.IsBlob H} :=
   N.semidirected.graph.treeOfBlobs
@@ -521,8 +565,8 @@ noncomputable def reducedUnrootedTreeOfBlobs :
     SimpleGraph {B // (N.unrootedTreeOfBlobs.neighborSet B).ncard ≠ 2} :=
   N.unrootedTreeOfBlobs.suppressDegreeTwo
 
-/-- With at least two taxa, the blob of a leaf has at most one neighbour in `T(N⁻)`. -/
-theorem subsingleton_neighborSet_blobOf_leaf [Nontrivial X] (x : X) :
+/-- The blob of a leaf has at most one neighbour in `T(N⁻)`. -/
+theorem subsingleton_neighborSet_blobOf_leaf (x : X) :
     (N.unrootedTreeOfBlobs.neighborSet
       (N.semidirected.graph.blobOf (N.leaf_mem_semidirected x))).Subsingleton :=
   subsingleton_neighborSet_treeOfBlobs _ (mem_blobOf _)
@@ -530,7 +574,7 @@ theorem subsingleton_neighborSet_blobOf_leaf [Nontrivial X] (x : X) :
 
 /-- The vertex of `T_rd(N⁻)` labelled by a taxon: the blob of its leaf, which is not suppressed
 as it has at most one neighbour. -/
-noncomputable def taxonVertex [Nontrivial X] (x : X) :
+noncomputable def taxonVertex (x : X) :
     {B // (N.unrootedTreeOfBlobs.neighborSet B).ncard ≠ 2} :=
   ⟨N.semidirected.graph.blobOf (N.leaf_mem_semidirected x), by
     have h := N.subsingleton_neighborSet_blobOf_leaf x
@@ -543,7 +587,7 @@ displays none of the three quartets `ab|cd`, `ac|bd` and `ad|bc`. Allman–Baño
 (2023, Definition 12) define B-quartets by a blob whose incident cut edges, once deleted, leave the
 four taxa in four distinct components, and state this condition on `T_rd(N⁻)` as an equivalent
 one; the definition here takes the latter. -/
-def IsBQuartet [Nontrivial X] (a b c d : X) : Prop :=
+def IsBQuartet (a b c d : X) : Prop :=
   [a, b, c, d].Nodup ∧
     ¬ DisplaysQuartet N.reducedUnrootedTreeOfBlobs
       (N.taxonVertex a) (N.taxonVertex b) (N.taxonVertex c) (N.taxonVertex d) ∧
@@ -554,12 +598,12 @@ def IsBQuartet [Nontrivial X] (a b c d : X) : Prop :=
 
 /-- Four distinct taxa form a **T-quartet** (tree-like quartet) on the network when they do not
 form a B-quartet (Allman–Baños–Mitchell–Rhodes 2023, Definition 13). -/
-def IsTQuartet [Nontrivial X] (a b c d : X) : Prop :=
+def IsTQuartet (a b c d : X) : Prop :=
   [a, b, c, d].Nodup ∧ ¬ N.IsBQuartet a b c d
 
 /-- **The quartet induced by a T-quartet is resolved**: the reduced unrooted tree of blobs
 displays one of the quartets `ab|cd`, `ac|bd` and `ad|bc`. -/
-theorem IsTQuartet.displaysQuartet [Nontrivial X] {a b c d : X} (h : N.IsTQuartet a b c d) :
+theorem IsTQuartet.displaysQuartet {a b c d : X} (h : N.IsTQuartet a b c d) :
     DisplaysQuartet N.reducedUnrootedTreeOfBlobs
         (N.taxonVertex a) (N.taxonVertex b) (N.taxonVertex c) (N.taxonVertex d) ∨
       DisplaysQuartet N.reducedUnrootedTreeOfBlobs
