@@ -11,7 +11,6 @@
 - [Conductor of an ℓ-adic representation](conductor-of-an-l-adic-representation.md)
 - [Conductor of a Weil–Deligne representation](conductor-of-a-weil-deligne-representation.md)
 - [Conductor of an ℓ-adic representation through its Weil–Deligne representation](conductor-through-the-weil-deligne-representation.md)
-- [Semisimple ℓ-adic representations are determined by their Frobenius traces](semisimple-l-adic-representations-and-frobenius-traces.md)
 - [Absolute irreducibility of the ℓ-adic representations of a newform](absolute-irreducibility-of-the-l-adic-representations-of-a-newform.md)
 - [Carayol's Hecke correspondence for GL₂](carayol-s-hecke-correspondence.md)
 - [Conductors under Carayol's Hecke correspondence](conductors-under-the-hecke-correspondence.md)

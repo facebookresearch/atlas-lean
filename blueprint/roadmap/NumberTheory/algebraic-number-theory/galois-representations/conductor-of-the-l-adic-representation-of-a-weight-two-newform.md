@@ -53,7 +53,7 @@ of $\overline{\mathbb{Q}}$ into $\overline{\mathbb{Q}}_\ell$ that induces $\lamb
 then $K'_f = K_{f,\lambda}$. By their clause (a), $\rho_f$ has the listed properties, and it is absolutely
 irreducible by their clause (c). Any $\rho$ as in the theorem has the Frobenius traces of $\rho_f$ at the
 primes $p \nmid \ell N$ and is semisimple, being irreducible, so it is isomorphic to $\rho_f$
-([Darmon–Diamond–Taylor, Proposition 2.6 (c)](semisimple-l-adic-representations-and-frobenius-traces.md));
+(Darmon–Diamond–Taylor, Proposition 2.6 (c); see [semisimple Galois representations with the same Frobenius polynomials are isomorphic](deligne-serre-theorem-on-weight-one-forms/semisimple-galois-representations-with-equal-frobenius-polynomials.md));
 conductors depend only on the isomorphism class. For another $K$, $\rho_f$ is the extension of scalars of this one to
 $K'_f$, which changes no codimension of a fixed subspace.
 
@@ -80,7 +80,7 @@ The proof follows Carayol. Fix a prime $p \neq \ell$.
    the value $q$ on $\mathrm{Frob}_q$. So $\sigma^{\lambda'} \otimes L$ and $(\rho \otimes \epsilon^{-1}) \otimes L$ have the
    same Frobenius traces at all primes $q \nmid \ell N$. The second is irreducible by step 1, hence semisimple,
    so the semisimplification of the first is
-   [isomorphic to the second](semisimple-l-adic-representations-and-frobenius-traces.md) and irreducible; hence
+   [isomorphic to the second](deligne-serre-theorem-on-weight-one-forms/semisimple-galois-representations-with-equal-frobenius-polynomials.md) and irreducible; hence
    $\sigma^{\lambda'} \otimes L$ is irreducible and $\sigma^{\lambda'} \otimes L \cong (\rho \otimes \epsilon^{-1}) \otimes L$.
 4. Since $\epsilon$ is trivial on $I_p$, the representations $\rho$ and $\rho \otimes \epsilon^{-1}$ agree on the groups
    $I_p^u$, and extension of scalars changes no codimension of a fixed subspace, so $m_p(\rho) = m_p(\sigma^{\lambda'})$.
@@ -108,7 +108,7 @@ The proof follows Carayol. Fix a prime $p \neq \ell$.
 - [Carayol's theorem on the ℓ-adic representations of Hilbert modular forms](carayol-s-theorem-on-hilbert-modular-forms.md), for the representations $\sigma^{\lambda'}$ with $\sigma^{\lambda'}|_{W_q} \cong \sigma^{\lambda'}(\pi_q)$ at every prime $q$
 - [Carayol's Hecke correspondence for GL₂](carayol-s-hecke-correspondence.md), for $\sigma(\pi_q)$ on the unramified principal series and the $\lambda'$-adic realizations
 - [Cyclotomic character and Tate twists](cyclotomic-character-and-tate-twists.md), for the cyclotomic character $\epsilon$, unramified at every $q \neq \ell$ with $\epsilon(\mathrm{Frob}_q) = q$
-- [Semisimple ℓ-adic representations are determined by their Frobenius traces](semisimple-l-adic-representations-and-frobenius-traces.md), for the isomorphism of the semisimplification of $\sigma^{\lambda'} \otimes L$ with $(\rho \otimes \epsilon^{-1}) \otimes L$, and for the comparison of $\rho$ with $\rho_f$ in the remark on Darmon, Diamond and Taylor's form
+- [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](deligne-serre-theorem-on-weight-one-forms/semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the isomorphism of the semisimplification of $\sigma^{\lambda'} \otimes L$ with $(\rho \otimes \epsilon^{-1}) \otimes L$, and for the comparison of $\rho$ with $\rho_f$ in the remark on Darmon, Diamond and Taylor's form
 - [Conductor of an ℓ-adic representation through its Weil–Deligne representation](conductor-through-the-weil-deligne-representation.md), for $m_p(\sigma^{\lambda'})$ being the conductor of the Weil–Deligne representation of $\sigma^{\lambda'}|_{G_p}$
 - [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md), for the uniqueness of the Weil–Deligne representation, which identifies that of $\sigma^{\lambda'}|_{G_p}$ with a model of $\sigma(\pi_p)$
 - [Conductor of a Weil–Deligne representation](conductor-of-a-weil-deligne-representation.md), for the invariance of the conductor under isomorphism and extension of scalars

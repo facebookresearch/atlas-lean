@@ -32,7 +32,7 @@ This node is still to be broken down. A good expansion states and links:
    who, assuming reducibility, applies algebraicity results of Lang and Serre to contradict the estimate on the
    Fourier coefficients;
 4. the deduction above, through
-   [the determination of semisimple ℓ-adic representations by their Frobenius traces](semisimple-l-adic-representations-and-frobenius-traces.md),
+   [the determination of semisimple ℓ-adic representations by their Frobenius traces](deligne-serre-theorem-on-weight-one-forms/semisimple-galois-representations-with-equal-frobenius-polynomials.md),
    applied after extension of scalars to a finite extension of $K_{f,\lambda}$.
 
 ## Depends on
@@ -43,7 +43,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Proof depends on
 
 - [Shimura's abelian variety attached to a weight-two eigenform](../../modular-forms-q-series/modular-forms/shimura-abelian-variety-of-an-eigenform.md), for $A_f$ and the action of $K_f$ on it (expansion item 1)
-- [Semisimple ℓ-adic representations are determined by their Frobenius traces](semisimple-l-adic-representations-and-frobenius-traces.md), for the comparison of the semisimplification of $\rho$ with $\rho_f$ (expansion item 4)
+- [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](deligne-serre-theorem-on-weight-one-forms/semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the comparison of the semisimplification of $\rho$ with $\rho_f$ (expansion item 4)
 
 ## Sources
 
