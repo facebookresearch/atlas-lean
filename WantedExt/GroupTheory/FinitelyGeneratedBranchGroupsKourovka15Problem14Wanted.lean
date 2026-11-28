@@ -53,38 +53,12 @@ quantify over every finite generating family. Containing `F₂` means an injecti
 the free group of rank `2`.
 -/
 
-/-- **Kourovka Problem 15.14(a): non-amenable branch groups.** The statement that there exists a
-finitely generated branch group that is not amenable. -/
-def fgNonamenableBranchGroup : Prop :=
-  ∃ (G : Type) (_ : Group G), Group.FG G ∧ IsBranchGroup G ∧ ¬ IsAmenable G
-
 /-- **Kourovka Problem 15.14(b): non-amenable branch groups without free subgroups.** The
 statement that there exists a finitely generated branch group that is not amenable and contains
 no free subgroup of rank $2$. -/
 def fgNonamenableBranchGroupWithoutFreeSubgroup : Prop :=
   ∃ (G : Type) (_ : Group G), Group.FG G ∧ IsBranchGroup G ∧ ¬ IsAmenable G ∧
     ¬ ContainsFreeGroupRankTwo G
-
-/--
-**Non-amenable branch groups exist (Kourovka 15.14(a)).** There is a finitely generated branch
-group that is not amenable.
-
-The Kourovka Archive answers 15.14(a) "Such groups do exist" (Sidki and Wilson): their finitely
-generated branch groups contain free subgroups of rank $2$ and so are non-amenable.
-
-Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
-Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 15.14 (L. Bartholdi, R. I. Grigorchuk, Z.
-Šunić); parts (a), (c), (d) in the Archive of Solved Problems, part (b) in the main list;
-resolution: S. Sidki and J. S. Wilson, Free subgroups of branch groups, Arch. Math. 80 (2003), no.
-5, 458-463 (parts a, c, d); S. Kionke and E. Schesler, Realizing residually finite groups as
-subgroups of branch groups, Bull. London Math. Soc. 56 (2024), no. 2, 536-550, arXiv:2212.07165
-(part b), Kourovka Archive, Problem 15.14 (a), (c), (d): such groups do exist (Sidki and Wilson's
-finitely generated branch groups contain free subgroups of rank 2, the positive answer recorded
-under Question 15 of Bartholdi, Grigorchuk and Šunić, Branch groups); Kourovka Notebook (21st
-issue), Problem 15.14 (b), and Kionke and Schesler, Corollary 1.2: there is a finitely generated
-non-amenable torsion branch group, https://arxiv.org/abs/2212.07165.
--/
-public theorem_wanted fgNonamenableBranchGroup_holds : fgNonamenableBranchGroup
 
 /--
 **Non-amenable branch groups without free subgroups exist (Kourovka 15.14(b)).** There is a
