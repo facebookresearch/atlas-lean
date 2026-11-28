@@ -17,7 +17,7 @@ $\delta \subseteq Q \times \Sigma \times Q$ is a relation and $\mu : \delta \tim
 configuration $(q, \mathrm{val})$ the system chooses a symbol $a$ and the environment chooses a transition $q \to^a q'$ in $\delta$, which updates
 the registers. A strategy maps the history of states to the next symbol. A strategy is *winning with budget* $k \in \mathbb{D}$ from a
 configuration if on every run consistent with it some configuration $(q_i, \mathrm{val}_i)$ has $q_i \in F$ and output
-$\nu(q_i, \mathrm{val}_i) = \mathrm{val}_i(v) + c \le k$, where $\nu(q_i) = (v, c)$; the system may stop in such a configuration. The problem asks whether
+$\nu(q_i, \mathrm{val}_i) = \mathrm{val}_i(v) + c \le k$, where $\nu(q_i) = (v, c)$; the system may stop in such a configuration. Runs may be finite, since the environment may have no transition for the chosen symbol; a maximal run that ends before visiting $F$ within the budget is not won. Update and output constants, like the budget, lie in $\mathbb{D}$, so over $\mathbb{N}$ no update decreases a register. The problem asks whether
 the system has a winning strategy with budget $k$ from the initial configuration.
 
 ## Depends on
@@ -30,4 +30,4 @@ None.
 
 ## Sources
 
-- R. Alur and M. Raghothaman, "Decision problems for additive regular functions", in *Automata, Languages, and Programming (ICALP 2013), Part II*, Lecture Notes in Computer Science 7966, pp. 37–48, Springer, 2013, doi:10.1007/978-3-642-39212-2_7; read in arXiv:1304.7029v1: the definition of ACRAs in Section 2 and the definition of $\mathrm{ACRA}(\mathbb{D})$ reachability games at the start of Section 5.
+- R. Alur and M. Raghothaman, "Decision problems for additive regular functions", in *Automata, Languages, and Programming (ICALP 2013), Part II*, Lecture Notes in Computer Science 7966, pp. 37–48, Springer, 2013, doi:10.1007/978-3-642-39212-2_7; read in arXiv:1304.7029v1: Definition 1 (ACRAs) in Section 2 and Definition 10 ($\mathrm{ACRA}(\mathbb{D})$ reachability games) at the start of Section 5.

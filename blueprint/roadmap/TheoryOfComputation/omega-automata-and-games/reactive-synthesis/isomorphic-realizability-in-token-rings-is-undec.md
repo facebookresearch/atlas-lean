@@ -17,6 +17,7 @@ and can communicate only through the token.
 ## Depends on
 
 - [Token rings and isomorphic and parameterized realizability](token-rings-and-isomorphic-and-parameterized-rea.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

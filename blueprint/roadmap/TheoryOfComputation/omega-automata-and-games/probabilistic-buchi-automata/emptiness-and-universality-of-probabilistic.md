@@ -9,7 +9,7 @@ L^{>0}_A(w) = \sup \{ \eta : \mathbb{P}^A(\{ r : \mathsf{Val}(\gamma(r)) \ge \et
 L^{=1}_A(w) = \sup \{ \eta : \mathbb{P}^A(\{ r : \mathsf{Val}(\gamma(r)) \ge \eta \}) = 1 \}
 $$
 
-(*positive* and *almost-sure* semantics). Given such an automaton and a rational $\nu$, the *quantitative emptiness problem* asks whether some infinite word $w$ has $L_A(w) \ge \nu$, and the *quantitative universality problem* whether every infinite word $w$ has $L_A(w) \ge \nu$. Probabilistic Büchi and co-Büchi automata are the limsup and liminf automata with weights in $\{0, 1\}$.
+(*positive* and *almost-sure* semantics). As inputs to the decision problems, automata are given by finite tables whose initial and transition probabilities and weights are rational numbers; the undecidability results come from probabilistic Büchi and co-Büchi automata with rational probabilities. Given such an automaton and a rational $\nu$, the *quantitative emptiness problem* asks whether some infinite word $w$ has $L_A(w) \ge \nu$, and the *quantitative universality problem* whether every infinite word $w$ has $L_A(w) \ge \nu$. Probabilistic Büchi and co-Büchi automata are the limsup and liminf automata with weights in $\{0, 1\}$.
 
 **Theorem (Chatterjee, Doyen and Henzinger).**
 
@@ -21,6 +21,7 @@ In contrast, emptiness of almost-sure limsup automata, universality of positive 
 ## Depends on
 
 - [Büchi acceptance condition](../emptiness-of-b-chi-automata/mem-language-iff.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

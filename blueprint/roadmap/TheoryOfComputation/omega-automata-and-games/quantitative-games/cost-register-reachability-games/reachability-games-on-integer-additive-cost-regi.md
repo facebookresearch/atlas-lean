@@ -5,14 +5,15 @@ register automaton with integer registers.
 
 **Theorem.** Given an $\mathrm{ACRA}(\mathbb{Z})$ reachability game, in the sense of
 [reachability games on additive cost register automata](reachability-games-on-additive-cost-register-aut.md), and a budget $k$, it is
-undecidable whether the system has a winning strategy with budget $k$.
+undecidable whether the system has a winning strategy with budget $k$ (Theorem 7 of the source).
 
-The reduction already uses the budget $k = 0$. With registers over $\mathbb{N}$, solving these games is EXPTIME-complete, so the
+The reduction already uses the budget $k = 0$. With registers over $\mathbb{N}$, solving these games is [EXPTIME](../../../complexity-classes/time-and-space-complexity-classes/exp.md)-complete, so the
 undecidability comes from integer, possibly negative, register updates.
 
 ## Depends on
 
 - [Reachability games on additive cost register automata](reachability-games-on-additive-cost-register-aut.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +29,4 @@ wins with budget $0$ exactly when it can follow the run of $M$ honestly to a hal
 
 ## Sources
 
-- R. Alur and M. Raghothaman, "Decision problems for additive regular functions", in *Automata, Languages, and Programming (ICALP 2013), Part II*, Lecture Notes in Computer Science 7966, pp. 37–48, Springer, 2013, doi:10.1007/978-3-642-39212-2_7; read in arXiv:1304.7029v1: the undecidability theorem of Section 5 for $\mathrm{ACRA}(\mathbb{Z})$ reachability games with the halting-gadget definition before it, and the EXPTIME-completeness for $\mathrm{ACRA}(\mathbb{N})$ games in the same section.
+- R. Alur and M. Raghothaman, "Decision problems for additive regular functions", in *Automata, Languages, and Programming (ICALP 2013), Part II*, Lecture Notes in Computer Science 7966, pp. 37–48, Springer, 2013, doi:10.1007/978-3-642-39212-2_7; read in arXiv:1304.7029v1: Theorem 7 with Definition 14 (the halting gadget) before it, and Theorems 5 and 6 (EXPTIME upper and lower bounds for $\mathrm{ACRA}(\mathbb{N})$ games), all in Section 5.

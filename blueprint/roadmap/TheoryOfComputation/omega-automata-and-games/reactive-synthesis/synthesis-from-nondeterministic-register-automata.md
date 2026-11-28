@@ -11,6 +11,7 @@ For deterministic specification automata whose output data are copies of input d
 ## Depends on
 
 - [Register transducer synthesis from data-word specifications](register-transducer-synthesis-from-data-word.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ The reduction is from universality of nondeterministic register automata over fi
 
 ## Sources
 
-- Léo Exibard, Emmanuel Filiot and Pierre-Alain Reynier, "Synthesis of Data Word Transducers", *Logical Methods in Computer Science* 17(1), 2021, paper 22, doi:[10.23638/LMCS-17(1:22)2021](https://doi.org/10.23638/LMCS-17(1:22)2021); numbering of arXiv:1905.03538v5 ([arXiv](https://arxiv.org/abs/1905.03538v5)): Theorem 4.1 and its proof, Theorem 4.2, the decidable subclass of Section 4.2 and the bounded-synthesis results of Section 5.
+- Léo Exibard, Emmanuel Filiot and Pierre-Alain Reynier, "Synthesis of Data Word Transducers", *Logical Methods in Computer Science* 17(1), 2021, paper 22, doi:[10.23638/LMCS-17(1:22)2021](https://doi.org/10.23638/LMCS-17(1:22)2021); numbering of arXiv:1905.03538v5 ([arXiv](https://arxiv.org/abs/1905.03538v5)): Theorem 3.1 and its proof, Theorem 3.2, the decidable subclass of Section 3.2 and the bounded-synthesis results of Section 4.

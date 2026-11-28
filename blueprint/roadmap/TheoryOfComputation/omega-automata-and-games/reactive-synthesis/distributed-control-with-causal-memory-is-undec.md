@@ -6,13 +6,13 @@ No algorithm decides whether the processes of an asynchronous automaton, each de
 
 **Games and strategies.** A *distributed game* is an asynchronous automaton together with a partition $A = A_c \sqcup A_e$ into controllable and environment actions. The *causal view* $\mathrm{view}_p(u)$ of a play $u$ by process $p$ is the prefix such that $u = \mathrm{view}_p(u) \cdot v$ with $v$ the longest suffix in which $p$ does not take part. A *strategy for $p$* maps each play $u$ to a set $\sigma_p(u) \subseteq A$ of allowed actions with $A_e \subseteq \sigma_p(u)$ and $\sigma_p(u) = \sigma_p(\mathrm{view}_p(u))$. A play $a_1 \cdots a_n$ is consistent with a *distributed strategy* $\sigma = (\sigma_p)_{p \in \mathbb{P}}$ if $a_i \in \sigma_p(a_1 \cdots a_{i-1})$ for every $i$ and every $p \in \mathrm{dom}(a_i)$. The strategy is *winning* if the set of plays consistent with it is finite and every maximal such play $u$ satisfies $\mathrm{state}_p(u) \in F_p$ for all $p$.
 
-**Theorem (Gimbert).** The *distributed control problem*, which asks whether a given distributed game has a winning distributed strategy, is undecidable, already for games with six processes.
+**Theorem (Gimbert).** The *distributed control problem*, which asks whether a given distributed game has a winning distributed strategy, is undecidable, already for games with six processes (stated in the abstract; it follows from Theorems 2.4 and 3.1 of the source).
 
 Four processes do not suffice for this construction: the distributed control problem is decidable for four processes, as the source recalls. The source notes that the construction adapts to deadlock-freeness winning conditions through the infinite version of the Post correspondence problem, and that the undecidability carries over to Petri games with a bounded number of tokens.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

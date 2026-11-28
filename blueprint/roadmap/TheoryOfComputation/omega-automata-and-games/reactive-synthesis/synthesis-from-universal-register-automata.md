@@ -9,6 +9,7 @@ In contrast, bounded synthesis from URA specifications, with a fixed bound $k$ o
 ## Depends on
 
 - [Register transducer synthesis from data-word specifications](register-transducer-synthesis-from-data-word.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The reduction is from emptiness of universal register automata over finite data 
 
 ## Sources
 
-- Léo Exibard, Emmanuel Filiot and Pierre-Alain Reynier, "Synthesis of Data Word Transducers", *Logical Methods in Computer Science* 17(1), 2021, paper 22, doi:[10.23638/LMCS-17(1:22)2021](https://doi.org/10.23638/LMCS-17(1:22)2021); numbering of arXiv:1905.03538v5 ([arXiv](https://arxiv.org/abs/1905.03538v5)): Theorem 4.3 and its proof; Section 5.2 (bounded synthesis for URA specifications).
+- Léo Exibard, Emmanuel Filiot and Pierre-Alain Reynier, "Synthesis of Data Word Transducers", *Logical Methods in Computer Science* 17(1), 2021, paper 22, doi:[10.23638/LMCS-17(1:22)2021](https://doi.org/10.23638/LMCS-17(1:22)2021); numbering of arXiv:1905.03538v5 ([arXiv](https://arxiv.org/abs/1905.03538v5)): Theorem 3.3 and its proof; Section 4.2 (bounded synthesis for URA specifications).

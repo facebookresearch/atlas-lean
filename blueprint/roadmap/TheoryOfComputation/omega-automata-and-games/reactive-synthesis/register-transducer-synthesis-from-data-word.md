@@ -22,4 +22,4 @@ A server granting the requests of unboundedly many clients, each request to be e
 
 ## Sources
 
-- Léo Exibard, Emmanuel Filiot and Pierre-Alain Reynier, "Synthesis of Data Word Transducers", *Logical Methods in Computer Science* 17(1), 2021, paper 22, doi:[10.23638/LMCS-17(1:22)2021](https://doi.org/10.23638/LMCS-17(1:22)2021); numbering of arXiv:1905.03538v5 ([arXiv](https://arxiv.org/abs/1905.03538v5)): Section 2 (data words, register automata, runs and the NRA, URA and DRA semantics) and Section 3 (specifications, implementations, the realizability problem, specification register automata and register transducers).
+- Léo Exibard, Emmanuel Filiot and Pierre-Alain Reynier, "Synthesis of Data Word Transducers", *Logical Methods in Computer Science* 17(1), 2021, paper 22, doi:[10.23638/LMCS-17(1:22)2021](https://doi.org/10.23638/LMCS-17(1:22)2021); numbering of arXiv:1905.03538v5 ([arXiv](https://arxiv.org/abs/1905.03538v5)): Section 1 (data words, register automata, runs and the NRA, URA and DRA semantics) and Section 2 (specifications, implementations, the realizability problem, specification register automata and register transducers).

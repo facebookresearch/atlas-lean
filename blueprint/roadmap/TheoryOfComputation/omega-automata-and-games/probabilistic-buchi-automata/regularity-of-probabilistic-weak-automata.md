@@ -8,7 +8,7 @@ $$
 L^{>0}(\mathcal{A}),\qquad L^{=1}(\mathcal{A}),\qquad L^{>\lambda}(\mathcal{A})
 $$
 
-consist of the words whose set of accepting runs has probability $> 0$, $= 1$ and $> \lambda$, respectively (*positive*, *almost-sure* and *threshold* semantics).
+consist of the words whose set of accepting runs has probability $> 0$, $= 1$ and $> \lambda$, respectively (*positive*, *almost-sure* and *threshold* semantics). As inputs, automata have rational transition probabilities and initial distribution.
 
 **Weakness.** The *underlying graph* of $\mathcal{A}$ has an edge $p \to q$ labeled $a$ whenever $\delta(p, a, q) > 0$. The automaton is *weak* if $F$ is a union of strongly connected components of this graph; then every run eventually stays in one component, and it is accepting exactly when that component lies in $F$. A weak probabilistic Büchi automaton is a *probabilistic weak automaton*.
 
@@ -19,6 +19,7 @@ The proof also shows that, for a suitable fixed $\omega$-regular language $L$, i
 ## Depends on
 
 - [Büchi acceptance condition](../emptiness-of-b-chi-automata/mem-language-iff.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

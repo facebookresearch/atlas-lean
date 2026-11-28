@@ -2,7 +2,7 @@
 
 No algorithm decides whether an LTL specification can be realized by two identical finite-state processes connected in a pipeline, the first reading the global input and the second reading the first one's output.
 
-**Symmetric architectures.** A process has an *interface* $(\mathsf{AP}^I, \mathsf{AP}^O)$ of local input and output propositions. A *symmetric architecture* over it is a tuple $(S, P, \mathsf{AP}^I_G, E^{\mathit{in}}, E^{\mathit{out}})$ of internal signals $S$, a set $P$ of processes, global input signals $\mathsf{AP}^I_G$, an input edge function $E^{\mathit{in}} \colon P \times \mathsf{AP}^I \to S \cup \mathsf{AP}^I_G$ and an output edge function $E^{\mathit{out}} \colon P \times \mathsf{AP}^O \to S$, every internal signal being written by exactly one local output of one process. Plugging one finite-state machine with inputs $\mathsf{AP}^I$ and outputs $\mathsf{AP}^O$ into every process gives a machine from $\mathsf{AP}^I_G$ to $S$. Given an interface, an architecture and an LTL specification $\varphi$ over $\mathsf{AP}^I_G \cup S$, the *symmetric synthesis problem* asks whether some finite-state machine implementation makes the resulting system satisfy $\varphi$.
+**Symmetric architectures.** A process has an *interface* $(\mathsf{AP}^I, \mathsf{AP}^O)$ of local input and output propositions. A *symmetric architecture* over it is a tuple $(S, P, \mathsf{AP}^I_G, E^{\mathit{in}}, E^{\mathit{out}})$ of internal signals $S$, a set $P$ of processes, global input signals $\mathsf{AP}^I_G$, an input edge function $E^{\mathit{in}} \colon P \times \mathsf{AP}^I \to S \cup \mathsf{AP}^I_G$ and an output edge function $E^{\mathit{out}} \colon P \times \mathsf{AP}^O \to S$, every internal signal being written by exactly one local output of one process. Implementations are finite-state machines, which the source takes to be Moore machines. Plugging one finite-state machine with inputs $\mathsf{AP}^I$ and outputs $\mathsf{AP}^O$ into every process gives a machine from $\mathsf{AP}^I_G$ to $S$. Given an interface, an architecture and an LTL specification $\varphi$ over $\mathsf{AP}^I_G \cup S$, the *symmetric synthesis problem* asks whether some finite-state machine implementation makes the resulting system satisfy $\varphi$.
 
 The architecture $S0$ has interface $(\{a\}, \{b\})$, internal signals $S = \{y, z\}$, processes $P = \{0, 1\}$, global input $\mathsf{AP}^I_G = \{x\}$, $E^{\mathit{in}}(0, a) = x$, $E^{\mathit{in}}(1, a) = y$, $E^{\mathit{out}}(0, b) = y$ and $E^{\mathit{out}}(1, b) = z$.
 
@@ -13,6 +13,8 @@ In contrast, symmetric synthesis is decidable for rotation-symmetric architectur
 ## Depends on
 
 - [Formulas of linear temporal logic](../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Moore machine](../../regular-languages/automata-and-expressions/sequential-transducers-mealy-and-moore-machines/moore-machine.md)
 
 ## Proof depends on
 

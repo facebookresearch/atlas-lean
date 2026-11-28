@@ -2,13 +2,14 @@
 
 For matrix multiplication games with finite sets of non-negative integer matrices, it is undecidable whether the payoff that Eve can ensure stays below $2$.
 
-**Theorem.** It is undecidable, given finite sets $\mathcal{A}, \mathcal{E}$ of non-negative matrices with integer entries, whether the maximal payoff that Eve can ensure in the [matrix multiplication game](matrix-multiplication-games.md) on $(\mathcal{A}, \mathcal{E})$ is less than $2$.
+**Theorem.** There is no algorithm that, given finite sets $\mathcal{A}, \mathcal{E}$ of non-negative matrices with integer entries, decides whether in the [matrix multiplication game](matrix-multiplication-games.md) on $(\mathcal{A}, \mathcal{E})$ Adam has a strategy $\sigma_0$ with $P(\sigma_0, \tau) < 2$ for every strategy $\tau$ of Eve. This holds already under the promise that either Adam has such a strategy or Eve has a strategy $\tau_0$ with $P(\sigma, \tau_0) > 2$ for every strategy $\sigma$ of Adam (Lemma 4 and Theorem 6 of the source; the source phrases the problem as whether "the maximal payoff that Eve can ensure is $< 2$").
 
-The games of the reduction are not claimed to be determined; the proof yields, from a two-counter machine $M$, non-negative integer games in which Adam can ensure payoff $< 2$ if $M$ halts and Eve can ensure payoff $\ge 2$ otherwise.
+The games of the reduction are not claimed to be determined; the proof yields, from a two-counter machine $M$, non-negative integer games in which Adam can ensure payoff $< 2$ if $M$, started with both counters $0$, halts, and Eve can ensure payoff $> 2$ otherwise.
 
 ## Depends on
 
 - [Matrix multiplication games](matrix-multiplication-games.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

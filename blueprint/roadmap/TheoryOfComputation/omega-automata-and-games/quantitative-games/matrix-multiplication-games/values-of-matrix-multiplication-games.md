@@ -2,7 +2,7 @@
 
 For determined matrix multiplication games with finite sets of integer matrices, the value is not computable from the matrices, even under the promise that it is $0$ or $1$.
 
-**Theorem.** Consider [matrix multiplication games](matrix-multiplication-games.md) on finite sets $\mathcal{A}, \mathcal{E}$ of matrices with integer entries that are determined. Their value $V$ is not computable from $\mathcal{A}$ and $\mathcal{E}$, and it remains not computable even when it is known in advance that $V \in \{0, 1\}$.
+**Theorem.** There is no algorithm that, given finite sets $\mathcal{A}, \mathcal{E}$ of matrices with integer entries such that the [matrix multiplication game](matrix-multiplication-games.md) on $(\mathcal{A}, \mathcal{E})$ is determined with value $V \in \{0, 1\}$, decides whether $V = 0$ (Lemma 3 and Theorem 5 of the source). In particular no algorithm computes the value $V$ of determined games on finite sets of integer matrices.
 
 Hence the value cannot be approximated either, and it is not computable as a function of the matrices in the sense of computable analysis. Already with Adam trivial, deciding $V \le \alpha$ for given finite sets of non-negative rational matrices and $\alpha \in \mathbb{Q}_+$ is undecidable, because the value is then the joint spectral radius of Eve's set, and deciding whether the joint spectral radius is at most $1$ is undecidable (Blondel and Tsitsiklis); whether it is below $1$ is open.
 

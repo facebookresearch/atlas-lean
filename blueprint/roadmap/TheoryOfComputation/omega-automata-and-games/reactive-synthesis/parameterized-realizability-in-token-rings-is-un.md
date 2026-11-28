@@ -15,6 +15,7 @@ decidable, by reduction to a two-process system in which the second process has 
 ## Depends on
 
 - [Token rings and isomorphic and parameterized realizability](token-rings-and-isomorphic-and-parameterized-rea.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

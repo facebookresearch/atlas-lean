@@ -24,7 +24,7 @@ $$
 
 and, for every player $i$ and every strategy $\sigma'_i$ of player $i$, if the outcome of $(\sigma_{-i}, \sigma'_i)$ lies in
 $\Omega_i \cap \mathrm{En}(G)$, then $\langle \sigma \rangle \in \Omega_i$. A deviation thus counts only if it also keeps the resources
-nonnegative. The problem asks whether a solution exists. Objectives are given in linear temporal logic; *reachability objectives*
+nonnegative. The problem asks whether a solution exists. Objectives are given in [linear temporal logic](../../../Logic/temporal-logic/linear-temporal-logic/formula.md); *reachability objectives*
 have the form $\Diamond p$ for an atomic proposition $p$.
 
 ## Depends on

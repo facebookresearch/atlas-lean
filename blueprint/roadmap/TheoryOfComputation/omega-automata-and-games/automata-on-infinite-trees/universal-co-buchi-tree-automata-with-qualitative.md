@@ -9,6 +9,7 @@ As consequences, the MSO+$\forall^{=1}_{\mathrm{path}}$ theory of the infinite b
 ## Depends on
 
 - [Tree automata on infinite trees](tree-automata-on-infinite-trees.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -16,7 +17,7 @@ As consequences, the MSO+$\forall^{=1}_{\mathrm{path}}$ theory of the infinite b
 
 ## Expansion
 
-The proof starts from the undecidability of the value-1 problem for simple probabilistic word automata, in which every transition moves to one of two states with probability $\tfrac12$ each (Gimbert and Oualhadj, Theorem 2.5). It follows that emptiness of simple probabilistic co-Büchi word automata with almost-sure semantics is undecidable (Proposition 4.1). For the reduction, a simple probabilistic word automaton with transitions $\delta(p, a) = \tfrac12 q_1 + \tfrac12 q_2$ gives two probabilistic tree automata, one sending $q_1$ or $q_2$ to both children and one sending them to the two children in either order; Lemmas 4.3 and 4.4 relate almost-sure acceptance of a word by the word automaton to qualitative acceptance by these tree automata, and from them one builds a universal co-Büchi tree automaton whose qualitative language is nonempty iff the word automaton almost-surely accepts some word.
+The proof starts from the undecidability of the value-1 problem for simple probabilistic word automata, in which every transition moves to one of two states with probability $\tfrac12$ each (Gimbert and Oualhadj, Theorem 2.5). It follows that emptiness of simple probabilistic co-Büchi word automata with almost-sure semantics is undecidable (Proposition 4.1). The linked page states the value-1 problem for arbitrary probabilistic automata; a good expansion links a page for its restriction to simple automata, which the source also attributes to Gimbert and Oualhadj. For the reduction, a simple probabilistic word automaton with transitions $\delta(p, a) = \tfrac12 q_1 + \tfrac12 q_2$ gives two probabilistic tree automata, one sending $q_1$ or $q_2$ to both children and one sending them to the two children in either order; Lemmas 4.3 and 4.4 relate almost-sure acceptance of a word by the word automaton to qualitative acceptance by these tree automata, and from them one builds a universal co-Büchi tree automaton whose qualitative language is nonempty iff the word automaton almost-surely accepts some word.
 
 ## Sources
 
