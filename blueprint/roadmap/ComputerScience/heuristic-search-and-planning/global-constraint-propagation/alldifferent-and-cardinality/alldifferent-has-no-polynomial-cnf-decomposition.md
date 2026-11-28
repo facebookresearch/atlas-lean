@@ -16,7 +16,7 @@ For $m\ge1$ let $\mathcal A_m$ be the constraint $\mathrm{ALLDIFFERENT}(X_1,\dot
 
 - [Polynomial CNF decompositions are polynomial monotone circuits](../cnf-decompositions-and-monotone-circuits.md): polynomial-size decompositions of the domain consistency propagators give polynomial-size monotone circuits for the induced checkers.
 - [Generalized arc consistency of ALLDIFFERENT by matchings](alldifferent-gac-matching-criterion.md): the constraint has a solution iff its value graph has a matching covering the variables.
-- [Monotone circuits for bipartite perfect matching need superpolynomial size](../monotone-circuit-lower-bound-for-perfect-matching.md): Razborov's $m^{\Omega(\log m)}$ bound for the logical permanent $f_m$.
+- [Monotone circuits for bipartite perfect matching need superpolynomial size](../../../../TheoryOfComputation/circuit-complexity/monotone-perfect-matching-lower-bound/monotone-circuit-lower-bound-for-perfect-matching.md): Razborov's $m^{\Omega(\log m)}$ bound for the logical permanent $f_m$.
 
 ## Expansion
 

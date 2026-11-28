@@ -13,7 +13,7 @@ In each case $G_f$ contains exactly one residual copy of $a$ ($a^+$ in item 1, $
 
 ## Depends on
 
-- [Strongly connected vertices](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/strongly-connected-components/strongly-connected.md): mutual reachability in the residual graph.
+- [Strongly connected vertices](../../traversal-and-connectivity/strongly-connected-components/strongly-connected.md): mutual reachability in the residual graph.
 
 ## Proof depends on
 

@@ -22,14 +22,14 @@ Let $G=(X,Y,E)$ be the [value graph](alldifferent-constraint.md) of $\mathrm{ALL
 
 ## Proof depends on
 
-- [Edges lying in some maximum matching](edges-in-some-maximum-matching.md): Berge's characterization, applied to the covering matching $M$.
+- [Edges lying in some maximum matching](../../../../GraphTheory/matchings-and-flows/edges-in-maximum-matchings/edges-in-some-maximum-matching.md): Berge's characterization, applied to the covering matching $M$.
 - [Hopcroft and Karp's bound on the number of phases](../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/maximum-bipartite-matching/card-le-hopcroft-karp-aux-sqrt.md): $O(\sqrt p)$ phases suffice when the $p$ variables form the counted side.
 
 ## Expansion
 
 Item 1 (Régin's Proposition 1): parity is automatic for cycles because $G$ is bipartite. For paths, a directed simple path from a free vertex $y\in Y$ alternates free and matching edges; if it has odd length it ends at some $x\in X$, and since $x$ has its unique successor (its mate) not yet on the path (each value has at most one predecessor through $M$), the path extends by one matching edge to an even one.
 
-Item 2: since $M$ covers $X$ it is a maximum matching, and covering matchings are exactly maximum matchings. By [Berge's characterization](edges-in-some-maximum-matching.md), an edge outside $M$ lies in some maximum matching iff it lies on an even alternating path from a free vertex or on an even alternating cycle, i.e. by item 1 on a directed path from a free vertex or on a directed cycle of $G_o$; an edge lies on a directed cycle iff its endpoints are in the same strongly connected component.
+Item 2: since $M$ covers $X$ it is a maximum matching, and covering matchings are exactly maximum matchings. By [Berge's characterization](../../../../GraphTheory/matchings-and-flows/edges-in-maximum-matchings/edges-in-some-maximum-matching.md), an edge outside $M$ lies in some maximum matching iff it lies on an even alternating path from a free vertex or on an even alternating cycle, i.e. by item 1 on a directed path from a free vertex or on a directed cycle of $G_o$; an edge lies on a directed cycle iff its endpoints are in the same strongly connected component.
 
 Items 3–4: Régin's Algorithm 2 marks the edges reached by breadth-first search from the free vertices, computes the strongly connected components with Tarjan's linear-time depth-first-search algorithm, marks the edges inside a component, and deletes the unmarked free edges, in $O(m+n)$ time. Hopcroft and Karp compute a maximum matching in $O(\sqrt s)$ phases, $s\le p$ the size of a maximum matching, each of linear cost; since every value of $Y$ lies in some domain, $|Y|\le m$ and linear cost is $O(m)$. If the matching has fewer than $p$ edges the constraint has no solution. Régin states the initialisation cost as $O(d|X_C|\sqrt{|X_C|})$.
 

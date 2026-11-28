@@ -14,7 +14,7 @@ None.
 
 ## Proof depends on
 
-- [Berge's lemma](../../../../GraphTheory/matchings-and-flows/berge-s-lemma/berge.md): a maximum matching admits no augmenting path, so the symmetric difference of two maximum matchings has no odd alternating path component.
+- [Berge's lemma](../berge-s-lemma/berge.md): a maximum matching admits no augmenting path, so the symmetric difference of two maximum matchings has no odd alternating path component.
 
 ## Expansion
 

@@ -21,7 +21,7 @@ Régin computes the initial flow by augmenting paths and states the cost of GAC 
 ## Proof depends on
 
 - [Flows with bounds and supplies by maximum flow](../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/circulations-with-bounds-by-maximum-flow.md): a network with bounds has a feasible flow iff an auxiliary maximum flow saturates its source arcs, and then an integral one; used for item 1.
-- [Changing the flow on a unit arc of a fixed-value flow](../rerouting-a-fixed-value-flow.md): for an unused variable–value arc (bounds $[0,1]$, flow 0), some flow of the same value $k$ uses it iff its endpoints are strongly connected in the residual graph.
+- [Changing the flow on a unit arc of a fixed-value flow](../../../graph-algorithms/spanning-trees-flows-matchings/fixed-value-flow-rerouting/rerouting-a-fixed-value-flow.md): for an unused variable–value arc (bounds $[0,1]$, flow 0), some flow of the same value $k$ uses it iff its endpoints are strongly connected in the residual graph.
 
 ## Expansion
 

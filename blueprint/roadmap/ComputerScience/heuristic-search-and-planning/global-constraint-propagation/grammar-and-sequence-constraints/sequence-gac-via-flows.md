@@ -18,7 +18,7 @@ Let $C=\mathrm{SEQUENCE}(l,u,k,[X_1,\dots,X_n],\{1\})$ be a [SEQUENCE constraint
 - [AMONG and SEQUENCE constraints](sequence-constraint.md): the constraint and the 0/1 reduction.
 - [Generalized arc consistency](../generalized-arc-consistency.md): the consistency enforced.
 - [Strongly connected vertices](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/strongly-connected-components/strongly-connected.md): the residual test of item 2.
-- [Changing the flow on a unit arc of a fixed-value flow](../rerouting-a-fixed-value-flow.md): $s$–$t$ flows with bounds, their value and the residual graph used in item 2; its unit-arc theorem also gives item 2.
+- [Changing the flow on a unit arc of a fixed-value flow](../../../graph-algorithms/spanning-trees-flows-matchings/fixed-value-flow-rerouting/rerouting-a-fixed-value-flow.md): $s$–$t$ flows with bounds, their value and the residual graph used in item 2; its unit-arc theorem also gives item 2.
 
 ## Proof depends on
 
