@@ -15,7 +15,8 @@ The proof follows Beame's encoding proof of Razborov's version of the switching 
 
 ## Depends on
 
-None.
+- [CNF formula](../../../Logic/propositional-logic/conjunctive-normal-form/cnf.md)
+- [Restriction of a CNF formula by a literal](../../../Logic/propositional-logic/conjunctive-normal-form/restrict-2.md)
 
 ## Proof depends on
 
