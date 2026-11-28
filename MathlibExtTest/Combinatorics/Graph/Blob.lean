@@ -17,11 +17,11 @@ import Mathlib.Tactic.FinCases
 Two parallel edges between two vertices are not cut edges, and the whole graph is one nontrivial
 blob with no incident edge. A single edge is a cut edge: deleting it raises the number of
 connected components from one to two, each end is a trivial blob, the end chosen as root is a
-`2`-blob and the other end a `1`-blob, and the two blobs are adjacent in the tree of blobs. A pendant
-vertex has at most one neighbour in the tree of blobs. The centre of an infinite star has
-infinitely many incident cut edges and is an `m`-blob for no `m`. Suppressing the middle vertex of a path on
-three vertices joins the two ends, while the centre of a star with three leaves is kept, so no
-two leaves of the star are joined.
+`2`-blob and the other end a `1`-blob, and the two blobs are adjacent in the tree of blobs. The
+blob of a pendant vertex has at most one neighbour in the tree of blobs. The centre of an infinite
+star has infinitely many incident cut edges and is an `m`-blob for no `m`. Suppressing the middle
+vertex of a path on three vertices joins the two ends, while the centre of a star with three leaves
+is kept, so no two leaves of the star are joined.
 -/
 
 @[expose] public section

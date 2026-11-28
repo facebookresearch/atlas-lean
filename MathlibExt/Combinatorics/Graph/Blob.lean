@@ -22,8 +22,8 @@ A **blob** of a multigraph `G` (Allman–Baños–Mitchell–Rhodes 2023, Defini
 connected subgraph of `G` that contains no cut edge of `G`. This differs slightly from the blobs of
 Gusfield–Bansal–Bafna–Song 2007, maximal edge sets built from cycles that share edges, under which
 two cycles meeting at a single vertex are two blobs rather than one. Here a cut edge is Mathlib's
-`Graph.IsBridge`, an edge that alone forms an edge cut; on a finite graph this is exactly an edge
-whose deletion increases the number of connected components
+`Graph.IsBridge`, an edge that alone forms an edge cut; on a graph with finitely many vertices this
+is exactly an edge whose deletion increases the number of connected components
 (`Graph.isBridge_iff_natCard_connectedComponent_lt`). Connectivity of a multigraph is that of
 its simple graph `Graph.toSimpleGraph`, which only forgets loops and parallel edges.
 
@@ -46,13 +46,13 @@ applied to the tree of blobs of a phylogenetic network it gives the reduced tree
 
 * `Graph.isBridge_iff_not_reachable`: an edge is a cut edge iff its ends are no longer joined
   once it is deleted.
-* `Graph.isBridge_iff_natCard_connectedComponent_lt`: on a finite graph, an edge is a cut edge
-  iff deleting it increases the number of connected components.
+* `Graph.isBridge_iff_natCard_connectedComponent_lt`: on a graph with finitely many vertices, an
+  edge is a cut edge iff deleting it increases the number of connected components.
 * `Graph.isBlob_iff`: the blobs are the components of the graph without its cut edges.
 * `Graph.IsBlob.vertexSet_subset`: blobs do not cross cut edges.
 * `Graph.isTrivialBlob_induce_singleton`: a vertex all of whose edges are cut edges is a trivial
   blob.
-* `Graph.subsingleton_neighborSet_treeOfBlobs`: a vertex with a single incident edge, which is
+* `Graph.subsingleton_neighborSet_treeOfBlobs`: a vertex with at most one incident edge, which is
   not a loop, lies in a blob with at most one neighbour in the tree of blobs.
 
 ## References
@@ -142,7 +142,7 @@ theorem isBridge_iff_not_reachable (he : G.IsLink e u v) :
       exact ⟨u, v, he, .refl, hreach⟩
 
 /-- A loop is not a cut edge. -/
-theorem not_isBridge_of_isLink_self (he : G.IsLink e x x) : ¬ G.IsBridge e := by
+theorem IsLoopAt.not_isBridge (he : G.IsLoopAt e x) : ¬ G.IsBridge e := by
   rintro ⟨S, hS⟩
   have heS : e ∈ G.edgeCut S := hS ▸ rfl
   rw [he.mem_edgeCut_iff] at heS
@@ -175,7 +175,7 @@ private def deleteEdgesToSimpleGraphHom (G : Graph α β) (F : Set β) :
 /-- **A cut edge is an edge whose deletion increases the number of connected components.** For
 an edge `e` of a graph with finitely many vertices, `G.IsBridge e` holds exactly when `G` without
 `e` has more connected components than `G`. -/
-theorem isBridge_iff_natCard_connectedComponent_lt [Finite α] (he : e ∈ E(G)) :
+theorem isBridge_iff_natCard_connectedComponent_lt [Finite V(G)] (he : e ∈ E(G)) :
     G.IsBridge e ↔ Nat.card G.toSimpleGraph.ConnectedComponent <
       Nat.card (G.deleteEdges {e}).toSimpleGraph.ConnectedComponent := by
   obtain ⟨u, v, huv⟩ := exists_isLink_of_mem_edgeSet he
@@ -184,6 +184,7 @@ theorem isBridge_iff_natCard_connectedComponent_lt [Finite α] (he : e ∈ E(G))
     intro c
     induction c using SimpleGraph.ConnectedComponent.ind with
     | h w => exact ⟨(G.deleteEdges {e}).toSimpleGraph.connectedComponentMk w, rfl⟩
+  have : Finite V(G.deleteEdges {e}) := ‹Finite V(G)›
   have : Fintype G.toSimpleGraph.ConnectedComponent := Fintype.ofFinite _
   have : Fintype (G.deleteEdges {e}).toSimpleGraph.ConnectedComponent := Fintype.ofFinite _
   simp only [Nat.card_eq_fintype_card]
@@ -348,23 +349,26 @@ theorem IsBlob.eq_of_mem (hH : G.IsBlob H) (hK : G.IsBlob K) (hxH : x ∈ V(H)) 
   change Relation.ReflTransGen _ b x at hxK
   rw [hcomp hxH, hcomp hxK]
 
-/-- The blob containing a vertex `x` of `G`. -/
-noncomputable def blobOf (G : Graph α β) (hx : x ∈ V(G)) : {H // G.IsBlob H} :=
-  ⟨(exists_isBlob_mem hx).choose, (exists_isBlob_mem hx).choose_spec.1⟩
+/-- The blob containing a vertex `x` of `G`: the subgraph of `G` without its cut edges induced on
+the vertices that it joins to `x` (`Graph.isBlob_iff`). -/
+def blobOf (G : Graph α β) (hx : x ∈ V(G)) : {H // G.IsBlob H} :=
+  ⟨(G.deleteEdges {e | G.IsBridge e}).induce
+    {y | Relation.ReflTransGen (G.deleteEdges {e | G.IsBridge e}).Adj x y},
+    isBlob_iff.2 ⟨x, hx, rfl⟩⟩
 
 theorem mem_blobOf (hx : x ∈ V(G)) : x ∈ V((G.blobOf hx).1) :=
-  (exists_isBlob_mem hx).choose_spec.2
+  Relation.ReflTransGen.refl
 
 /-- A blob containing `x` is the blob of `x`. -/
-theorem IsBlob.eq_blobOf (hH : G.IsBlob H) (hxH : x ∈ V(H)) (hx : x ∈ V(G)) :
-    H = (G.blobOf hx).1 :=
-  hH.eq_of_mem (G.blobOf hx).2 hxH (mem_blobOf hx)
+theorem IsBlob.eq_blobOf (hH : G.IsBlob H) (hxH : x ∈ V(H)) :
+    H = (G.blobOf (hH.le.vertexSet_mono hxH)).1 :=
+  hH.eq_of_mem (G.blobOf _).2 hxH (mem_blobOf _)
 
 /-- There are finitely many blobs in a graph with finitely many vertices. -/
-instance finite_isBlob [Finite α] : Finite {H // G.IsBlob H} := by
+instance finite_isBlob [Finite V(G)] : Finite {H // G.IsBlob H} := by
   refine Finite.of_surjective (fun x : V(G) ↦ G.blobOf x.2) fun B ↦ ?_
   obtain ⟨⟨x, hx⟩⟩ := B.2.connected.nonempty
-  exact ⟨⟨x, B.2.le.vertexSet_mono hx⟩, Subtype.ext (B.2.eq_blobOf hx _).symm⟩
+  exact ⟨⟨x, B.2.le.vertexSet_mono hx⟩, Subtype.ext (B.2.eq_blobOf hx).symm⟩
 
 /-- **A vertex all of whose edges are cut edges is a trivial blob**: the subgraph consisting of
 the vertex `x` alone is then a blob of `G`. -/
@@ -395,7 +399,7 @@ theorem isTrivialBlob_induce_singleton (hx : x ∈ V(G))
       obtain ⟨b, rfl⟩ := b
       rfl
     · obtain ⟨a, b, hab, rfl, rfl⟩ := he
-      exact not_isBridge_of_isLink_self hab
+      exact IsLoopAt.not_isBridge hab
   exact ⟨⟨hprop, fun K hKP hle ↦ hK K hKP.1 hKP.2.1 hKP.2.2 (hle.vertexSet_mono rfl)⟩, x, rfl⟩
 
 /-! ### The tree of blobs -/
@@ -447,7 +451,7 @@ theorem IsBlob.vertexSet_subset (hH : G.IsBlob H) {S : Set α} (hx : x ∈ V(H))
 /-- If every edge at `x` is one and the same edge, which is not a loop, then the blob containing `x`
 consists of `x` alone. -/
 theorem IsBlob.vertexSet_eq_singleton (hB : G.IsBlob H) (hxH : x ∈ V(H))
-    (hx : ∀ e f y z, G.IsLink e x y → G.IsLink f x z → e = f) (hloop : ∀ e, ¬ G.IsLink e x x) :
+    (hx : ∀ e f y z, G.IsLink e x y → G.IsLink f x z → e = f) (hloop : ∀ e, ¬ G.IsLoopAt e x) :
     V(H) = {x} := by
   refine Set.eq_singleton_iff_unique_mem.2 ⟨hxH, fun y hy ↦ ?_⟩
   by_contra hyx
@@ -459,11 +463,12 @@ theorem IsBlob.vertexSet_eq_singleton (hB : G.IsBlob H) (hxH : x ∈ V(H))
   exact hB.not_isBridge hf.edge_mem (isBridge_of_forall_isLink_eq hfG
     (fun hxz ↦ hloop f (hxz ▸ hfG)) fun g w hg ↦ hx _ _ _ _ hg hfG)
 
-/-- **A pendant vertex is a blob of degree at most one in the tree of blobs.** If every edge at
-`x` is one and the same edge, which is not a loop, then the blob containing `x` consists of `x`
-alone and is adjacent to at most one blob in the tree of blobs (to none when `x` is isolated). -/
+/-- **The blob of a pendant vertex has at most one neighbour in the tree of blobs.** If every edge
+at `x` is one and the same edge, which is not a loop, then the blob containing `x` is adjacent to at
+most one blob in the tree of blobs. That blob consists of `x` alone
+(`Graph.IsBlob.vertexSet_eq_singleton`). -/
 theorem subsingleton_neighborSet_treeOfBlobs (B : {H // G.IsBlob H}) (hxB : x ∈ V(B.1))
-    (hx : ∀ e f y z, G.IsLink e x y → G.IsLink f x z → e = f) (hloop : ∀ e, ¬ G.IsLink e x x) :
+    (hx : ∀ e f y z, G.IsLink e x y → G.IsLink f x z → e = f) (hloop : ∀ e, ¬ G.IsLoopAt e x) :
     (G.treeOfBlobs.neighborSet B).Subsingleton := by
   have hV := B.2.vertexSet_eq_singleton hxB hx hloop
   rintro K₁ ⟨-, e₁, p₁, q₁, h₁, hp₁, hq₁⟩ K₂ ⟨-, e₂, p₂, q₂, h₂, hp₂, hq₂⟩

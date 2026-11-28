@@ -22,13 +22,13 @@ Three networks witness that the structure is satisfiable:
   `{a, b, c, d}` is a T-quartet: the reduced unrooted tree of blobs displays `ab|cd`.
 * `twoCycleNetwork`, whose root has two parallel edges to a hybrid node (a `2`-cycle) above a
   cherry `(a, b)`. Its LSA is the parent of the cherry, below the root, so the LSA network drops the
-  root and the hybrid node, and the semidirected network is the single edge between the two
-  leaves. The two parallel edges are not cut edges: with the root they form a `2`-blob of the
+  root and the hybrid node, and in the semidirected network the edge replacing the LSA joins the
+  two leaves. The two parallel edges are not cut edges: with the root they form a `2`-blob of the
   rooted network.
-* `fourBlobNetwork`, with a `4`-cycle through two tree nodes and a hybrid node, below the root,
-  meeting the four taxa through four cut edges. Its LSA is the root, the cycle is a single blob of
-  the semidirected network, a vertex of degree four of the tree of blobs, and `{a, b, c, d}` is a
-  B-quartet.
+* `fourBlobNetwork`, with a `4`-cycle through three tree nodes and a hybrid node, below the root,
+  meeting the four taxa through four cut edges. Its LSA is the root, the cycle is a `4`-blob of the
+  semidirected network and a vertex of the reduced tree of blobs, `{a, b, c, d}` is a B-quartet, and
+  the semidirected network keeps the direction of a hybrid edge but not of a tree edge.
 -/
 
 @[expose] public section
@@ -293,7 +293,7 @@ theorem quartetTreeBlob_adj {u v : Fin 7} (hu : u ≠ 0) (hv : v ≠ 0) (huv : u
 theorem quartetTree_blobOf_leaf (x : Fin 4) :
     quartetTree.semidirected.graph.blobOf (quartetTree.leaf_mem_semidirected x) =
       quartetTreeBlob (quartetTree.leaf x) (by fin_cases x <;> decide) :=
-  Subtype.ext ((quartetTreeBlob _ _).2.eq_blobOf rfl _).symm
+  Subtype.ext ((quartetTreeBlob _ _).2.eq_blobOf rfl).symm
 
 /-- The two inner nodes have degree three in the tree of blobs, so they are not suppressed. -/
 theorem quartetTree_ncard_ne_two (v : Fin 7) (hv : v = 1 ∨ v = 2) :
@@ -425,7 +425,7 @@ example : 0 ∉ V(twoCycleNetwork.lsaNetwork) ∧ 1 ∉ V(twoCycleNetwork.lsaNet
   · rw [twoCycleNetwork_lsa] at h
     exact twoCycleNetwork.isAcyclic 2 h
 
-/-- Suppressing the root of the LSA network leaves a single edge between the two leaves. -/
+/-- Suppressing the root of the LSA network gives an edge between the two leaves. -/
 example : twoCycleNetwork.semidirected.graph.IsLink none 3 4 := by
   rw [RootedBinaryNetwork.semidirected_isLink_none]
   exact ⟨3, 4, by decide, by rw [twoCycleNetwork_lsa]; rfl, by rw [twoCycleNetwork_lsa]; rfl,

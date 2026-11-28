@@ -29,11 +29,11 @@ edge otherwise. Every node lies below the root, so the network is connected
 * The **lowest stable ancestor** `RootedBinaryNetwork.lsa` is the node, among those that lie on
   every directed path from the root to a leaf, that lies below all the others; it exists and is
   unique (`RootedBinaryNetwork.existsUnique_isLSA`).
-* The **LSA network** `N⊕` (`RootedBinaryNetwork.lsaNetwork`) deletes the nodes and edges above
-  the LSA and is rooted at the LSA. The **semidirected unrooted network** `N⁻`
-  (`RootedBinaryNetwork.semidirected`) undirects its tree edges, keeps the directions of its
-  hybrid edges, and suppresses its root: the root and its two edges are replaced by one edge
-  between the root's two children, directed when one of the two edges is hybrid.
+* The **LSA network** `N⊕` deletes the nodes and edges above the LSA and is rooted at the LSA;
+  `RootedBinaryNetwork.lsaNetwork` is its underlying multigraph. The **semidirected unrooted
+  network** `N⁻` (`RootedBinaryNetwork.semidirected`) undirects its tree edges, keeps the
+  directions of its hybrid edges, and suppresses its root: the root and its two edges are replaced
+  by one edge between the root's two children, directed when one of the two edges is hybrid.
 * Cut edges, blobs, trivial blobs, incident edges, `m`-blobs and the tree of blobs of a multigraph
   are in `MathlibExt.Combinatorics.Graph.Blob`; the `m`-blobs of the rooted networks `N⁺` and
   `N⊕` are `Graph.IsRootedMBlob` with their roots, those of `N⁻` are `Graph.IsMBlob`.
@@ -110,7 +110,8 @@ structure RootedBinaryNetwork (X V E : Type*) [Finite V] [Finite E] where
   acyclic : ∀ v, ¬ Relation.TransGen (fun a b ↦ ∃ e, src e = a ∧ tgt e = b) v v
 
 /-- A **semidirected network**: a multigraph in which some edges carry a direction, `IsArc e x y`
-saying that the edge `e` is directed from `x` to `y`. -/
+saying that the edge `e` is directed from `x` to `y`. No edge carries both directions, so no loop
+is directed. -/
 structure SemidirectedNetwork (V E : Type*) where
   /-- The underlying undirected multigraph. -/
   graph : Graph V E
@@ -118,6 +119,8 @@ structure SemidirectedNetwork (V E : Type*) where
   IsArc : E → V → V → Prop
   /-- An edge directed from `x` to `y` has ends `x` and `y`. -/
   isLink_of_isArc : ∀ ⦃e x y⦄, IsArc e x y → graph.IsLink e x y
+  /-- An edge directed from `x` to `y` is not also directed from `y` to `x`. -/
+  isArc_asymm : ∀ ⦃e x y⦄, IsArc e x y → ¬ IsArc e y x
 
 /-- A graph `T`, in practice a tree, **displays the quartet** `ab|cd` on four of its vertices when
 a path joining `a` and `b` and a path joining `c` and `d` have no vertex in common. In a tree the
@@ -323,7 +326,7 @@ noncomputable def lsa : V :=
 theorem isLSA_lsa : N.IsLSA N.lsa :=
   N.existsUnique_isLSA.exists.choose_spec
 
-/-- A node that lies on every root–leaf path and is below no other such node is the LSA. -/
+/-- A node that lies on every root–leaf path and lies below every other such node is the LSA. -/
 theorem IsLSA.eq_lsa {v : V} (hv : N.IsLSA v) : v = N.lsa :=
   N.existsUnique_isLSA.unique hv N.isLSA_lsa
 
@@ -351,10 +354,11 @@ theorem leaf_ne_lsa [Nontrivial X] (x : X) : N.leaf x ≠ N.lsa := by
 
 /-! ### The LSA network and the semidirected network -/
 
-/-- The **LSA network** `N⊕` (Baños 2019; Allman–Baños–Mitchell–Rhodes 2023, Definition 5):
-the network left after deleting every node above the lowest stable ancestor, that is, every node
-from which a directed path of positive length leads to it, together with the edges at those
-nodes. Its root is `N.lsa`. -/
+/-- The underlying multigraph of the **LSA network** `N⊕` (Baños 2019; Allman–Baños–Mitchell–Rhodes
+2023, Definition 5): the multigraph of the network left after deleting every node above the lowest
+stable ancestor, that is, every node from which a directed path of positive length leads to it,
+together with the edges at those nodes. `N⊕` itself is rooted at `N.lsa` and keeps the directions
+of `N` (`N.src`, `N.tgt`). -/
 noncomputable def lsaNetwork : Graph V E :=
   N.toGraph.induce {v | ¬ Relation.TransGen N.toDigraph.Adj v N.lsa}
 
@@ -430,6 +434,19 @@ noncomputable def semidirected : SemidirectedNetwork V (Option E) where
       obtain ⟨e₁, e₂, h, h₁, h₂, hx, hy, -⟩ := h
       exact ⟨e₁, e₂, h, h₁, h₂, hx, hy⟩
     | some e => exact h.1
+  isArc_asymm o x y h h' := by
+    cases o with
+    | none =>
+      -- whether an edge is hybrid depends only on its child
+      obtain ⟨e₁, -, -, -, -, hx, -, hnot, -⟩ := h
+      obtain ⟨-, e₄, -, -, -, -, hx', -, hhyb⟩ := h'
+      apply hnot
+      unfold IsHybridEdge at hhyb ⊢
+      rwa [hx, ← hx']
+    | some e =>
+      obtain ⟨-, -, hx, hy⟩ := h
+      obtain ⟨-, -, hy', -⟩ := h'
+      exact N.isAcyclic _ (.single ⟨e, rfl, hy.trans (hy'.symm)⟩)
 
 theorem mem_semidirected_vertexSet {v : V} :
     v ∈ V(N.semidirected.graph) ↔ ¬ Relation.TransGen N.toDigraph.Adj v N.lsa ∧ v ≠ N.lsa :=
@@ -455,11 +472,11 @@ theorem leaf_mem_semidirected [Nontrivial X] (x : X) :
   obtain ⟨_, ⟨e, he, -⟩, -⟩ := Relation.TransGen.head'_iff.1 h
   exact N.src_ne_leaf x e he
 
-/-- With at least two taxa, a leaf has a single edge in `N⁻`, and it is not a loop. -/
+/-- With at least two taxa, a leaf has at most one edge in `N⁻`, and it is not a loop. -/
 theorem semidirected_isLink_leaf [Nontrivial X] (x : X) :
     (∀ o o' y z, N.semidirected.graph.IsLink o (N.leaf x) y →
       N.semidirected.graph.IsLink o' (N.leaf x) z → o = o') ∧
-      ∀ o, ¬ N.semidirected.graph.IsLink o (N.leaf x) (N.leaf x) := by
+      ∀ o, ¬ N.semidirected.graph.IsLoopAt o (N.leaf x) := by
   obtain ⟨e₀, he₀, hu⟩ := N.existsUnique_tgt_eq_leaf x
   -- an edge of `N⁺` at a leaf is its parent edge
   have hedge : ∀ e y, N.toGraph.IsLink e (N.leaf x) y → e = e₀ ∧ N.src e₀ = y := by
