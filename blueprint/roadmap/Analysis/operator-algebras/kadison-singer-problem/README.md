@@ -31,6 +31,9 @@
 - [Marcus--Spielman--Srivastava bound, finite-support form](finite-mssbound.md)
 - [Paving projection](paving-proj.md)
 - [Anderson paving theorem](kadison-singer-paving.md)
+- [Flat ultrafilters](is-flat.md)
+- [Nontrivial relative commutants force flat ultrafilters](nontrivial-relative-commutant-flat.md)
+- [Flatness of ultrafilters with nontrivial relative commutant](nontrivial-relative-commutant-flat-holds.md)
 
 ## Related topics
 

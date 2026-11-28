@@ -13,7 +13,6 @@ Convexity and smoothness of norms (uniform convexity, Kadec–Klee, Birkhoff–J
 - [Normed spaces isometric to their duals](normed-spaces-isometric-to-their-duals/README.md)
 - [Rademacher type and cotype](rademacher-type-and-cotype/README.md)
 - [Schauder bases](schauder-bases/README.md)
-- [Type and cotype of Banach spaces](type-and-cotype-of-banach-spaces/README.md)
 - [Uniformly convex spaces](uniformly-convex-spaces/README.md)
 - [Banach–Mazur embedding theorem](banach-mazur-embedding.md)
 - [Banach–Stone theorem for real scalars](banach-stone-real.md)
