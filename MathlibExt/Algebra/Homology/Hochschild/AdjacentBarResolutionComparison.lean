@@ -306,8 +306,8 @@ theorem coefficientResolutionTensorComparison_homology
   have hπ := congrArg (fun f => f.f 0) (envelopingBarResolutionComparison_hom_π k A P)
   have hcomm : (envelopingBarResolutionComparison k A P).hom.f 0 ≫ P.π.f 0 =
       (envelopingBarProjectiveResolution k A).π.f 0 ≫ 𝟙 (regularEnvelopingTarget k A) := by
-    simp only [HomologicalComplex.comp_f, Category.comp_id, envelopingBarProjectiveResolution_π] at
-        hπ ⊢
+    simp only [HomologicalComplex.comp_f, Category.comp_id,
+      envelopingBarProjectiveResolution_π] at hπ ⊢
     exact hπ
   have h := ProjectiveResolution.isoLeftDerivedObj_hom_naturality
     (𝟙 (regularEnvelopingTarget k A)) (envelopingBarProjectiveResolution k A) P
