@@ -129,6 +129,13 @@ private def zeroCoordinate :
   (TensorProduct.rid ℤ A).toLinearMap.comp
     (TensorProduct.map LinearMap.id (TensorPower.zeroEquiv ℤ A).toLinearMap)
 
+private theorem zeroCoordinate_tprod (m : A) (a : Fin 0 → A) :
+    zeroCoordinate (m ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ a) = m := by
+  simp [zeroCoordinate, LinearMap.comp_apply, TensorProduct.map_tmul,
+    TensorPower.zeroEquiv, PiTensorProduct.isEmptyEquiv_apply_tprod,
+    TensorProduct.rid_tmul]
+
+
 -- Pin the regular coefficient actions before opening the matrix-actor scope.
 local instance : Module A A := Semiring.toModule
 local instance : Module Aᵐᵒᵖ A := Semiring.toOppositeModule
@@ -168,10 +175,8 @@ example :
         zeroCoordinate ((ModuleCat.Algebra.Hochschild.boundary ℤ A A 0).hom x)) matchedTrace
     _ = _ := by
       rw [ModuleCat.Algebra.Hochschild.boundary_one_tprod]
-      simp [zeroCoordinate, LinearMap.comp_apply, TensorProduct.map_tmul,
-        TensorPower.zeroEquiv, PiTensorProduct.isEmptyEquiv_apply_tprod,
-        unit2, Matrix.mul_apply, Matrix.single_apply, Fin.sum_univ_succ,
-        smul_eq_mul]
+      simp [zeroCoordinate_tprod, unit2, Matrix.mul_apply, Matrix.single_apply,
+        Fin.sum_univ_succ, smul_eq_mul]
 
 example :
     (cornerChainMap ℤ A A (ULift.{1} I2) (ULift.up 0)) ≫
