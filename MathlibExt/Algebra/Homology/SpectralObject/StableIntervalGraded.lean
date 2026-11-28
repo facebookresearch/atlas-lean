@@ -14,6 +14,7 @@ module
 
 public import Mathlib.Algebra.Homology.SpectralObject.Page
 public import Mathlib.CategoryTheory.Abelian.Exact
+public import MathlibExt.CategoryTheory.Abelian.DiagramLemmas.ImageQuotient
 
 /-!
 # Stable spectral intervals as ordered image quotients
@@ -57,8 +58,9 @@ def stableIntervalMiddle {i₁ i₂ : ι} (h : i₁ ≤ i₂) : i₁ ⟶ i₂ :=
 def stableIntervalRight (i₂ : ι) : i₂ ⟶ (⊤ : ι) :=
   homOfLE le_top
 
-def stableIntervalLeftMiddle (i₂ : ι) : (⊥ : ι) ⟶ i₂ :=
-  homOfLE bot_le
+/-- Compatibility name for the unique bottom-to-cut arrow. -/
+abbrev stableIntervalLeftMiddle (i₂ : ι) : (⊥ : ι) ⟶ i₂ :=
+  stableIntervalLeft i₂
 
 def stableIntervalFull : (⊥ : ι) ⟶ (⊤ : ι) :=
   homOfLE bot_le
@@ -256,6 +258,57 @@ theorem stableIntervalDelta_comp_toStable_zero
     _ = biprod.inr ≫ 0 := congrArg (fun k => biprod.inr ≫ k) S.zero
     _ = 0 := by simp)
 
+private theorem stableIntervalKernelZero (n : ℤ) (i₂ : ι) :
+    Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+      (n - 1) n (by omega) ≫ Y.stableIntervalStepToAbutment n i₂ = 0 :=
+  Y.zero₁ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+    (stableIntervalFull (ι := ι)) (Subsingleton.elim _ _) (n - 1) n
+
+private theorem stableIntervalKernelExact (n : ℤ) (i₂ : ι) :
+    (ShortComplex.mk
+      (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+        (n - 1) n (by omega))
+      (Y.stableIntervalStepToAbutment n i₂) (Y.stableIntervalKernelZero n i₂)).Exact :=
+  Y.exact₁ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+    (stableIntervalFull (ι := ι)) (Subsingleton.elim _ _) (n - 1) n (by omega)
+
+private theorem stableIntervalCokernelSequence_exact
+    (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
+    (Y.stableIntervalCokernelSequence n h).Exact :=
+  Y.cokernelSequenceE_exact (stableIntervalLeft i₁) (stableIntervalMiddle h)
+    (stableIntervalRight i₂) (stableIntervalLeftMiddle i₂)
+    (stableIntervalLeft_comp_middle h) (n - 1) n (n + 1) (by omega) (by omega)
+
+private noncomputable def stableIntervalStepCokernelIso
+    (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
+    Y.stableIntervalObj n h ≅ cokernel (Y.stableIntervalCokernelSequence n h).f := by
+  let _ : Epi (Y.stableIntervalCokernelSequence n h).g := by
+    change Epi (Y.stableIntervalStepToStable n h)
+    infer_instance
+  exact (IsColimit.coconePointUniqueUpToIso
+    (cokernelIsCokernel (Y.stableIntervalCokernelSequence n h).f)
+    (Y.stableIntervalCokernelSequence_exact n h).gIsCokernel).symm
+
+private theorem cokernel_π_stableIntervalStepCokernelIso_inv
+    (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
+    cokernel.π (Y.stableIntervalCokernelSequence n h).f ≫
+      (Y.stableIntervalStepCokernelIso n h).inv = Y.stableIntervalStepToStable n h := by
+  let _ : Epi (Y.stableIntervalCokernelSequence n h).g := by
+    change Epi (Y.stableIntervalStepToStable n h)
+    infer_instance
+  simpa only [stableIntervalStepCokernelIso, Iso.symm_inv, parallelPair_obj_one,
+    Cofork.app_one_eq_π, Cofork.ofπ_pt, Cofork.π_ofπ] using
+    (IsColimit.comp_coconePointUniqueUpToIso_hom
+      (cokernelIsCokernel (Y.stableIntervalCokernelSequence n h).f)
+      (Y.stableIntervalCokernelSequence_exact n h).gIsCokernel WalkingParallelPair.one)
+
+private theorem stableIntervalStepToStable_comp_stepCokernelIso
+    (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
+    Y.stableIntervalStepToStable n h ≫ (Y.stableIntervalStepCokernelIso n h).hom =
+      cokernel.π (Y.stableIntervalCokernelSequence n h).f := by
+  rw [← Y.cokernel_π_stableIntervalStepCokernelIso_inv n h, Category.assoc,
+    Iso.inv_hom_id, Category.comp_id]
+
 /-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
 indexed by ι. For n∈ℤ and i₁≤i₂, let u_{i₂}:A_{i₂}=H^n_Y(⊥,i₂)→H^n_Y(⊥,⊤), e_{i₂}:A_{i₂}→image
 u_{i₂}, and π:A_{i₂}→E_Y(⊥,i₁,i₂,⊤;n). This is the pair consisting of the descended map q:image
@@ -266,20 +319,17 @@ noncomputable def stableIntervalImageToStableLift
     { q : Limits.image (Y.stableIntervalStepToAbutment n i₂) ⟶
         Y.stableIntervalObj n h //
       Y.stableIntervalStepToImage n i₂ ≫ q =
-        Y.stableIntervalStepToStable n h } := by
-  let f₁₂ := stableIntervalLeftMiddle i₂
-  let f₃ := stableIntervalRight i₂
-  let f₁₂₃ : (⊥ : ι) ⟶ (⊤ : ι) := stableIntervalFull
-  have hExact :=
-    Y.exact₁ f₁₂ f₃ f₁₂₃ (Subsingleton.elim _ _)
-      (n - 1) n (by omega)
-  have hδ : Y.δ f₁₂ f₃ (n - 1) n (by omega) ≫
-      Y.stableIntervalStepToStable n h = 0 :=
-    Y.stableIntervalDelta_comp_toStable_zero n h
-  let q := hExact.isColimitImage.desc
-    (CokernelCofork.ofπ (Y.stableIntervalStepToStable n h) hδ)
+        Y.stableIntervalStepToStable n h }  := by
+  let a := Y.stableIntervalStepMap n h
+  let x := Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+    (n - 1) n (by omega)
+  let b := Y.stableIntervalStepToAbutment n i₂
+  let q := imageToBiprodQuotient a x b (Y.stableIntervalKernelZero n i₂)
+    (Y.stableIntervalKernelExact n i₂) ≫ (Y.stableIntervalStepCokernelIso n h).inv
   refine ⟨q, ?_⟩
-  exact Cofork.IsColimit.π_desc hExact.isColimitImage
+  dsimp only [q, stableIntervalStepToImage]
+  rw [← Category.assoc, factorThruImage_imageToBiprodQuotient]
+  exact Y.cokernel_π_stableIntervalStepCokernelIso_inv n h
 
 /-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
 indexed by ι. For n∈ℤ and i₁≤i₂, this is the descended epimorphism q:image
@@ -321,16 +371,11 @@ theorem stableIntervalDelta_comp_toImage_zero
     (n : ℤ) (i₂ : ι) :
     Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
         (n - 1) n (by omega) ≫
-      Y.stableIntervalStepToImage n i₂ = 0 := by
-  apply (cancel_mono
-    (Limits.image.ι (Y.stableIntervalStepToAbutment n i₂))).1
-  simp only [stableIntervalStepToImage, Category.assoc, Limits.image.fac,
-    zero_comp]
-  exact Y.zero₁
-    (stableIntervalLeftMiddle i₂)
-    (stableIntervalRight i₂)
-    (stableIntervalFull (ι := ι))
-    (Subsingleton.elim _ _) (n - 1) n
+      Y.stableIntervalStepToImage n i₂ = 0  :=
+  comp_factorThruImage_eq_zero
+    (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+      (n - 1) n (by omega))
+    (Y.stableIntervalStepToAbutment n i₂) (Y.stableIntervalKernelZero n i₂)
 
 /-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
 indexed by ι. For n∈ℤ and i₁≤i₂, let j:image u_{i₁}→image u_{i₂} be the ordered image inclusion
@@ -349,124 +394,79 @@ theorem stableIntervalImageMap_comp_imageToStable_zero
     Y.stableIntervalStepMap_comp_toStable_zero n h,
     comp_zero]
 
-/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
-indexed by ι. For n∈ℤ and i₁≤i₂, let j:image u_{i₁}→image u_{i₂} and q:image
-u_{i₂}→E_Y(⊥,i₁,i₂,⊤;n). The cofork defined by q and j≫q=0 is a cokernel. Thus every t:image
-u_{i₂}→Z with j≫t=0 factors uniquely as q≫l=t for a morphism l:E→Z. -/
-noncomputable def stableIntervalImageToStableIsCokernel
+private noncomputable def stableIntervalOrderedImageCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
-    IsColimit (CokernelCofork.ofπ
-      (Y.stableIntervalImageToStable n h)
-      (Y.stableIntervalImageMap_comp_imageToStable_zero n h)) := by
-  let S := Y.stableIntervalCokernelSequence n h
-  let eA := Y.stableIntervalStepToImage n i₁
-  let eB := Y.stableIntervalStepToImage n i₂
-  let _ : Epi S.g := by
-    change Epi (Y.stableIntervalStepToStable n h)
-    infer_instance
-  let k : S.X₁ ⟶ Limits.image
-      (Y.stableIntervalStepToAbutment n i₁) :=
-    biprod.desc eA 0
-  have hinl : biprod.inl ≫ S.f = Y.stableIntervalStepMap n h := by
-    dsimp only [S, stableIntervalCokernelSequence, cokernelSequenceE,
-      stableIntervalStepMap]
-    simp only [biprod.inl_desc]
-  have hinr : biprod.inr ≫ S.f =
-      Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
-        (n - 1) n (by omega) := by
-    dsimp only [S, stableIntervalCokernelSequence, cokernelSequenceE]
-    simp only [biprod.inr_desc]
-  have hFac : S.f ≫ eB =
-      k ≫ Y.stableIntervalImageMap n h := by
-    apply biprod.hom_ext'
-    · calc
-        biprod.inl ≫ (S.f ≫ eB) =
-            (biprod.inl ≫ S.f) ≫ eB :=
-          (Category.assoc _ _ _).symm
-        _ = Y.stableIntervalStepMap n h ≫ eB := by rw [hinl]
-        _ = eA ≫ Y.stableIntervalImageMap n h :=
-          Y.stableIntervalStepToImage_naturality n h
-        _ = (biprod.inl ≫ k) ≫
-            Y.stableIntervalImageMap n h := by
-          dsimp only [k]
-          rw [biprod.inl_desc]
-        _ = biprod.inl ≫
-            (k ≫ Y.stableIntervalImageMap n h) :=
-          Category.assoc _ _ _
-    · calc
-        biprod.inr ≫ (S.f ≫ eB) =
-            (biprod.inr ≫ S.f) ≫ eB :=
-          (Category.assoc _ _ _).symm
-        _ = Y.δ (stableIntervalLeftMiddle i₂)
-              (stableIntervalRight i₂) (n - 1) n (by omega) ≫ eB := by
-          rw [hinr]
-        _ = 0 := Y.stableIntervalDelta_comp_toImage_zero n i₂
-        _ = (biprod.inr ≫ k) ≫
-            Y.stableIntervalImageMap n h := by
-          dsimp only [k]
-          simp only [biprod.inr_desc, zero_comp]
-        _ = biprod.inr ≫
-            (k ≫ Y.stableIntervalImageMap n h) :=
-          Category.assoc _ _ _
-  have hS : S.Exact := by
-    dsimp only [S, stableIntervalCokernelSequence]
-    exact Y.cokernelSequenceE_exact
-      (stableIntervalLeft i₁)
-      (stableIntervalMiddle h)
-      (stableIntervalRight i₂)
-      (stableIntervalLeftMiddle i₂)
-      (stableIntervalLeft_comp_middle h)
-      (n - 1) n (n + 1) (by omega) (by omega)
-  refine CokernelCofork.IsColimit.ofπ'
-    (Y.stableIntervalImageToStable n h)
-    (Y.stableIntervalImageMap_comp_imageToStable_zero n h)
-    (fun {A} t ht => ?_)
-  have hbt : S.f ≫ (eB ≫ t) = 0 := by
-    calc
-      S.f ≫ (eB ≫ t) = (S.f ≫ eB) ≫ t :=
-        (Category.assoc _ _ _).symm
-      _ = (k ≫ Y.stableIntervalImageMap n h) ≫ t := by rw [hFac]
-      _ = k ≫ (Y.stableIntervalImageMap n h ≫ t) :=
-        Category.assoc _ _ _
-      _ = 0 := by rw [ht, comp_zero]
-  let l : S.X₃ ⟶ A :=
-    hS.gIsCokernel.desc (CokernelCofork.ofπ (eB ≫ t) hbt)
-  refine ⟨l, ?_⟩
-  apply (cancel_epi eB).1
-  rw [← Category.assoc,
-    Y.stableIntervalStepToImage_comp_imageToStable n h]
-  exact Cofork.IsColimit.π_desc hS.gIsCokernel
+    cokernel (Y.stableIntervalImageMap n h) ≅
+      cokernel (imageCompMap (Y.stableIntervalStepMap n h)
+        (Y.stableIntervalStepToAbutment n i₂)) :=
+  cokernel.mapIso (Y.stableIntervalImageMap n h)
+    (imageCompMap (Y.stableIntervalStepMap n h)
+      (Y.stableIntervalStepToAbutment n i₂))
+    (Limits.image.eqToIso (Y.stableIntervalStepMap_comp_toAbutment n h).symm)
+    (Iso.refl _) (by
+      apply (cancel_mono (Limits.image.ι (Y.stableIntervalStepToAbutment n i₂))).1
+      simp only [Iso.refl_hom, Category.comp_id, Category.assoc]
+      rw [Y.stableIntervalImageMap_comp_ι, imageCompMap_ι]
+      exact Limits.image.eq_fac (Y.stableIntervalStepMap_comp_toAbutment n h).symm)
 
-/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
-indexed by ι. For n∈ℤ and i₁≤i₂, this is the canonical isomorphism E_Y(⊥,i₁,i₂,⊤;n)≅coker(j),
-where j:image u_{i₁}→image u_{i₂} is induced by the ordered bottom-to-cut steps in H^n_Y(⊥,⊤).
-It identifies the two cokernels of j, one given by the descended stable quotient and the other
-by the categorical cokernel. -/
+private theorem cokernel_π_stableIntervalOrderedImageCokernelIso_inv
+    (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
+    cokernel.π (imageCompMap (Y.stableIntervalStepMap n h)
+        (Y.stableIntervalStepToAbutment n i₂)) ≫
+      (Y.stableIntervalOrderedImageCokernelIso n h).inv =
+      cokernel.π (Y.stableIntervalImageMap n h) := by
+  simp only [stableIntervalOrderedImageCokernelIso, cokernel.mapIso, cokernel.map,
+    Iso.refl_inv, cokernel.π_desc, Category.id_comp]
+
+/-- The stable spectral interval is the quotient of the two ordered abutment images.
+
+Identify its native spectral cokernel with the quotient by the step and boundary maps,
+apply `imageQuotientBiprodIso`, and transport the image-of-composite inclusion to the
+specified ordered image inclusion. The boundary and exactness are the spectral laws. -/
 noncomputable def stableIntervalImageCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
-    Y.stableIntervalObj n h ≅
-      cokernel (Y.stableIntervalImageMap n h) :=
-  (IsColimit.coconePointUniqueUpToIso
-    (cokernelIsCokernel (Y.stableIntervalImageMap n h))
-    (Y.stableIntervalImageToStableIsCokernel n h)).symm
+    Y.stableIntervalObj n h ≅ cokernel (Y.stableIntervalImageMap n h) :=
+  Y.stableIntervalStepCokernelIso n h ≪≫
+    imageQuotientBiprodIso (Y.stableIntervalStepMap n h)
+      (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+        (n - 1) n (by omega))
+      (Y.stableIntervalStepToAbutment n i₂)
+      (Y.stableIntervalKernelZero n i₂) (Y.stableIntervalKernelExact n i₂) ≪≫
+    (Y.stableIntervalOrderedImageCokernelIso n h).symm
 
-/-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
-indexed by ι. For n∈ℤ and i₁≤i₂, let q:image u_{i₂}→E_Y(⊥,i₁,i₂,⊤;n), j:image u_{i₁}→image
-u_{i₂}, and e:E≅coker(j) be the canonical comparison. Then q≫e.hom=cokernel.π(j). The equality
-specifies the comparison on the full current image, not merely its isomorphism class. -/
+/-- The spectral comparison computes on the full image quotient projection. -/
 @[reassoc]
 theorem stableIntervalImageToStable_comp_iso_hom
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
-    Y.stableIntervalImageToStable n h ≫
-        (Y.stableIntervalImageCokernelIso n h).hom =
+    Y.stableIntervalImageToStable n h ≫ (Y.stableIntervalImageCokernelIso n h).hom =
       cokernel.π (Y.stableIntervalImageMap n h) := by
-  simpa only [stableIntervalImageCokernelIso, Iso.symm_hom,
-    parallelPair_obj_one, Cofork.app_one_eq_π, Cofork.ofπ_pt,
-    Cofork.π_ofπ] using
-    (IsColimit.comp_coconePointUniqueUpToIso_inv
-      (cokernelIsCokernel (Y.stableIntervalImageMap n h))
-      (Y.stableIntervalImageToStableIsCokernel n h)
-      WalkingParallelPair.one)
+  apply (cancel_epi (Y.stableIntervalStepToImage n i₂)).1
+  rw [← Category.assoc, Y.stableIntervalStepToImage_comp_imageToStable]
+  change Y.stableIntervalStepToStable n h ≫
+      (Y.stableIntervalStepCokernelIso n h).hom ≫
+      imageQuotientForward (Y.stableIntervalStepMap n h)
+        (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+          (n - 1) n (by omega))
+        (Y.stableIntervalStepToAbutment n i₂) (Y.stableIntervalKernelZero n i₂) ≫
+      (Y.stableIntervalOrderedImageCokernelIso n h).inv = _
+  rw [← Category.assoc, Y.stableIntervalStepToStable_comp_stepCokernelIso,
+    ← Category.assoc, cokernel_π_imageQuotientForward, Category.assoc,
+    Y.cokernel_π_stableIntervalOrderedImageCokernelIso_inv]
+
+/-- The descended stable quotient is a cokernel of the ordered image inclusion.
+
+Transport the standard categorical cokernel through the native quotient-of-images
+comparison, using its specified projection law. -/
+noncomputable def stableIntervalImageToStableIsCokernel
+    (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
+    IsColimit (CokernelCofork.ofπ (Y.stableIntervalImageToStable n h)
+      (Y.stableIntervalImageMap_comp_imageToStable_zero n h)) := by
+  refine CokernelCofork.IsColimit.ofπ'
+    (Y.stableIntervalImageToStable n h)
+    (Y.stableIntervalImageMap_comp_imageToStable_zero n h) (fun {A} t ht => ?_)
+  refine ⟨(Y.stableIntervalImageCokernelIso n h).hom ≫
+    cokernel.desc (Y.stableIntervalImageMap n h) t ht, ?_⟩
+  rw [← Category.assoc, Y.stableIntervalImageToStable_comp_iso_hom, cokernel.π_desc]
 
 end CategoryTheory.Abelian.SpectralObject
 

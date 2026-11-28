@@ -415,17 +415,10 @@ section UnderlyingComparison
 with T.forget and pair it with the constant left module of alg. The resulting C-valued
 balanced pairing has constant target A and component a : T(A) → A. Its balancing equation is
 μ_A ≫ a = T(a) ≫ a. -/
-noncomputable def emUnderlyingPairing (alg : T.Algebra) :
+noncomputable abbrev emUnderlyingPairing (alg : T.Algebra) :
     BalancedPairing T (emRightModule.postcomp T.forget)
-      (algebraLeftModule alg) where
-  target := BarRegularContraction.regularTarget (algebraLeftModule alg)
-  pairing :=
-    { app := fun _ => alg.a
-      naturality := fun _ _ _ => by
-        change T.map (𝟙 _) ≫ alg.a = alg.a ≫ 𝟙 _
-        simp }
-  balanced :=
-    (isBalancedPairing_iff_action_eq (T := T)).mpr (fun a => alg.assoc)
+      (algebraLeftModule alg) :=
+  BarRegularContraction.regularBalancedPairing (algebraLeftModule alg)
 
 /-- For a monad T on C, a T-algebra alg=(A,a), and a point of Discrete PUnit, the component of
 emUnderlyingPairing(alg) equals a : T(A) → A. -/
@@ -439,10 +432,9 @@ theorem emUnderlyingPairing_pairing_app (alg : T.Algebra)
 free right module and the algebra left module at the unique discrete point. This defines an
 augmented simplicial object of C with degree-n term T(T^n(A)), target A, and zero-degree
 augmentation a. -/
-noncomputable def emUnderlyingAugmented (alg : T.Algebra) :
+noncomputable abbrev emUnderlyingAugmented (alg : T.Algebra) :
     SimplicialObject.Augmented C :=
-  (SimplicialObject.Augmented.whiskeringObj _ _ resolutionEvalPoint).obj
-    (BalancedPairing.toSimplicialAugmented (emUnderlyingPairing alg))
+  resolutionAugmented alg
 
 /-- For a monad T on C and T-algebra alg=(A,a), the augmentation target of
 emUnderlyingAugmented(alg) equals A. This is the evaluated constant target of the action
@@ -456,40 +448,8 @@ theorem emUnderlyingAugmented_point (alg : T.Algebra) :
 bar of the free right module postcomposed with T.forget and the constant left module of alg,
 evaluated at the unique point. Its degree-n object is T(T^n(A)), with faces and degeneracies
 inherited from these actions. -/
-noncomputable def emUnderlyingBar (alg : T.Algebra) : SimplicialObject C :=
-  algebraBar (emRightModule.postcomp T.forget) alg
-
-/-- For a monad T on C, T-algebra alg=(A,a), and n ∈ ℕ, the degree-n term of emUnderlyingBar(alg)
-is the value of the forgotten free-module functor on T^n(A), namely T(T^n(A)). -/
-@[simp]
-theorem emUnderlyingBar_obj (alg : T.Algebra) (n : ℕ) :
-    (emUnderlyingBar alg).obj (Opposite.op (SimplexCategory.mk n)) =
-      (emRightModule.postcomp T.forget).functor.obj
-        ((monadPow T n).obj alg.A) :=
-  algebraBar_obj _ _ _
-
-/-- Let T be a monad on C, alg=(A,a) a T-algebra, n ∈ ℕ, and i ∈ Fin(n+2). The face of
-emUnderlyingBar(alg) is the evaluated barFaceApp for the forgotten free right module and
-algebra left module. The first face uses its multiplication action, the last uses T(T^n(a)),
-and interior faces use T applied to the reversed-position multiplication insertions. -/
-@[simp]
-theorem emUnderlyingBar_map_δ_op (alg : T.Algebra) {n : ℕ}
-    (i : Fin (n + 2)) :
-    (emUnderlyingBar alg).map (SimplexCategory.δ i).op =
-      barFaceApp (T := T) (R := emRightModule.postcomp T.forget)
-        (L := algebraLeftModule alg) n i ⟨PUnit.unit⟩ :=
-  algebraBar_map_δ_op _ _ _
-
-/-- For a monad T on C, T-algebra alg=(A,a), n ∈ ℕ, and i ∈ Fin(n+1), the degeneracy of
-emUnderlyingBar(alg) is T(barEtaAtPos(T,n,i,A)). The unit insertion uses the raw reversed
-position Fin.rev(i) and maps the degree-n term to the degree-(n+1) term. -/
-@[simp]
-theorem emUnderlyingBar_map_σ_op (alg : T.Algebra) {n : ℕ}
-    (i : Fin (n + 1)) :
-    (emUnderlyingBar alg).map (SimplexCategory.σ i).op =
-      (emRightModule.postcomp T.forget).functor.map
-        (barEtaAtPos T n i alg.A) :=
-  algebraBar_map_σ_op _ _ _
+noncomputable abbrev emUnderlyingBar (alg : T.Algebra) : SimplicialObject C :=
+  resolutionBar alg
 
 /-- Let T be a monad on C and alg a T-algebra. The underlying simplicial object of
 emUnderlyingAugmented(alg) equals emUnderlyingBar(alg), the evaluated bar of the forgotten
@@ -504,13 +464,8 @@ emUnderlyingAugmented(alg) equals a : T(A) → A. -/
 @[simp]
 theorem emUnderlyingAugmented_hom_zero (alg : T.Algebra) :
     (emUnderlyingAugmented alg).hom.app
-      (Opposite.op (SimplexCategory.mk 0)) = alg.a := by
-  unfold emUnderlyingAugmented
-  rw [SimplicialObject.Augmented.whiskeringObj_obj_hom_app_mk,
-    BalancedPairing.toSimplicialAugmented_hom_app_mk,
-    BalancedPairing.toDataHom_app_zero]
-  change ((emUnderlyingPairing alg).pairing).app (Discrete.mk PUnit.unit) = alg.a
-  rfl
+      (Opposite.op (SimplexCategory.mk 0)) = alg.a :=
+  resolutionAugmented_hom_zero alg
 
 /-- Let T be a monad on C and alg a T-algebra. The module isomorphism between the forgotten free
 right module and the regular right module, together with the identity algebra left-module
@@ -655,86 +610,38 @@ theorem emUnderlying_hq {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
 identity on the forgotten free right module and algebra left-module map φ, together with the
 constant carrier target map, gives emUnderlyingAugmented(alg) → emUnderlyingAugmented(alg′)
 after evaluation at the unique point. -/
-noncomputable def emUnderlyingHom {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
+noncomputable abbrev emUnderlyingHom {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     emUnderlyingAugmented alg ⟶ emUnderlyingAugmented alg' :=
-  (SimplicialObject.Augmented.whiskeringObj _ _ resolutionEvalPoint).map
-    (BalancedPairing.toSimplicialAugmentedMap (emUnderlyingPairing alg)
-      (emUnderlyingPairing alg') (𝟙 (emRightModule.postcomp T.forget))
-      (algebraLeftModuleHom φ) (emUnderlyingTargetHom φ)
-      (emUnderlying_hq φ))
+  resolutionHom φ
 
 /-- For a monad T on C and algebra morphism φ : alg → alg′, the underlying simplicial map of
 emUnderlyingHom(φ) equals algebraBarHom of the identity forgotten right-module map and φ. Its
 degree-n component acts on the algebra carrier by T(T^n(φ.f)). -/
 theorem emUnderlyingHom_left {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     (emUnderlyingHom φ).left =
-      algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) φ := by
-  simp only [emUnderlyingHom,
-    SimplicialObject.Augmented.whiskeringObj_map_left,
-    BalancedPairing.toSimplicialAugmentedMap_left]
-  rfl
+      algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) φ :=
+  resolutionHom_left φ
 
 /-- Let T be a monad on C and φ : alg → alg′ an algebra morphism. The augmentation-target
 component of emUnderlyingHom(φ) equals the carrier morphism φ.f : alg.A → alg′.A. -/
 theorem emUnderlyingHom_right {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
-    (emUnderlyingHom φ).right = φ.f := by
-  simp only [emUnderlyingHom,
-    SimplicialObject.Augmented.whiskeringObj_map_right,
-    BalancedPairing.toSimplicialAugmentedMap_right]
-  rfl
+    (emUnderlyingHom φ).right = φ.f :=
+  resolutionHom_right φ
 
 /-- For a monad T on C and T-algebra alg, emUnderlyingHom(𝟙_alg) equals the identity augmented map
 of emUnderlyingAugmented(alg). This includes its simplicial component and its algebra-carrier
 target. -/
 theorem emUnderlyingHom_id (alg : T.Algebra) :
-    emUnderlyingHom (𝟙 alg) = 𝟙 (emUnderlyingAugmented alg) := by
-  refine SimplicialObject.Augmented.hom_ext _ _ ?_ ?_
-  · have e1 : (emUnderlyingHom (𝟙 alg)).left =
-        algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) (𝟙 alg) := by
-      rw [emUnderlyingHom_left]
-    have e2 : algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) (𝟙 alg) =
-        𝟙 (emUnderlyingBar alg) :=
-      algebraBarHom_id _ _
-    have e3 : (𝟙 (emUnderlyingBar alg)) =
-        𝟙 (emUnderlyingAugmented alg).left :=
-      rfl
-    exact e1.trans (e2.trans e3.symm)
-  · have e1r : (emUnderlyingHom (𝟙 alg)).right =
-        (𝟙 alg : alg ⟶ alg).f := by
-      rw [emUnderlyingHom_right]
-    have e2r : (𝟙 alg : alg ⟶ alg).f = 𝟙 alg.A :=
-      Algebra.id_f _
-    have e3r : (𝟙 alg.A) = 𝟙 (emUnderlyingAugmented alg).right :=
-      rfl
-    exact e1r.trans (e2r.trans e3r.symm)
+    emUnderlyingHom (𝟙 alg) = 𝟙 (emUnderlyingAugmented alg) :=
+  resolutionHom_id alg
 
 /-- Let T be a monad on C and φ : alg₁ → alg₂, ψ : alg₂ → alg₃ algebra morphisms. Then
 emUnderlyingHom(φ) ≫ emUnderlyingHom(ψ) = emUnderlyingHom(φ ≫ ψ), as augmented simplicial maps
 of C. -/
 theorem emUnderlyingHom_comp {alg₁ alg₂ alg₃ : T.Algebra} (φ : alg₁ ⟶ alg₂)
     (ψ : alg₂ ⟶ alg₃) :
-    emUnderlyingHom φ ≫ emUnderlyingHom ψ = emUnderlyingHom (φ ≫ ψ) := by
-  refine SimplicialObject.Augmented.hom_ext _ _ ?_ ?_
-  · have f1 : (emUnderlyingHom φ ≫ emUnderlyingHom ψ).left =
-        algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) φ ≫
-          algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) ψ :=
-      rfl
-    have f2 : algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) φ ≫
-        algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) ψ =
-        algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) (φ ≫ ψ) := by
-      simp only [algebraBarHom_comp, Category.id_comp]
-    have f3 : algebraBarHom (𝟙 (emRightModule.postcomp T.forget)) (φ ≫ ψ) =
-        (emUnderlyingHom (φ ≫ ψ)).left :=
-      rfl
-    exact f1.trans (f2.trans f3.symm)
-  · have g1 : (emUnderlyingHom φ ≫ emUnderlyingHom ψ).right =
-        φ.f ≫ ψ.f :=
-      rfl
-    have g2 : φ.f ≫ ψ.f = (φ ≫ ψ).f :=
-      (Algebra.comp_f _ _).symm
-    have g3 : (φ ≫ ψ).f = (emUnderlyingHom (φ ≫ ψ)).right :=
-      rfl
-    exact g1.trans (g2.trans g3.symm)
+    emUnderlyingHom φ ≫ emUnderlyingHom ψ = emUnderlyingHom (φ ≫ ψ) :=
+  resolutionHom_comp φ ψ
 
 /-- For a monad T on C and algebra morphism φ : alg → alg′, the simplicial comparison
 e=emUnderlyingBarIso satisfies emUnderlyingHom(φ).left ≫ e_alg′.hom = e_alg.hom ≫
@@ -786,34 +693,6 @@ theorem emAugmentedIso_hom_right (alg : T.Algebra) :
   rw [hA, hB]
   exact Functor.map_id _ _
 
-/-- For a monad T on C, define T.Algebra → SimplicialObject.Augmented C by alg ↦
-emUnderlyingAugmented(alg) and φ ↦ emUnderlyingHom(φ). Its degree-n term has carrier
-T(T^n(alg.A)), and its target is alg.A. The algebra-bar map identities and composition laws
-give functoriality. -/
-noncomputable def emUnderlyingAugmentedFunctor :
-    T.Algebra ⥤ SimplicialObject.Augmented C where
-  obj alg := emUnderlyingAugmented alg
-  map φ := emUnderlyingHom φ
-  map_id alg := emUnderlyingHom_id alg
-  map_comp φ ψ := (emUnderlyingHom_comp φ ψ).symm
-
-/-- Let T be a monad on C and alg a T-algebra. The value of emUnderlyingAugmentedFunctor at alg
-equals emUnderlyingAugmented(alg), the evaluated augmentation of the forgotten free right
-module paired with the algebra left module. -/
-@[simp]
-theorem emUnderlyingAugmentedFunctor_obj (alg : T.Algebra) :
-    emUnderlyingAugmentedFunctor.obj alg = emUnderlyingAugmented alg :=
-  rfl
-
-/-- For a monad T on C and algebra morphism φ : alg → alg′, emUnderlyingAugmentedFunctor.map(φ)
-equals emUnderlyingHom(φ). This is the action-pairing-preserving augmented bar map induced by
-φ. -/
-@[simp]
-theorem emUnderlyingAugmentedFunctor_map {alg alg' : T.Algebra}
-    (φ : alg ⟶ alg') :
-    emUnderlyingAugmentedFunctor.map φ = emUnderlyingHom φ :=
-  rfl
-
 /-- Let T be a monad on C and φ : alg → alg′ an algebra morphism. The augmented isomorphism
 e=emAugmentedIso satisfies emUnderlyingHom(φ) ≫ e_alg′.hom = e_alg.hom ≫ resolutionHom(φ). The
 equality includes both the simplicial naturality square and the identity comparisons on
@@ -829,29 +708,6 @@ theorem emAugmented_naturality {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
       emAugmentedIso_hom_right, emNaturality_right φ]
     exact (Category.comp_id _).trans (Category.id_comp _).symm
 
-/-- For a monad T on C, the functor emUnderlyingAugmentedFunctor is naturally isomorphic to
-resolutionAugmentedFunctor as functors T.Algebra → SimplicialObject.Augmented C. At alg the
-component is emAugmentedIso(alg), induced by the forgotten-free-to-regular right-module
-isomorphism and identity left-module comparison. -/
-noncomputable def emAugmentedNatIso :
-    (emUnderlyingAugmentedFunctor : T.Algebra ⥤ SimplicialObject.Augmented C) ≅
-      (resolutionAugmentedFunctor : T.Algebra ⥤ SimplicialObject.Augmented C) :=
-  NatIso.ofComponents
-    (fun alg => by
-      rw [emUnderlyingAugmentedFunctor_obj, resolutionAugmentedFunctor_obj]
-      exact emAugmentedIso alg)
-    (fun φ => by
-      rw [emUnderlyingAugmentedFunctor_map, resolutionAugmentedFunctor_map]
-      exact emAugmented_naturality φ)
-
-/-- Let T be a monad on C and alg a T-algebra. The component of emAugmentedNatIso at alg equals
-emAugmentedIso(alg), the augmented isomorphism from the forgotten-module bar to the
-regular-right monadic bar. -/
-@[simp]
-theorem emAugmentedNatIso_app (alg : T.Algebra) :
-    emAugmentedNatIso.app alg = emAugmentedIso alg :=
-  rfl
-
 end UnderlyingComparison
 
 section LiteralComparison
@@ -859,8 +715,8 @@ section LiteralComparison
 /-- For a monad T on C, define evaluation (Discrete PUnit ⥤ T.Algebra) → T.Algebra at the unique
 discrete point. It sends a diagram to its value at that point and a natural transformation to
 its corresponding algebra-morphism component. -/
-noncomputable def emEvalAlgebra : (Discrete PUnit.{1} ⥤ T.Algebra) ⥤ T.Algebra :=
-  (evaluation (Discrete PUnit.{1}) T.Algebra).obj (Discrete.mk PUnit.unit)
+noncomputable abbrev emEvalAlgebra : (Discrete PUnit.{1} ⥤ T.Algebra) ⥤ T.Algebra :=
+  resolutionEvalPoint (C := T.Algebra)
 
 /-- Let T be a monad on C and alg a T-algebra. Evaluate emAugmented(alg) at the unique discrete
 point to obtain an augmented simplicial object of T.Algebra. Its target is alg, its degree-n
@@ -1271,34 +1127,55 @@ theorem emLiteralResolution_naturality {alg alg' : T.Algebra}
 
 end LiteralComparison
 
+/-- The literal EM-to-resolution comparison is identity on each degree carrier. -/
+@[simp]
+theorem emLiteralResolutionIso_hom_left_app (alg : T.Algebra)
+    (Δ : SimplexCategoryᵒᵖ) :
+    (emLiteralResolutionIso alg).hom.left.app Δ = 𝟙 _ := by
+  change (emLiteralBarIso alg).hom.app Δ ≫
+    (emUnderlyingBarIso alg).hom.app Δ = 𝟙 _
+  rw [emLiteralBarIso_hom_app, emUnderlyingBarIso_hom_app_id, Category.id_comp]
+
 section UnderlyingContraction
 
-/-- For a monad T on C and T-algebra alg, transport the regular-right bar extra degeneracy through
-e=emAugmentedIso(alg) to the augmented simplicial object emUnderlyingAugmented(alg). This
-defines a left extra degeneracy. In degree n its map is e_n.hom followed by the regular
-outer-unit degeneracy and e_{n+1}.inv; the augmentation section is the transported unit at
-alg.A. -/
+/-- The extra degeneracy of the actual evaluated-and-forgotten EM bar.
+
+Transport the canonical regular resolution contraction through `emLiteralResolutionIso`.
+The source of this structure is the literal augmentation obtained by evaluating the
+algebra-valued bar and forgetting its algebra structure. -/
 noncomputable def emExtra (alg : T.Algebra) :
-    SimplicialObject.Augmented.ExtraDegeneracy (emUnderlyingAugmented alg) :=
-  SimplicialObject.Augmented.ExtraDegeneracy.ofIso (emAugmentedIso alg).symm
+    SimplicialObject.Augmented.ExtraDegeneracy (emLiteralAugmented alg) :=
+  SimplicialObject.Augmented.ExtraDegeneracy.ofIso (emLiteralResolutionIso alg).symm
     (resolutionExtra alg)
 
-/-- Let T be a monad on C and alg a T-algebra. The augmentation emUnderlyingAugmented(alg).hom is
-a split epimorphism of simplicial objects of C. Its section is the simplicial section supplied
-by emExtra(alg), and that section followed by the augmentation is the identity of the constant
-algebra-carrier simplicial object. -/
+/-- The actual EM augmentation section is the monad unit at the algebra carrier. -/
+@[simp]
+theorem emExtra_s' (alg : T.Algebra) : (emExtra alg).s' = T.η.app alg.A := by
+  change (emLiteralResolutionIso alg).hom.right ≫ T.η.app alg.A ≫
+    (emLiteralResolutionIso alg).inv.left.app
+      (Opposite.op (SimplexCategory.mk 0)) = T.η.app alg.A
+  rw [emLiteralResolutionIso_hom_right, Category.id_comp]
+  have hi := congrArg
+    (fun f : emLiteralAugmented alg ⟶ emLiteralAugmented alg =>
+      f.left.app (Opposite.op (SimplexCategory.mk 0)))
+    (emLiteralResolutionIso alg).hom_inv_id
+  change (emLiteralResolutionIso alg).hom.left.app
+      (Opposite.op (SimplexCategory.mk 0)) ≫
+    (emLiteralResolutionIso alg).inv.left.app
+      (Opposite.op (SimplexCategory.mk 0)) = 𝟙 _ at hi
+  rw [emLiteralResolutionIso_hom_left_app, Category.id_comp] at hi
+  rw [hi, Category.comp_id]
+
+/-- The transported section splits the actual forgotten EM augmentation. -/
 noncomputable def emSplitEpi (alg : T.Algebra) :
-    SplitEpi (emUnderlyingAugmented alg).hom :=
+    SplitEpi (emLiteralAugmented alg).hom :=
   (emExtra alg).splitEpi
 
-/-- For a monad T on C and T-algebra alg, let ε be the augmentation of emUnderlyingAugmented(alg)
-and s its section from emExtra(alg). There is a simplicial homotopy from ε ≫ s to the identity
-of the underlying bar simplicial object. It is the homotopy associated with the transported
-left extra degeneracy and is valid for an arbitrary category C. -/
+/-- The transported contraction gives the canonical homotopy on the actual EM bar. -/
 noncomputable def emHomotopy (alg : T.Algebra) :
     SimplicialObject.Homotopy
-      ((emUnderlyingAugmented alg).hom ≫ (emExtra alg).section_)
-      (𝟙 (emUnderlyingAugmented alg).left) :=
+      ((emLiteralAugmented alg).hom ≫ (emExtra alg).section_)
+      (𝟙 (emLiteralAugmented alg).left) :=
   (emExtra alg).homotopy
 
 end UnderlyingContraction

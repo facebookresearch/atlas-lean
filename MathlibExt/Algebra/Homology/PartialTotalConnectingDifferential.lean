@@ -118,11 +118,13 @@ set_option backward.isDefEq.respectTransparency false in
 
 At adjacent supported cochain degrees, the step comparison and row quotient followed by the
 shift coordinate agree heterogeneously with the finite row quotient and its extension
-coordinate. -/
+coordinate. The adjacent degree equality is inferred from `k` by default. -/
 theorem partialTotalAdjacentTargetMap_f_comp_shiftIso_heq
     (m k : ℕ)
     (hkdeg : ComplexShape.embeddingDownNat.f k =
-      ComplexShape.embeddingDownNat.f (k + 1) + 1) :
+      ComplexShape.embeddingDownNat.f (k + 1) + 1 := by
+        simp only [ComplexShape.embeddingDownNat_f, Nat.cast_add, Nat.cast_one]
+        omega) :
     let Q :
         (B.partialTotalStepCochainShortComplex (m + 1)).X₁ ⟶
           (B.totalRow m).extend ComplexShape.embeddingDownNat :=
