@@ -12,6 +12,11 @@ Circuit minimization relative to an oracle truth table given in the input, MOCSP
 
 The reduction is from approximating Set Cover within a factor of $6$: given sets $S_1,\dots,S_t\subseteq[n]$ covering $[n]$ and a number $c$, it builds a random truth table $T$ and oracle table $O$ whose oracle circuit size tracks the optimal cover size $\ell$. A cover of size $\ell$ gives an $O$-oracle circuit for $T$ whose size bound does not depend on the random choices, which makes the error one-sided. Purported yes answers can be checked using the search-to-decision reduction for Set Cover, which turns the RP reduction into a ZPP Turing reduction. Item 3 adapts the arguments of Murray–Williams and Hitchcock–Pavan for MCSP.
 
+Known unstated proof prerequisites needed before this node is ready for formalization:
+
+- Nondeterministic time hierarchy for polynomial versus exponential time bounds ($\mathrm{NEXP} \not\subseteq \mathrm{NP}$, Žák, used in Ilango Appendix B, Theorem B.2)
+- Murray–Williams substring lemma ($\mathrm{CC}(f_S) \le \mathrm{CC}(f_T) + c \log |T|$ for every substring $S$ of $T$, *Theory of Computing* Lemma 2.3, used in Ilango Proposition B.1)
+
 ## Depends on
 
 - [MOCSP: circuit minimization with an oracle truth table in the input](mocsp-circuit-minimization-with-an-input-oracle.md)
@@ -24,6 +29,7 @@ The reduction is from approximating Set Cover within a factor of $6$: given sets
 
 - [Lund–Yannakakis–Feige: Set Cover is NP-hard to approximate within every constant](../../../pcp-and-inapproximability/approximation-hardness-of-classical-problems/set-cover-hardness-of-approximation.md)
 - [Nondeterministic time hierarchy](../../../hierarchy-theorems-and-barriers/nondet-time-hierarchy.md)
+- [Adleman's theorem: BPP is contained in P/poly](../../../randomized-and-quantum-complexity/adleman.md)
 
 ## Sources
 

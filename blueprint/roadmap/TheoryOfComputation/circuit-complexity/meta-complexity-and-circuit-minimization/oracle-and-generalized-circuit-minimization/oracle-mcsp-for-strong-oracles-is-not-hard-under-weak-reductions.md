@@ -14,9 +14,11 @@ $\mathrm{MCSP}^{\mathrm{QBF}}$, although PSPACE-complete under ZPP reductions, i
 The proofs pass to succinct versions. The B-succinct version of $\mathrm{MCSP}^A$, whose instances are given by B-oracle circuits for the truth table, lies in $(\Sigma^p_2)^A$ when $B\le^p_T A$. A reduction from SAT whose output bits are computable within the oracle's class becomes a reduction from succinct SAT, which is NEXP-complete, to succinct $\mathrm{MCSP}^A$: for item 1 this puts NEXP in $(\Sigma^p_2)^{\mathrm{EXP}}=\mathrm{EXP}$, and for item 2 in PSPACE. Repeating the argument with PSPACE in place of NP would give $\mathrm{EXPSPACE}=\mathrm{PSPACE}$, contradicting the space hierarchy theorem, which is item 3. For item 4, a uniform $\mathrm{AC}^0$ reduction yields a language in PH that requires $A$-oracle circuits of size $2^{\Omega(n)}$ almost everywhere, which contradicts PH-hardness of $A$ under P/poly reductions; the step uses Håstad's bound that depth-three circuits for PARITY on $m$ bits need size $2^{\Omega(\sqrt{m})}$.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - EXPSPACE-completeness of succinct QBF (Allender–Holden–Kabanets Section 1.3 and Corollary 19)
+- Agrawal's theorem that sets hard under uniform $\mathrm{AC}^0$ reductions for a class closed under $\mathrm{TC}^0$ reductions are hard under length-increasing (uniform $\mathrm{AC}^0$)-uniform $\mathrm{NC}^0$ reductions (M. Agrawal, *J. Comput. Syst. Sci.* 77(1), 2011, Theorems 5.1 and 6.2, extended to hard sets in Allender–Holden–Kabanets Lemma 21)
+- Non-uniform inclusion $\mathrm{PH} \subseteq \mathrm{SIZE}^{\oplus\mathrm{P}}[\mathrm{poly}]$ (fixing the random bits of Toda's first step, used in Corollary 23)
 
 ## Depends on
 
@@ -36,6 +38,7 @@ Expanding this node to full proof readiness requires planned proof-prerequisite 
 - [Depth-d circuit size of parity](../../lower-bounds-for-ac0-circuits/depth-d-circuit-size-of-parity.md)
 - [Succinct 3SAT is NEXP-complete](../../../completeness-other-classes/succinct-3sat/succinct-three-sat-nexp-complete.md)
 - [Succinct Circuit Value is EXP-complete](../../../completeness-other-classes/succinct-circuit-value-problem/succinct-circuit-value-exp-complete.md)
+- [Randomized reduction from the polynomial hierarchy to parity satisfiability](../../../counting-complexity/randomized-reduction-from-ph-to-parity-sat.md)
 
 ## Sources
 

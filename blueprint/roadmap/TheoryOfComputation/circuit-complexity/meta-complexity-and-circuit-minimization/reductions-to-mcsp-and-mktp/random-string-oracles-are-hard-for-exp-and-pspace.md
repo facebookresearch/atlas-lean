@@ -15,12 +15,13 @@ The hardness statements hold for every dense set containing no strings of low co
 
 ## Expansion
 
-The proofs use relativizing hardness-versus-randomness constructions in the contrapositive. A generator built from a complete function $f$ (Babai–Fortnow–Nisan–Wigderson and Klivans–van Melkebeek, or Impagliazzo–Wigderson) has outputs of low $\mathrm{KT}^A$ complexity, so a dense set of random strings distinguishes it from uniform; the reconstruction procedure then yields small oracle circuits for $f$. For the uniform PSPACE result, the proof uses the Trevisan–Vadhan PSPACE-hard problem in $\mathrm{DSPACE}(n)$ that is random and downward self-reducible together with the uniform derandomization of Impagliazzo and Wigderson (journal Theorems 29, 33 and 34). The uniform EXP result $\mathrm{EXP}=\mathrm{NP}^{R_{\mathrm{Kt}}}$ goes instead through journal Theorem 37 (if $\mathrm{EXP}\subseteq\mathrm{P}^L/\mathrm{poly}$ then $\mathrm{EXP}\subseteq\mathrm{MA}^L$, from Babai–Fortnow–Nisan–Wigderson via two-prover interactive proofs of Babai–Fortnow–Lund). These arguments do not relativize.
+The proofs use relativizing hardness-versus-randomness constructions in the contrapositive. A generator built from a complete function $f$ (Babai–Fortnow–Nisan–Wigderson and Klivans–van Melkebeek, or Impagliazzo–Wigderson) has outputs of low $\mathrm{KT}^A$ complexity, so a dense set of random strings distinguishes it from uniform; the reconstruction procedure then yields small oracle circuits for $f$. For the uniform PSPACE result, the proof uses the Trevisan–Vadhan PSPACE-hard problem in $\mathrm{DSPACE}(n)$ that is random and downward self-reducible together with the uniform derandomization of Impagliazzo and Wigderson (journal Theorems 34 and 29, used to prove Theorem 33). The uniform EXP result $\mathrm{EXP}=\mathrm{NP}^{R_{\mathrm{Kt}}}$ goes instead through journal Theorem 37 (if $\mathrm{EXP}\subseteq\mathrm{P}^L/\mathrm{poly}$ then $\mathrm{EXP}\subseteq\mathrm{MA}^L$, from Babai–Fortnow–Nisan–Wigderson via two-prover interactive proofs of Babai–Fortnow–Lund). These arguments do not relativize.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
-- Trevisan–Vadhan PSPACE-hard problem in $\mathrm{DSPACE}(n)$ with random and downward self-reducibility and Impagliazzo–Wigderson uniform derandomization (journal Theorems 29, 33 and 34)
+- Trevisan–Vadhan PSPACE-hard problem in $\mathrm{DSPACE}(n)$ with random and downward self-reducibility (journal Theorem 34, used to prove Theorem 33)
+- Impagliazzo–Wigderson (2001) uniform derandomization (journal Theorem 29, used to prove Theorem 33)
 - Babai–Fortnow–Nisan–Wigderson / Babai–Fortnow–Lund collapse from $\mathrm{EXP} \subseteq \mathrm{P}^L/\mathrm{poly}$ to $\mathrm{EXP} \subseteq \mathrm{MA}^L$ (journal Theorem 37)
 
 ## Depends on

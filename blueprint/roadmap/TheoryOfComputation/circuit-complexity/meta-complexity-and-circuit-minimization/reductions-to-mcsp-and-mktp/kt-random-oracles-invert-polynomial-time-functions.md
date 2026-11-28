@@ -14,6 +14,10 @@ The set $R_{\mathrm{KT}}$ of KT-random strings is such a set $L$ and is decidabl
 
 From a length-doubling generator $G(y,\cdot)$ computed in polynomial time, the Goldreich–Goldwasser–Micali tree construction (as used by Razborov and Rudich) gives a generator with polynomial stretch whose outputs have circuit size, hence KT complexity, polynomial in the seed length. Choosing the stretch so that every output has KT complexity below $|z|^{\varepsilon}$, the set $L$ accepts many uniform strings but no pseudorandom ones, so it distinguishes $G$ from uniform. The Håstad–Impagliazzo–Levin–Luby construction turns any oracle distinguisher for the generator built from $f$ into an oracle inverter for $f$.
 
+Known unstated proof prerequisites needed before this node is ready for formalization:
+
+- Oracle-relativized Håstad–Impagliazzo–Levin–Luby reduction turning an $L$-oracle distinguisher for the generator built from an arbitrary polynomial-time $f_y$ into an $L$-oracle inverter for $f_y$ (Allender–Buhrman–Koucký–van Melkebeek–Ronneburger, journal Theorem 44, applied in the proof of Theorem 45)
+
 ## Depends on
 
 - [KT complexity and the minimum KT problem MKTP](kt-complexity-and-mktp.md)

@@ -16,7 +16,7 @@ MCSP instances list whole truth tables, and a local reduction prints each bit of
 The contrast in the opening is a remark rather than part of the theorem. Murray and Williams recall (Proposition 1.2, crediting Skyum–Valiant and Papadimitriou–Yannakakis, without fixing instance encodings) that SAT, Vertex Cover, Independent Set, Hamiltonian Path and 3-Coloring are NP-complete under $\mathrm{TIME}(\mathrm{poly}(\log n))$ reductions, since almost all NP-complete problems are complete under projections.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Ajtai's depth-three (OR-AND-OR) circuits for approximate majority (Murray–Williams, proof of Theorem 1.5)
 

@@ -13,7 +13,7 @@ The *Minimum Discrete Complexity Problem* MDCP takes $n$ in unary (so $V=[n]$), 
 The reduction is from $r$-bounded Set Cover, which is NP-hard to approximate. A random critical target set $A$ is built from the sets of the instance so that a cover of size $\ell$ gives $D(A\mid\mathcal{B}_S)\le\ell$, while any construction with $\ell$ operations uses at most $2\ell$ generators and so yields a cover of size at most $2\ell$. These bounds give a gap-preserving randomized reduction. NP-hardness of Partial-MCSP with the partial function given as a list of points and their values follows almost immediately, by converting circuit minimization over arbitrary generators into a problem about partial functions; this list form is [Succinct MCSP](../../minimum-circuit-size-problem/succinct-mcsp.md), not the partial-truth-table problem. The technique combined with several new ideas proves NP-hardness of multi-output MCSP ([Multi-output MCSP is NP-hard](../../minimum-circuit-size-problem/multi-output-mcsp-np-hard.md)).
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Hardness of approximating $r$-bounded Set Cover (Ilango–Loff–Oliveira Theorem 8, from Trevisan)
 

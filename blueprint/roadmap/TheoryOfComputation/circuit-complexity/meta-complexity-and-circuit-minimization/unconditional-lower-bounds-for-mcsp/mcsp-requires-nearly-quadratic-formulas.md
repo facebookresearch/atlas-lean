@@ -13,7 +13,7 @@ Let $L(f)$ denote the minimum leaf size of a De Morgan formula computing $f$, an
 Impagliazzo, Meka and Zuckerman showed that compositions of $r$ $q$-regular $\ell$-wise independent restrictions shrink formulas like truly random ones: $\mathbb{E}[L(f|_{\rho})]\le c^r p^{\Gamma}L(f)$ with shrinkage exponent $\Gamma=2$. Such restrictions use few random bits, so as truth tables they have circuit size $s$ much smaller than the expected number $pn$ of free variables. The key lemma says MCSP does not shrink under them: setting all free variables to $0$ yields a yes-instance, and if $f|_{\rho}$ ignored a set $V_0$ of free variables, all $2^{|V_0|}$ settings of $V_0$ would be yes-instances, while only $s^{O(s)}$ truth tables have circuits of size $s$. Comparing $pn/8\le c^rp^{\Gamma}L(f)$ with $p=2^{\sqrt{\log n}}/n$ and $r=\Theta(\sqrt{\log n})$ gives the bound.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Impagliazzo–Meka–Zuckerman formula shrinkage (Hirahara–Santhanam Theorem 28)
 

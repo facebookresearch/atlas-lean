@@ -19,9 +19,11 @@ These extend the many-one case proved by Murray and Williams ([NP-hardness of MC
 Split on Hypothesis H. If it fails, NP contains no hard tally language while EXP does, so $\mathrm{NP}\ne\mathrm{EXP}$ and hence $\mathrm{ZPP}\ne\mathrm{EXP}$. If it holds, apply the reduction to the inputs $0^n$ of a hard tally language: the queries form a sequence produced from $0^n$ in polynomial time, so they cannot all be easy instances, and an honest-reduction argument extracts truth tables of circuit complexity $2^{\delta n}$ computable in E. By the infinitely-often form of the Impagliazzo–Wigderson theorem, that lower bound derandomizes ZPP to P at infinitely many lengths, so again $\mathrm{EXP}\ne\mathrm{ZPP}$.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Infinitely-often Impagliazzo–Wigderson derandomization (Hitchcock–Pavan, proof of Corollary 4.2)
+- Existence of tally languages in $\mathrm{EXP}$ not solvable in deterministic time $2^{n^{\varepsilon}}$ (time hierarchy, Hitchcock–Pavan proof of Corollary 4.2, case 1)
+- Infinitely-often time hierarchy separation: a language in $\mathrm{EXP}$ that no polynomial-time algorithm decides on infinitely many input lengths (Hitchcock–Pavan proof of Corollary 4.2, case 2)
 
 ## Depends on
 

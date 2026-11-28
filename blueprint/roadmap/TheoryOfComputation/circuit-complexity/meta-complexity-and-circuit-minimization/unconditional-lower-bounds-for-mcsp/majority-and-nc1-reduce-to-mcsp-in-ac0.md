@@ -15,7 +15,7 @@ Majority is computed by polynomial-size non-uniform $\mathrm{AC}^0$ circuits wit
 The proof of the $\mathrm{AC}^0[p]$ lower bound shows that MCSP with a fixed threshold solves a coin problem with bias $\varepsilon=\Theta(N^{-0.49})$. By a known reduction quoted as Theorem 2.5, any oracle that solves the $\varepsilon$-coin problem with constant advantage gives non-uniform $\mathrm{AC}^0$ circuits of size $\mathrm{poly}(n/\varepsilon)$ with oracle gates for majority on $1/\varepsilon$ bits. Combined with $\mathrm{NC}^1\subseteq(\mathrm{TC}^0)^{\mathrm{MCSP}}$ this gives item 2. For item 5, $\mathrm{NEXP}\subseteq\mathrm{P/poly}$ gives $\mathrm{NEXP}=\mathrm{EXP}$ by the easy witness lemma, so item 4 and $\mathrm{MCSP}\in\mathrm{ACC}^0$ would put NEXP in $\mathrm{ACC}^0$, contradicting Williams's theorem.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Shaltiel–Viola reduction from Majority to the coin problem in AC0 (Golovnev et al. Theorem 2.5)
 - Oliveira–Santhanam inclusion $\mathrm{NC}^1 \subseteq (\mathrm{TC}^0)^{\mathrm{MCSP}}$ (Golovnev et al., before Corollary 5.2)

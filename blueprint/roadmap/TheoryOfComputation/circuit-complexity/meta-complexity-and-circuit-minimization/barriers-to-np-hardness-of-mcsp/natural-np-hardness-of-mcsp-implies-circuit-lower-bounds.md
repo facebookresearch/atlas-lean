@@ -18,7 +18,7 @@ Item 4 corrects the statement of Corollary 19 as printed, "If MCSP is NP-hard un
 A natural reduction maps formulas of size $n$ to truth tables on $k=O(\log n)$ variables with a size parameter $s_n$ depending only on $n$. If $s_n\le(\log n)^c$ for a fixed $c$, all produced instances are solvable in time $n^{\mathrm{polylog}(n)}$ by trying all small circuits, putting SAT in quasi-polynomial time, and then E already has functions outside P/poly. Otherwise apply the reduction to a trivial family of unsatisfiable formulas: the produced truth tables are computable in time $2^{O(k)}$ and, being no-instances, have circuit complexity above $s_n$. The same argument with $s_n$ versus $2^{\varepsilon\log n}$ gives item 2. Item 3 follows from items 1 and 2 by the infinitely-often forms of the hardness-versus-randomness theorems of Babai–Fortnow–Nisan–Wigderson and Impagliazzo–Wigderson, and item 4 from item 3 by diagonalization against SUBEXP.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Infinitely-often Impagliazzo–Wigderson and Babai–Fortnow–Nisan–Wigderson derandomization (Kabanets–Cai Theorems 16 and 17)
 

@@ -14,6 +14,11 @@ An *isomorphism problem* has instances $x=(x_0,x_1)$ that determine a universe $
 
 The no-false-negative direction is new: pick random bits $r_1,\dots,r_t$ and random group elements $\pi_i$ and form $y=\pi_1(\omega_{r_1})\cdots\pi_t(\omega_{r_t})$. If $\omega_0$ and $\omega_1$ are not isomorphic, $y$ carries about $t(s+1)$ bits of entropy with $s=\log(|H_x|/|\mathrm{Aut}|)$, so $\mathrm{KT}(y)$ exceeds a threshold $\theta$ with high probability. If they are isomorphic, $y$ is determined by $t$ group elements, and an efficiently decodable near-optimal encoding (Lehmer codes and blocking) shows $\mathrm{KT}(y)\le\theta$ always. The inversion argument supplies the other one-sided algorithm, and the two together give zero error.
 
+Known unstated proof prerequisites needed before this node is ready for formalization:
+
+- Polynomial-time permutation-group algorithms given by generators (group order, transporter, point-stabilizer generators; Allender–Grochow–van Melkebeek–Moore–Morgan Proposition 4, citing Holt–Eick–O'Brien and Seress)
+- Erdős–Rényi random-subproducts theorem for finite groups (arXiv:1710.09806v1 Lemma 6, proof of Claim 2, citing Erdős–Rényi 1965)
+
 ## Depends on
 
 - [KT complexity and the minimum KT problem MKTP](kt-complexity-and-mktp.md)

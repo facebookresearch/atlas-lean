@@ -11,7 +11,7 @@ The proof uses a complete problem. *Polarized Image Intersection Density* (PIID)
 Let $F_C(x)=C(x)$. The oracle inverter gives $N$ with $\Pr_{x,s}[F_C(N^{\mathrm{MCSP}}(C,F_C(x),s))=F_C(x)]\ge 1/q(m)$. On $(n,D_0,D_1)$ run $n^{\ell}$ trials: pick $x$, set $z=D_0(x)$, obtain $y=N^{\mathrm{MCSP}}(D_1,z,s)$ and count a success when $D_1(y)=z$; accept if at least $\log n$ trials succeed. On no-instances each trial succeeds with probability below $2^{-n}$, since $z$ is rarely in the image of $D_1$. On yes-instances $D_0(x)$ and $D_1(x)$ are $2^{-n}$-close, so the inverter for $D_1$ still succeeds with probability about $1/q(m)$ on $D_0(x)$.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Completeness of PIID for $\mathrm{NISZK}_h$ (Ben-Or–Gutfreund)
 - Equality $\mathrm{NISZK}_h = \mathrm{SZK}$ (Chailloux–Ciocan–Kerenidis–Vadhan)

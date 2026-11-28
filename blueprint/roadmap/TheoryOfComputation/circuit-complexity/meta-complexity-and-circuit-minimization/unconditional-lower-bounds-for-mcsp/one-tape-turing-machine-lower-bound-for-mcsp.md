@@ -16,7 +16,7 @@ By contrast, a hardness magnification theorem implicit in McKay, Murray and Will
 A pseudorandom generator whose outputs are truth tables of circuit size at most $s(n)$ and which fools a class $\mathcal{C}$ shows that $\mathrm{MCSP}[s]\notin\mathcal{C}$, since MCSP would accept every output and reject most uniform strings. Local generators of Viola, and generators for combinatorial rectangles and read-once branching programs of Forbes and Kelley, fool time-bounded one-tape machines (Lemma 20 and Theorem 21; Lemma 22 folds short oracle queries and fixed coins into the states of a deterministic machine) and have each output bit computable from a short part of the seed, which bounds the circuit size of their outputs.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Viola's simulation of time-bounded one-tape Turing machines by read-once branching programs (Cheraghchi et al. Lemma 20)
 - Forbes–Kelley pseudorandom generator for read-once branching programs (Cheraghchi et al. Theorem 21)

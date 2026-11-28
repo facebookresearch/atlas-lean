@@ -9,7 +9,7 @@ For every prime $p$, no polynomial-size $\mathrm{AC}^0[p]$ circuit family solves
 The proof breaks the Fefferman–Shaltiel–Umans–Viola generator $G(x_1,\dots,x_k)=x_1\cdots x_k\cdot\mathrm{PARITY}(x_1)\cdots\mathrm{PARITY}(x_k)$ (for odd $p$). Its outputs are implicitly computable, so $\mathrm{KT}(G(x))\le nk+n\,\mathrm{polylog}(n)$, which for $k=n^3$ is below the threshold, while uniform strings exceed it except with probability $o(1)$. Replacing "?" by $1$, an average-case circuit for $\mathrm{MKTP}[s]$ accepts every output of $G$ and at most an $\varepsilon+o(1)$ fraction of uniform strings, so it distinguishes $G$. By resamplability of parity, any such distinguisher gives an $\mathrm{AC}^0$ circuit with oracle gates computing parity exactly, which an $\mathrm{AC}^0[p]$ circuit for odd $p$ cannot do by Razborov–Smolensky. For $p=2$ the generator is replaced by one based on the connectivity matrix determinant problem, whose outputs satisfy $\mathrm{KT}\le nk+n^{O(1)}$ and whose distinguishers give $\mathrm{AC}^0[2]$ oracle circuits for majority, contradicting Razborov's lower bound.
 
 
-Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+Known unstated proof prerequisites needed before this node is ready for formalization:
 
 - Fefferman–Shaltiel–Umans–Viola resamplability lemmas (Hirahara–Santhanam Lemmas 32 and 36)
 
