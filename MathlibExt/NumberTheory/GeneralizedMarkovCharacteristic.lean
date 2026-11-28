@@ -21,6 +21,11 @@ import Mathlib.Tactic.Positivity
 
 For a middle Farey fraction strictly between zero and one, the characteristic number satisfies
 the positive-sign congruence modulo the middle generalized Markov number.
+
+## References
+
+* Yasuaki Gyoda and Shuhei Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+  Are Prime Powers*, INTEGERS 26 (2026), Article A91, pp. 1–27, Sections 1.2, 2 and 4.
 -/
 
 namespace MetaMathlibExt
@@ -68,6 +73,16 @@ Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
 public def genMarkovVieta (k : ℕ) : Bool → ℕ × ℕ × ℕ → ℕ × ℕ × ℕ
   | false, (a, b, c) => (a, (a ^ 2 + k * a * b + b ^ 2) / c, b)
   | true, (a, b, c) => (b, (b ^ 2 + k * b * c + c ^ 2) / a, c)
+
+/-- **Left Vieta jumping.** For natural numbers $k,a,b,c$, the left Vieta jumping of
+$(a,b,c)$ is $(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$, where division by $0$ gives $0$. -/
+public theorem genMarkovVieta_false (k a b c : ℕ) :
+    genMarkovVieta k false (a, b, c) = (a, (a ^ 2 + k * a * b + b ^ 2) / c, b) := rfl
+
+/-- **Right Vieta jumping.** For natural numbers $k,a,b,c$, the right Vieta jumping of
+$(a,b,c)$ is $(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$, where division by $0$ gives $0$. -/
+public theorem genMarkovVieta_true (k a b c : ℕ) :
+    genMarkovVieta k true (a, b, c) = (b, (b ^ 2 + k * b * c + c ^ 2) / a, c) := rfl
 
 /-- **The wide generalized Markov tree.** Fix a natural number $k$. The wide $k$-generalized
 Markov tree $\mathrm{WMT}(k)$ is the binary tree of triples of natural numbers with root

@@ -289,58 +289,25 @@ public theorem genCohnPQR1_det (k : ℕ) (ℓ : ℤ) :
   refine ⟨?_, ?_, ?_⟩ <;>
     simp [genCohnP1, genCohnQ1, genCohnR1, Matrix.det_fin_two_of] <;> ring
 
-/-- **Children in the wide generalized Cohn tree.** Let $k$ be a natural number, $\ell$ an
-integer, and $S$ the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. For every path $w$
-in the wide $k$-generalized Cohn tree $\mathrm{WGCT}(k, \ell)$, if $(P, Q, R)$ is the vertex at
-$w$, then the vertex at $w$ followed by a left step is $(P, PQ - S, Q)$ and the vertex at $w$
-followed by a right step is $(Q, QR - S, R)$; that is, each child is obtained from its parent by
-one generalized Cohn step.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public theorem wideGenCohnTree_append_singleton (k : ℕ) (ℓ : ℤ) (w : List Bool) (d : Bool) :
-    wideGenCohnTree k ℓ (w ++ [d]) = genCohnStep k d (wideGenCohnTree k ℓ w) := by
-  simp [wideGenCohnTree, genCohnPath, List.foldl_append]
-
-/-- **Cohn steps reach every classical Cohn triple whose middle entry is largest.** Call a
-$0$-generalized Cohn triple a Cohn triple; for $k = 0$ the matrix $S$ of the generalized Cohn
-relation is zero, so the relation reads $Q = PR$. Call $(P, Q, R) \mapsto (P, PQ, Q)$ the left
-step and $(P, Q, R) \mapsto (Q, QR, R)$ the right step. First, if $(P, Q, R)$ is a Cohn triple
-associated with $(a, b, c)$ and $a \le b$, $c \le b$, then $(P, Q, R)$ is obtained by applying
-finitely many left and right steps to some Cohn triple associated with $(1, 1, 1)$. Second, if
-$(P, Q, R)$ is a Cohn triple associated with $(a, b, c)$, then the $(1, 2)$-entries of the left
-step $(P, PQ, Q)$ are $(a, \lfloor (a^2 + b^2)/c \rfloor, b)$ and those of the right step
-$(Q, QR, R)$ are $(b, \lfloor (b^2 + c^2)/a \rfloor, c)$: on $(1, 2)$-entries the steps are the
-left and right Vieta jumpings of the Markov triple $(a, b, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.9 (citing Aigner,
-Theorem 4.7). -/
-public theorem_wanted cohnTriple_reachable :
-    (∀ P Q R a b c, IsGenCohnTriple 0 P Q R a b c → a ≤ b → c ≤ b →
-      ∃ P₀ Q₀ R₀ w, IsGenCohnTriple 0 P₀ Q₀ R₀ 1 1 1 ∧ genCohnPath 0 (P₀, Q₀, R₀) w = (P, Q, R)) ∧
-    ∀ P Q R a b c d, IsGenCohnTriple 0 P Q R a b c →
-      (genCohnStep 0 d (P, Q, R)).1 0 1 = (genMarkovVieta 0 d (a, b, c)).1 ∧
-        (genCohnStep 0 d (P, Q, R)).2.1 0 1 = (genMarkovVieta 0 d (a, b, c)).2.1 ∧
-        (genCohnStep 0 d (P, Q, R)).2.2 0 1 = (genMarkovVieta 0 d (a, b, c)).2.2
-
-/-- **Cohn steps reach every generalized Cohn triple whose middle entry is largest.** Let
+/-- **Cohn steps reach every generalized Markov triple whose middle entry is largest.** Let
 $k \in \mathbb{N}$ and let $S$ be the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$.
 Call $(P, Q, R) \mapsto (P, PQ - S, Q)$ the left step and $(P, Q, R) \mapsto (Q, QR - S, R)$ the
-right step. First, if $(P, Q, R)$ is a $k$-generalized Cohn triple associated with $(a, b, c)$
-and $a \le b$, $c \le b$, then $(P, Q, R)$ is obtained by applying finitely many left and
-right steps to some $k$-generalized Cohn triple associated with $(1, 1, 1)$. Second, if
-$(P, Q, R)$ is a $k$-generalized Cohn triple associated with $(a, b, c)$, then the
+right step. For every $k$-generalized Markov triple $(a, b, c)$ with $a \le b$ and $c \le b$,
+there is a $k$-generalized Cohn triple $(P_0, Q_0, R_0)$ associated with $(1, 1, 1)$ and a
+finite sequence of left and right steps taking it to a $k$-generalized Cohn triple associated
+with $(a, b, c)$. For any $k$-generalized Cohn triple $(P,Q,R)$ associated with $(a,b,c)$, the
 $(1, 2)$-entries of the left step $(P, PQ - S, Q)$ are
 $(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$ and those of the right step $(Q, QR - S, R)$ are
 $(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$: on $(1, 2)$-entries the steps are the left and
 right Vieta jumpings of $(a, b, c)$.
 
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+Source: Yasuaki Gyoda and Shuhei Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
 Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.10. -/
 public theorem_wanted genCohnTriple_reachable (k : ℕ) :
-    (∀ P Q R a b c, IsGenCohnTriple k P Q R a b c → a ≤ b → c ≤ b →
-      ∃ P₀ Q₀ R₀ w, IsGenCohnTriple k P₀ Q₀ R₀ 1 1 1 ∧ genCohnPath k (P₀, Q₀, R₀) w = (P, Q, R)) ∧
+    (∀ a b c, IsGenMarkovTriple k a b c → a ≤ b → c ≤ b →
+      ∃ P₀ Q₀ R₀ w, IsGenCohnTriple k P₀ Q₀ R₀ 1 1 1 ∧
+        (let T := genCohnPath k (P₀, Q₀, R₀) w
+         IsGenCohnTriple k T.1 T.2.1 T.2.2 a b c)) ∧
     ∀ P Q R a b c d, IsGenCohnTriple k P Q R a b c →
       (genCohnStep k d (P, Q, R)).1 0 1 = (genMarkovVieta k d (a, b, c)).1 ∧
         (genCohnStep k d (P, Q, R)).2.1 0 1 = (genMarkovVieta k d (a, b, c)).2.1 ∧
