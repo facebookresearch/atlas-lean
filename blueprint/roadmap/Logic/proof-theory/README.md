@@ -14,12 +14,12 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Substructural sequent calculi beyond classical linear logic](substructural-calculi-beyond-classical-linear-logic.md)
 
 - [Arithmetization of syntax and the diagonal lemma](arithmetization-of-syntax-and-the-diagonal-lemma.md)
-- [Logic of bunched implications](logic-of-bunched-implications.md)
 - [Reverse mathematics](reverse-mathematics.md)
 - [Craig interpolation for first-order logic](craig-interpolation-for-first-order-logic.md)
 - [Cut elimination for the classical sequent calculus LK](cut-elimination-for-the-classical-sequent-calculus.md)
 - [Automatability of Proof Systems](automatability-of-proof-systems/README.md)
 - [Resolution Separations and Supercritical Trade-offs](resolution-separations-and-supercritical-tradeoffs/README.md)
 - [Stabbing Planes and Semi-Algebraic Branching](stabbing-planes-and-semi-algebraic-branching/README.md)
+- [Logic of bunched implications](bunched-implications-foundations/README.md)
 - [Resolution Trade-offs, Lifting and QBF](resolution-tradeoffs-lifting-and-qbf/README.md)
 - [Algebraic and Semialgebraic Proof Systems](algebraic-and-semialgebraic-proof-systems/README.md)
