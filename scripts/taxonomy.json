@@ -15718,6 +15718,7 @@
   "MathlibExt/Probability/RegularVariation": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
   "MathlibExt/Probability/RegularVariationGeneralizedInverse": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
   "MathlibExt/Probability/RegularVariationKaramata": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
+  "MathlibExt/Probability/Reliability/AnnualPoissonLoss": {"to": "Probability/nonparametric-survival", "title": "Reliability and monitoring"},
   "MathlibExt/Probability/Reliability/FailureRate": {"to": "Probability/nonparametric-survival", "title": "Reliability and monitoring"},
   "MathlibExt/Probability/Reliability/FiniteSystemReliability": {"to": "Probability/nonparametric-survival", "title": "Reliability and monitoring"},
   "MathlibExt/Probability/Renewal/CramerIdentity": {"to": "Probability/random-walks", "title": "The ladder Cramér identity for an i.i.d. integer score walk"},

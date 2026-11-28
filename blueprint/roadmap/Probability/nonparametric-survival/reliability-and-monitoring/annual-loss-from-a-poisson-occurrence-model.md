@@ -1,19 +1,15 @@
 # Annual loss from a Poisson occurrence model
 
-Let the hazard occurrence rate be $r\ge0$ with units inverse years, and set the dimensionless expected one-year count
-$\lambda=r\,(1\,\mathrm{year})$. Suppose that the event count $N$ in that year is Poisson with mean $\lambda$. Let losses
-$L_1,L_2,\ldots$ be identically distributed, integrable real random variables, independent of each other and of $N$. The annual loss
-$A=\sum_{i=1}^{N}L_i$ (zero for $N=0$) has $E[A] = \lambda\,E[L_1]$, and the probability of at least one event in the year is
-$1 - e^{-\lambda} \le \lambda$. The occurrence rate $r$ is not a probability, and the mean count $\lambda$ may exceed one. For small $\lambda$, the one-year probability
-of at least one modeled event is approximately $\lambda$. This is not the probability that aggregate loss exceeds an arbitrary
-threshold; single-event risk is also a different quantity.
+Let $r\ge0$ be the occurrence rate in inverse years, and let $\lambda=r\,(1\,\mathrm{year})$ be the dimensionless mean one-year count. Suppose that the one-year event count $N$ has the Poisson law with mean $\lambda$. Let $L_1,L_2,\ldots$ be identically distributed, integrable real losses, each independent of $N$. The losses need not be mutually independent.
 
-## Depends on
+The annual loss $A=\sum_{i=1}^{N} L_i$, interpreted as zero for $N=0$, is integrable, and
 
-## Proof depends on
+$$E[A]=\lambda E[L_1],\qquad P(N>0)=1-e^{-\lambda}\le\lambda.$$
 
-- [Wald's equation](../../martingales/wald-s-equations/wald-s-equation/wald-equation.md)
+For the expectation, apply Wald's equation with the same information $\sigma(N)$ at every step: $N$ is known in this filtration, and each loss is independent of it. The occurrence probability follows from the Poisson mass at zero, and the inequality follows from $e^{-\lambda}\ge1-\lambda$.
+
+Neither $r$ nor $\lambda$ is a probability, and $\lambda$ may exceed one. The occurrence probability is not in general the probability that the aggregate loss exceeds a specified threshold.
 
 ## Sources
 
-- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, 2nd revised edition, American Mathematical Society, Section 5.1, the Poisson distribution, <https://math.dartmouth.edu/~prob/prob/prob.pdf>.
+- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, 2nd revised edition, American Mathematical Society, §5.1, equation (5.2), <https://math.dartmouth.edu/~prob/prob/prob.pdf>: the Poisson count law. The annual-loss identity and occurrence bound are derived here.

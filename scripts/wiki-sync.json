@@ -106611,6 +106611,7 @@
 "ProbabilityTheory.ae_tendsto_sum_of_indep_centered_L1bdd": "caacaccdabc7f49f",
 "ProbabilityTheory.aemeasurable_postStoppingTimeSeq": "bee6edddc63841dc",
 "ProbabilityTheory.aestronglyMeasurable_itoIntegralL2": "5ff8bf3a56175403",
+"ProbabilityTheory.annual_poisson_loss": "c43dccf11b17ad58",
 "ProbabilityTheory.antitone_rankDesc": "e21a9b8990bbee07",
 "ProbabilityTheory.antitone_stickRemainder": "af241be7013f3aab",
 "ProbabilityTheory.ascPochhammer_eval_add_eq_sum": "025f0401833ba45a",
