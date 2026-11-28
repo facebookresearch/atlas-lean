@@ -18,10 +18,13 @@ contains the empty word and such that any two states whose output words agree on
 `W` are equivalent. Characterization sets are the `W` of the W-method of Vasilevskii and Chow.
 
 Kocsis and Rot (*Complete test suites for automata in monoidal closed categories*,
-arXiv:2411.13412v2) define characterization sets for DFAs (Definition 2.3). Their Section 5.1
-contrasts their instance for Mealy machines, which compares only the output of the last
-transition, with the traditional extension of the output function to words, which records every
-output of a run, as `runOut` does; the definition here uses the traditional extension.
+arXiv:2411.13412v2) define characterization sets for DFAs (Definition 2.3). In their instance
+for Mealy machines (Section 5.1), the observation at an input word `w` is a function of the next
+input letter `a`: it is the output of the last transition of the run on `w ++ [a]`, not on `w`,
+so at the empty word it observes the output of the first transition on each letter. Section 5.1
+contrasts this with the traditional extension of the output function to words, which records
+every output of the run on `w`, as `runOut` does; the definition here uses the traditional
+extension.
 
 ## Main results
 

@@ -16,6 +16,8 @@ When $\operatorname{supp}\bar\rho\subseteq\operatorname{supp}\sigma$, expand $\o
 
 - [Classical-quantum states](classical-quantum-state.md)
 - [Quantum mutual information](quantum-mutual-information.md)
+- [Support inclusion and Umegaki relative entropy](../../quantum-states-distances-and-entropy/quantum-relative-entropy/umegaki-relative-entropy.md)
+- [Density matrices, pure states and reduced states](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 
