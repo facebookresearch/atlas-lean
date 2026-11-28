@@ -9,3 +9,4 @@ Separating implication and local reasoning in the heap model, abstract separatio
 - [Footprints and small specifications](footprints-and-small-specifications/README.md)
 - [Operational locality and the frame rule](operational-locality/README.md)
 - [Permission accounting and share models](permission-accounting/README.md)
+- [Regular graph constraints](regular-graph-constraints/README.md)
