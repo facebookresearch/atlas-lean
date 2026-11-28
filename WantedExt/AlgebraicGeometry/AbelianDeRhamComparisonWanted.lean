@@ -22,13 +22,12 @@ the Hodge filtration on `D_dR(V)` lie in `{0, 1}`, and `dim_F Fil¹ D_dR(V) = g`
 
 The period ring is Mathlib's `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`, the `(ker θ)`-adic completion of
 `W(𝓞_ℂ_p^♭)[1/p]`, with `Fil^j B_dR^+` the kernel of the projection to
-`W(𝓞_ℂ_p^♭)[1/p] ⧸ (ker θ)^j`. The Galois actions, the `ℚ_p`-structure of `B_dR^+` and the groups
+`W(𝓞_ℂ_p^♭)[1/p] ⧸ (ker θ)^j`. The Galois group acts on `B_dR^+` by
+`PadicComplexInt.galoisBDeRhamPlus`, and `B_dR^+` is a `ℚ_p`-algebra by
+`PadicComplexInt.instAlgebraPadicBDeRhamPlus`. The groups
 `Fil^j D_dR(V) = (Fil^j B_dR^+ ⊗ V)^{G_F}`, `j ≥ 0`, are defined in
 `MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison`; de Rham with jumps in `{0, 1}` is then a
-statement about their dimensions. The Galois group acts on `B_dR^+` by continuity because its action
-on `W(𝓞_ℂ_p^♭)[1/p]` preserves `ker θ`, recorded here as a wanted theorem. `B_dR^+` also needs the
-`p`-adic completeness of `𝓞_ℂ_p`, which that module proves as the instance
-`padicComplexInt_isAdicComplete`.
+statement about their dimensions.
 
 Reference: Peter Scholze, *p-adic Hodge theory for rigid-analytic varieties*, Forum Math. Pi 1
 (2013), e1, Corollary 1.8, pp. 5–6, with Theorems 9.1 and 9.3, pp. 74–75.
@@ -45,24 +44,7 @@ open MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison
 
 variable (p : ℕ) [Fact p.Prime]
 
-/-- **Galois equivariance of Fontaine's $\theta$.** Let
-$\sigma \in \operatorname{Gal}(\overline{\mathbb{Q}}_p/\mathbb{Q}_p)$ act on
-$\mathcal{O}_{\mathbb{C}_p}$ through its continuous extension to $\mathbb{C}_p$, on
-$\mathcal{O}_{\mathbb{C}_p}^\flat =
-\varprojlim_{x \mapsto x^p} \mathcal{O}_{\mathbb{C}_p}/p$ coordinatewise, and on
-$W(\mathcal{O}_{\mathbb{C}_p}^\flat)[1/p]$ by functoriality of Witt vectors and localization. Then
-$\sigma$ maps the kernel of Fontaine's map
-$\theta \colon W(\mathcal{O}_{\mathbb{C}_p}^\flat)[1/p] \to \mathcal{O}_{\mathbb{C}_p}[1/p]$ into
-itself, so it extends by continuity to the $(\ker\theta)$-adic completion $B_{\mathrm{dR}}^+$.
-
-J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of
-2022-05-26), Lemma 6.9, p. 139 ($\theta$ commutes with the Galois action) and §6.2.2,
-pp. 140–141 (its extension to $W(R)[1/p]$ is equivariant), archived at
-<http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>. -/
-public theorem_wanted thetaKer_le_comap_preDeRhamGalois (σ : Galois p) :
-    thetaKer p ≤ (thetaKer p).comap (preDeRhamGalois p σ)
-
-/-- **$H^1$ of an abelian variety is de Rham with Hodge–Tate weights $0$ and $1$.** Let $F$ be a
+/-- **$H^1$ of an abelian variety is de Rham with Hodge–Tate weights in $\{0, 1\}$.** Let $F$ be a
 finite extension of $\mathbb{Q}_p$ inside $\overline{\mathbb{Q}}_p$ and let $A/F$ be an abelian
 variety of dimension $g$: a commutative group object over $\operatorname{Spec} F$ that is proper,
 geometrically connected and smooth of relative dimension $g$. Let
@@ -89,9 +71,9 @@ $\operatorname{Fil}^2 D_{\mathrm{dR}}(V) = 0$. Taking as Hodge–Tate weights th
 with multiplicity $\dim_F \operatorname{gr}^j D_{\mathrm{dR}}(V)$ (the convention in which
 $\mathbb{Q}_p(1)$ has weight $-1$), $V$ has weights in $\{0, 1\}$, the weight $1$ with
 multiplicity $g$. Étale cohomology with $\mathbb{Q}_p$ coefficients is the pro-étale cohomology of
-the sheaf of continuous $\mathbb{Q}_p$-valued functions. The Galois action on
-$B_{\mathrm{dR}}^+$ extends that on $W(\mathcal{O}_{\mathbb{C}_p}^\flat)[1/p]$, which preserves
-$\ker\theta$.
+the sheaf of continuous $\mathbb{Q}_p$-valued functions. The Galois group acts on
+$B_{\mathrm{dR}}^+$ through its action on $\mathcal{O}_{\mathbb{C}_p}$ by functoriality of
+$B_{\mathrm{dR}}^+$ (`PadicComplexInt.galoisBDeRhamPlus`).
 
 Peter Scholze, *p-adic Hodge theory for rigid-analytic varieties*, Forum Math. Pi 1 (2013), e1,
 [Corollary 1.8, pp. 5–6](https://doi.org/10.1017/fmp.2013.1): for a proper smooth rigid-analytic
@@ -107,10 +89,10 @@ public theorem_wanted abelianVariety_h1_deRham
     (A : Over (Spec (CommRingCat.of F))) [GrpObj A] [IsCommMonObj A]
     [IsProper A.hom] [GeometricallyConnected A.hom] (g : ℕ) [SmoothOfRelativeDimension g A.hom] :
     FiniteDimensional ℚ_[p] (H1 p F A) ∧
-      Module.finrank ℚ_[p] (filDeRham p F A (❰thetaKer_le_comap_preDeRhamGalois❱ p) 0) =
+      Module.finrank ℚ_[p] (filDeRham p F A 0) =
         Module.finrank ℚ_[p] F * Module.finrank ℚ_[p] (H1 p F A) ∧
-      Module.finrank ℚ_[p] (filDeRham p F A (❰thetaKer_le_comap_preDeRhamGalois❱ p) 1) =
+      Module.finrank ℚ_[p] (filDeRham p F A 1) =
         Module.finrank ℚ_[p] F * g ∧
-      filDeRham p F A (❰thetaKer_le_comap_preDeRhamGalois❱ p) 2 = ⊥
+      filDeRham p F A 2 = ⊥
 
 end WantedExt.AlgebraicGeometry.AbelianDeRhamComparison

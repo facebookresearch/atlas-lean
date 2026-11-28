@@ -1,4 +1,4 @@
-# $H^1$ of an abelian variety is de Rham with Hodge–Tate weights $0$ and $1$
+# $H^1$ of an abelian variety is de Rham with Hodge–Tate weights in $\{0, 1\}$
 
 Let $F$ be a
 finite extension of $\mathbb{Q}_p$ inside $\overline{\mathbb{Q}}_p$ and let $A/F$ be an abelian
@@ -27,9 +27,9 @@ $\operatorname{Fil}^2 D_{\mathrm{dR}}(V) = 0$. Taking as Hodge–Tate weights th
 with multiplicity $\dim_F \operatorname{gr}^j D_{\mathrm{dR}}(V)$ (the convention in which
 $\mathbb{Q}_p(1)$ has weight $-1$), $V$ has weights in $\{0, 1\}$, the weight $1$ with
 multiplicity $g$. Étale cohomology with $\mathbb{Q}_p$ coefficients is the pro-étale cohomology of
-the sheaf of continuous $\mathbb{Q}_p$-valued functions. The Galois action on
-$B_{\mathrm{dR}}^+$ extends that on $W(\mathcal{O}_{\mathbb{C}_p}^\flat)[1/p]$, which preserves
-$\ker\theta$.
+the sheaf of continuous $\mathbb{Q}_p$-valued functions. The Galois group acts on
+$B_{\mathrm{dR}}^+$ through its action on $\mathcal{O}_{\mathbb{C}_p}$ by functoriality of
+$B_{\mathrm{dR}}^+$ (`PadicComplexInt.galoisBDeRhamPlus`).
 
 Peter Scholze, *p-adic Hodge theory for rigid-analytic varieties*, Forum Math. Pi 1 (2013), e1,
 [Corollary 1.8, pp. 5–6](https://doi.org/10.1017/fmp.2013.1): for a proper smooth rigid-analytic
