@@ -13,6 +13,7 @@ The scheme is part of the input; the order is fixed at $2$. For $r = 0$ both set
 
 - [Probabilistic higher-order recursion schemes](probabilistic-higher-order-recursion-schemes.md)
 - [The arithmetical class Πₙ](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -20,6 +20,7 @@ The same paper claimed $\exists^*\forall^*\mathsf{SL}(\mathsf{EUF})_{U,U^k}$ to 
 
 - [Separating conjunction](../../separation-logic/star.md)
 - [Heap assertion](../../separation-logic/hassertion.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -17,6 +17,7 @@ Validity here is with respect to the standard interpretation over $\mathbb{N}$, 
 ## Depends on
 
 - [The arithmetical class Πₙ](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

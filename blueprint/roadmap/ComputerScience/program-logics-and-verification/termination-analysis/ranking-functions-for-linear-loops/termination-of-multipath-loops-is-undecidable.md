@@ -2,18 +2,19 @@
 
 Whether a multipath linear-constraint loop terminates is undecidable over the integers, the rationals and the reals, both from every initial state and from a given one; this holds already for deterministic loops whose paths are mutually exclusive affine updates.
 
-**Theorem.** For each domain $\mathbb D \in \{\mathbb Z, \mathbb Q, \mathbb R\}$, the following problems are undecidable for [multipath linear-constraint (MLC) loops](linear-constraint-loops.md) whose variables range over $\mathbb D$:
+**Theorem.** For each domain $\mathbb D \in \{\mathbb Z, \mathbb Q, \mathbb R\}$, the following problems are undecidable for [multipath linear-constraint (MLC) loops](linear-constraint-loops.md), given by their rational guard and update matrices and vectors, whose variables range over $\mathbb D$ (for $\mathbb D = \mathbb R$ the transitions are the real points of the same polyhedra; the linked page defines the integer and rational cases):
 
 1. *universal termination*: given the loop, is there no infinite execution from any initial state in $\mathbb D^n$?
-2. *termination with an initial state*: given the loop and an initial state, is there no infinite execution from that state?
+2. *termination with initial states*: given the loop and a polyhedral set $S_0$ of initial states, given by rational linear inequalities, is there no infinite execution from any state of $S_0$?
 
-Undecidability holds even for MLC loops in which every path is an affine single-path loop and the path guards are mutually exclusive, so that the loop is deterministic.
+Undecidability holds even for MLC loops in which every path is an affine single-path loop and the path guards are mutually exclusive, so that the loop is deterministic. The proof (Theorem 3.7 of the source) translates a counter program into an integer MLC loop with one variable per counter and a location variable, so that a single integer initial state suffices; over $\mathbb Q$ and $\mathbb R$ it uses Tiwari's observation that the generated loops terminate over $\mathbb Z$ iff they terminate over $\mathbb Q$ and over $\mathbb R$. Undecidability already holds with $3$ variables.
 
 The source credits the observation to Tiwari (CAV 2004), building on the undecidability of mortality for piecewise affine systems of Blondel, Bournez, Koiran, Papadimitriou and Tsitsiklis (2001).
 
 ## Depends on
 
 - [Linear-constraint loops](linear-constraint-loops.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ The observation is due to Tiwari. A counter program with $n$ counters becomes an
 
 ## Sources
 
-- Amir M. Ben-Amram, Samir Genaim, Joël Ouaknine and James Worrell, "Termination Analysis of Linear-Constraint Programs", *Foundations and Trends in Programming Languages* 10(1–2), 2026, pp. 1–145, <https://doi.org/10.1108/FTPGL-07-2025-0071>; read as arXiv:2509.06752v3, <https://arxiv.org/abs/2509.06752v3>: Section 2.3 (Programs; universal termination and counter programs) and Section 3.3 ("Termination of Multi-path Linear-Constraint Loops"), the first theorem there, of that version.
+- Amir M. Ben-Amram, Samir Genaim, Joël Ouaknine and James Worrell, "Termination Analysis of Linear-Constraint Programs", *Foundations and Trends in Programming Languages* 10(1–2), 2026, pp. 1–145, <https://doi.org/10.1108/FTPGL-07-2025-0071>; read as arXiv:2509.06752v3, <https://arxiv.org/abs/2509.06752v3>: Section 2.3 (Programs; universal termination and counter programs) and Theorem 3.7 in Section 3.3 ("Termination of Multi-path Linear-Constraint Loops") and Theorem 2.4 (universal termination of counter programs), in the numbering of that version.

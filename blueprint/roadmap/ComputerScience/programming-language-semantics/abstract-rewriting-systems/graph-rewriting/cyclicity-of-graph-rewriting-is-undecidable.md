@@ -7,6 +7,7 @@ There is no algorithm that decides, given a graph rewriting system in the double
 ## Depends on
 
 - [Double-pushout graph rewriting systems](double-pushout-graph-rewriting-systems.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

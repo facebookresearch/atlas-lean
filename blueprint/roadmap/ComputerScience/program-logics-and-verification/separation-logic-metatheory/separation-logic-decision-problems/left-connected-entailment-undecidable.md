@@ -9,6 +9,7 @@ The record size $\kappa$ is a fixed parameter of the logic; the reduction in the
 ## Depends on
 
 - [Progressing, connected and established entailment problems](progressing-connected-established-entailment.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

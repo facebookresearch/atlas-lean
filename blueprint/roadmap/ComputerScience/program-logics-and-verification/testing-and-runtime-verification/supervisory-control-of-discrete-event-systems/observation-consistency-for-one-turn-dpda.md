@@ -12,6 +12,7 @@ For plants given by finite automata, the same paper proves both problems PSPACE-
 
 - [Deterministic pushdown automaton](../../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/deterministic-context-free-languages/is-deterministic.md)
 - [Language accepted by a pushdown automaton](../../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/pushdown-automata/accepts.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

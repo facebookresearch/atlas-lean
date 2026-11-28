@@ -16,7 +16,7 @@ The same paper gives, under an additional assumption, an algorithm deciding term
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +28,4 @@ For a polynomial $f(x_1, \dots, x_m)$ with integer coefficients, take the loop $
 
 ## Sources
 
-- Bican Xia and Zhihai Zhang, "Termination of linear programs with nonlinear constraints", Journal of Symbolic Computation 45(11), pp. 1234–1249, 2010, <https://doi.org/10.1016/j.jsc.2010.06.006>; the loop $\mathtt{P_1}$ of Section 1 and Lemma 1, Theorem 1 and Theorem 2 (main statement) of Section 2 ("Undecidability of $\mathtt{P_1}$ over $\mathbb{Z}$") of arXiv:0904.3588v1, read at <https://arxiv.org/abs/0904.3588v1>.
+- Bican Xia and Zhihai Zhang, "Termination of linear programs with nonlinear constraints", Journal of Symbolic Computation 45(11), pp. 1234–1249, 2010, <https://doi.org/10.1016/j.jsc.2010.06.006>; the loop $\mathtt{P_1}$ of Section 1 and Lemma 1, Theorem 1 (loops $\mathtt{P_1}$) and Theorem 2 (loops $\mathtt{P'_1}$) of Section 2, and Section 3 on termination over $\mathbb{R}$ ("Undecidability of $\mathtt{P_1}$ over $\mathbb{Z}$") of arXiv:0904.3588v1, read at <https://arxiv.org/abs/0904.3588v1>.

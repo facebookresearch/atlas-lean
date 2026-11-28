@@ -7,6 +7,7 @@ There is no algorithm that decides, given a finite hypergraph rewriting system t
 ## Depends on
 
 - [Hypergraph rewriting systems](hypergraph-rewriting-systems.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

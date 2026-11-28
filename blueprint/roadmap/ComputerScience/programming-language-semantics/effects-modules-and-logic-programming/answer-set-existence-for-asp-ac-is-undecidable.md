@@ -20,6 +20,7 @@ The paper also proves model checking for these programs to be in EXPTIME, and no
 ## Depends on
 
 - [Semirings and formal power series on a free monoid](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/semirings-and-formal-power-series.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -27,7 +28,7 @@ None.
 
 ## Expansion
 
-The proof reduces from the mortal matrix problem: whether some product of matrices from a finite set $X = \{X_1, \dots, X_n\} \subseteq \mathbb{Z}^{d \times d}$ is the zero matrix. Over the efficiently encodable semiring $(\mathbb{Z}^{d \times d}, +, \cdot, 0_d, 1_d)$ the program with facts $p(X_i)$, the constraint $\bot \leftarrow \neg p(0_d)$ and the rule $p(Y) \leftarrow p(Z_1), p(Z_2), Y =_{\mathbb{Z}^{d \times d}} Z_1 \otimes Z_2$ has an equilibrium model exactly when $p(0_d)$ is derivable, that is, when $X$ is mortal. Dropping the constraint gives a negation-free program $\Pi'$ with $\Pi \equiv_s \Pi'$ if and only if $X$ is mortal, which gives SE.
+The proof reduces from the mortal matrix problem: whether some product of matrices from a finite set $X = \{X_1, \dots, X_n\} \subseteq \mathbb{Z}^{d \times d}$ is the zero matrix. Over the efficiently encodable semiring $(\mathbb{Z}^{d \times d}, +, \cdot, 0_d, 1_d)$ the program with facts $p(X_i)$, the constraint $\bot \leftarrow \neg p(0_d)$ and the rule $p(Y) \leftarrow p(Z_1), p(Z_2), Y =_{\mathbb{Z}^{d \times d}} Z_1 \otimes Z_2$ has an equilibrium model exactly when $p(0_d)$ is derivable, that is, when $X$ is mortal. Dropping the constraint gives a negation-free program $\Pi'$ with $\Pi \equiv_s \Pi'$ if and only if $X$ is mortal, which gives SE. A complete expansion links a page for the undecidability of the mortal matrix problem for integer matrices.
 
 ## Sources
 

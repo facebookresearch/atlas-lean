@@ -10,7 +10,7 @@ By earlier work, observational equivalence is also undecidable at every third-or
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +22,4 @@ The proofs use game semantics: observational equivalence coincides with equality
 
 ## Sources
 
-- Conrad Cotton-Barratt, David Hopkins, Andrzej S. Murawski and C.-H. Luke Ong, "Fragments of ML Decidable by Nested Data Class Memory Automata", Foundations of Software Science and Computation Structures (FoSSaCS 2015), Lecture Notes in Computer Science, pp. 249–263, 2015, <https://doi.org/10.1007/978-3-662-46678-0_16>; Section 2 (RML, order, arity and observational equivalence) and the two undecidability theorems of the section "Undecidable Fragments", with the appendix "Proofs of Undecidability Results", of arXiv:1501.04511v1, read at <https://arxiv.org/abs/1501.04511v1>.
+- Conrad Cotton-Barratt, David Hopkins, Andrzej S. Murawski and C.-H. Luke Ong, "Fragments of ML Decidable by Nested Data Class Memory Automata", Foundations of Software Science and Computation Structures (FoSSaCS 2015), Lecture Notes in Computer Science, pp. 249–263, 2015, <https://doi.org/10.1007/978-3-662-46678-0_16>; Section 2 (RML, order, arity and observational equivalence, and Theorem 1, the game-semantic characterization due to Abramsky and McCusker), and Theorems 4 and 5 of Section 5 ("Undecidable Fragments"), with their proofs in Appendix C (Q-machines and queue programs), of arXiv:1501.04511v1, read at <https://arxiv.org/abs/1501.04511v1>.
