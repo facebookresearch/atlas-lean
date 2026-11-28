@@ -119,4 +119,31 @@ example : ∃ b : ℤ, ({5, 2, -3, -6} : Finset ℤ) = {b, b + 3, b + 4 + 4, b +
   have hI : (({2, -2} : Finset ℤ).erase (-2)).erase 2 = ∅ := by decide
   simpa only [hI, Finset.image_empty, Finset.union_empty, show (2 : ℤ) - (-2) = 4 by decide] using h
 
+-- At the upper endpoint k = 1, the third formula sends 4 to 15 and keeps position 0.
+example : ∃ b : ℤ, b = -6 ∧ ({5, 2, 0, -3, -6} : Finset ℤ) =
+    {b, b + 3, b + 8, b + 11} ∪ {b + 6} := by
+  obtain ⟨h2, _, h5, _, h2n, h3n, _, h6n⟩ := golden_zpow_examples
+  have hS : basePhiValue {2, 0, -2} = 4 := by
+    rw [basePhiValue_eq_sum, Finset.sum_insert (by decide), Finset.sum_pair (by decide),
+      h2, zpow_zero, h2n]
+    ring
+  have hT : basePhiValue {5, 2, 0, -3, -6} = 15 := by
+    rw [basePhiValue_eq_sum, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_pair (by decide), h5, h2, zpow_zero, h3n, h6n]
+    ring
+  obtain ⟨b, hb⟩ := (bergman_lucas_odd_add 2 (by decide)).2.2 1 (by decide)
+    {2, 0, -2} {5, 2, 0, -3, -6} (-2) 2 (by rw [isBergmanExpansion_iff]; decide) hS
+    (by norm_num [IsLeast, lowerBounds]) (by norm_num [IsGreatest, upperBounds])
+    (by rw [isBergmanExpansion_iff]; decide) hT
+  have hI : (({2, 0, -2} : Finset ℤ).erase (-2)).erase 2 = {0} := by decide
+  have hshape : ({5, 2, 0, -3, -6} : Finset ℤ) = {b, b + 3, b + 8, b + 11} ∪ {b + 6} := by
+    simpa only [hI, Finset.image_singleton, zero_add, show b + (2 - (-2)) + 4 = b + 8 by omega,
+      show b + (2 - (-2)) + 7 = b + 11 by omega, show b - (-2) + 4 = b + 6 by omega] using hb
+  -- The least position of the concrete output must be the replacement's least position.
+  have hlow : b ∈ ({5, 2, 0, -3, -6} : Finset ℤ) := by rw [hshape]; simp
+  have hhigh : (-6 : ℤ) ∈ ({b, b + 3, b + 8, b + 11} ∪ {b + 6} : Finset ℤ) :=
+    hshape ▸ (by decide : (-6 : ℤ) ∈ ({5, 2, 0, -3, -6} : Finset ℤ))
+  simp only [Finset.mem_union, Finset.mem_insert, Finset.mem_singleton] at hlow hhigh
+  exact ⟨b, by omega, hshape⟩
+
 end MetaMathlibExt
