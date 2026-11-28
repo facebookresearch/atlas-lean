@@ -54,11 +54,11 @@ Two commuting actions on `V^⊗k`:
 * `glAction`: the general linear group `GL(V)` acts diagonally as `g · (v₁ ⊗ ⋯ ⊗ v_k) =
   (g v₁) ⊗ ⋯ ⊗ (g v_k)`.
 
-Schur–Weyl duality says their images in `End(V^⊗k)` generate mutual centralizers. We state
-the two directions as separate `eval_problem`s.
+Schur–Weyl duality says their images in `End(V^⊗k)` generate mutual centralizers when `V` is
+finite-dimensional over a field in which `k!` is invertible.
 
-The two actions and the general linear side of the duality are proved in
-`MathlibExt.GroupTheory.SchurWeyl`, which this module imports.
+This compatibility module publicly re-exports `MathlibExt.GroupTheory.SchurWeyl`, which defines
+both actions and proves both directions of the duality.
 -/
 
 end RepresentationTheory
