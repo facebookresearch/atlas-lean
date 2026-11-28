@@ -113,4 +113,71 @@ example {S : RelationalSchema} (V : Type*) {R P T : S.Name} {k : ℕ}
   intro I h
   exact IND.holdsIn_trans (h _ (Set.mem_insert _ _)) (h _ (Set.mem_insert_of_mem _ rfl))
 
+/-! ### The separating example of finite implication -/
+
+open FiniteImplication in
+-- The counter-models must be infinite: on a finite instance the first theorem would apply.
+example : ¬ descending.IsFinite := by
+  intro h
+  exact not_holdsIn_indBA_descending (finitelyImplies_indBA ℕ descending h descending_holdsIn_deps)
+
+open FiniteImplication in
+example : ¬ descendingWithLoop.IsFinite := by
+  intro h
+  exact not_holdsIn_fdBA_descendingWithLoop
+    (finitelyImplies_fdBA ℕ descendingWithLoop h descendingWithLoop_holdsIn_deps)
+
+private def onlyRow : FiniteImplication.schema.Instance ℕ := fun _ => {![0, 1]}
+
+private def fork : FiniteImplication.schema.Instance ℕ := fun _ => {![0, 0], ![0, 1]}
+
+open FiniteImplication in
+-- Both hypotheses are needed: the functional dependency alone fails on one row (0, 1).
+example : ¬ Dependency.FinitelyImplies ℕ {fdAB} (.inclusion indBA) := by
+  intro h
+  have hfin : onlyRow.IsFinite := fun R => Set.finite_singleton _
+  have hFD : fdAB.HoldsIn onlyRow := by
+    change (⟨{0}, {1}⟩ : FD (Fin 2)).HoldsIn (onlyRow ())
+    intro t ht u hu _ a _
+    have ht' : t = ![0, 1] := Set.mem_singleton_iff.mp ht
+    have hu' : u = ![0, 1] := Set.mem_singleton_iff.mp hu
+    rw [ht', hu']
+  have hcon : indBA.HoldsIn onlyRow := h onlyRow hfin (by rintro _ (rfl : _ = _); exact hFD)
+  have hmem : ![0, 1] ∈ onlyRow () := Set.mem_singleton_iff.mpr rfl
+  rw [indBA.holdsIn_iff_exists_row onlyRow] at hcon
+  obtain ⟨s, hs, he⟩ := hcon _ hmem
+  obtain rfl : s = ![0, 1] := Set.mem_singleton_iff.mp hs
+  have h10 : (1 : ℕ) = 0 := he (0 : Fin 1)
+  exact one_ne_zero h10
+
+open FiniteImplication in
+-- The inclusion dependency alone fails on the rows (0, 0) and (0, 1).
+example : ¬ Dependency.FinitelyImplies ℕ {.inclusion indAB} (.inclusion indBA) := by
+  intro h
+  have hfin : fork.IsFinite := fun R => (Set.finite_singleton _).insert _
+  have hIND : indAB.HoldsIn fork := by
+    have hmem0 : ![0, 0] ∈ fork () := Set.mem_insert_iff.mpr (Or.inl rfl)
+    rw [indAB.holdsIn_iff_exists_row fork]
+    intro t ht
+    rcases Set.mem_insert_iff.mp ht with rfl | hmem_t
+    · refine ⟨_, hmem0, ?_⟩
+      simp only [indAB, Fin.forall_fin_one]
+      decide
+    · obtain rfl : t = ![0, 1] := Set.mem_singleton_iff.mp hmem_t
+      refine ⟨_, hmem0, ?_⟩
+      simp only [indAB, Fin.forall_fin_one]
+      decide
+  have hcon : indBA.HoldsIn fork :=
+    h fork hfin (by rintro _ (rfl : _ = _); exact hIND)
+  have hmem1 : ![0, 1] ∈ fork () :=
+    Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr rfl))
+  rw [indBA.holdsIn_iff_exists_row fork] at hcon
+  obtain ⟨s, hs, he⟩ := hcon _ hmem1
+  rcases Set.mem_insert_iff.mp hs with rfl | hmem_s
+  · have h10 : (1 : ℕ) = 0 := he (0 : Fin 1)
+    exact one_ne_zero h10
+  · obtain rfl : s = ![0, 1] := Set.mem_singleton_iff.mp hmem_s
+    have h10 : (1 : ℕ) = 0 := he (0 : Fin 1)
+    exact one_ne_zero h10
+
 end Cslib.Databases.InclusionDependenciesTests
