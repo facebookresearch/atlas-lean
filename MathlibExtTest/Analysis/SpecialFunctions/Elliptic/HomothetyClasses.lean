@@ -25,10 +25,14 @@ example (L : PeriodPair) (α : ℂˣ) :
     (L.scale α).g₂ = (α : ℂ)⁻¹ ^ 4 * L.g₂ :=
   g₂_eq_of_lattice_eq_smul α.ne_zero (lattice_scale L α)
 
-example (L : PeriodPair) (α : ℂˣ) :
-    1728 * (L.scale α).g₂ ^ 3 / ((L.scale α).g₂ ^ 3 - 27 * (L.scale α).g₃ ^ 2) =
-      1728 * L.g₂ ^ 3 / (L.g₂ ^ 3 - 27 * L.g₃ ^ 2) :=
+-- The `j`-invariant of `L.scale α` is that of `L`.
+example (L : PeriodPair) (α : ℂˣ) : (L.scale α).jInvariant = L.jInvariant :=
   jInvariant_eq_of_lattice_eq_smul α.ne_zero (lattice_scale L α)
+
+-- The first clause of `homothety_classes` ends with the `j`-invariant.
+example {L L' : PeriodPair} {c : ℂ} (hc : c ≠ 0)
+    (h : (L'.lattice : Set ℂ) = c • (L.lattice : Set ℂ)) : L'.jInvariant = L.jInvariant :=
+  (homothety_classes.1 L L' c hc h).2.2.2
 
 -- Every period pair is homothetic to some `(1, τ)` with `τ` in the upper half-plane (clause 2).
 example (L : PeriodPair) : ∃ τ : ℍ, L.IsHomothetic (ofTau τ τ.im_pos.ne') :=
