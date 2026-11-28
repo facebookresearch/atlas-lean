@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.GameTheory.EuclidGameCalkinWilf
+public import MathlibExt.GameTheory.EuclidGameGoldenRemoteness
 public import MathlibExt.GameTheory.SmithRemoteness
 
 namespace MetaMathlibExt
@@ -45,18 +46,6 @@ public theorem_wanted max_remoteness_path_alternates (w : List Bool)
       w.foldl (fun q b => if b then (q.1 + q.2, q.2) else (q.1, q.1 + q.2)) (1, 1)) = w.length)
     (i : ℕ) (hi : 2 * i + 1 < w.length) :
     w[2 * i]! ≠ w[2 * i + 1]!
-
-/-- **Golden-ratio bounds for N-positions of maximal remoteness above 1.** Let $\varphi$ be the
-golden ratio. If the pair $(m, n)$, read as the fraction $m/n$, lies in row $k$ of the Calkin–Wilf
-tree, $n < m$, the position $(m, n)$ of Euclid is not a P-position, and its Smith remoteness in
-Euclid equals $k$, then $\varphi < m/n < \varphi + 1$.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 6.3. -/
-public theorem_wanted golden_bounds_of_max_remoteness_N (k m n : ℕ) (hk : (m, n) ∈ calkinWilfRow k)
-    (hmn : n < m) (hN : euclidPPosition m n = false)
-    (hr : SpragueGrundy.smithRemoteness euclidGame (show euclidGame.Pos from (m, n)) = k) :
-    Real.goldenRatio < (m : ℝ) / n ∧ (m : ℝ) / n < Real.goldenRatio + 1
 
 /-- **Golden-ratio bounds for N-positions of maximal remoteness below 1.** Let $\varphi$ be the
 golden ratio. If the pair $(m, n)$, read as the fraction $m/n$, lies in row $k$ of the Calkin–Wilf
