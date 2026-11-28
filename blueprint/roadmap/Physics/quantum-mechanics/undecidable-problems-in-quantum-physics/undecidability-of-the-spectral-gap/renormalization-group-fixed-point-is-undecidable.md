@@ -2,14 +2,14 @@
 
 For the Hamiltonians with undecidable spectral gap there is a real-space renormalization group map, computable at every step and preserving gapped and gapless behavior, under which each Hamiltonian flows to one of two fixed points; which one cannot be decided.
 
-Let $h(\varphi)$, $\varphi\in\mathbb Q$, be the local interaction of the [two-dimensional Hamiltonians with undecidable spectral gap](the-spectral-gap-of-two-dimensional-hamiltonians.md), and $H(\varphi)=\sum h(\varphi)^{(i,j)}$; $H(\varphi)$ is [gapped](gapped-and-gapless-families-of-hamiltonians.md) if the universal Turing machine encoded in $h(\varphi)$ halts on input $\varphi$ and gapless if it never halts.
+For $n\in\mathbb N$ let $\varphi=\varphi(n)$ be the binary fraction of the reversed digits of $n$, let $h(\varphi)$ be the local interaction, for this $n$, of the [two-dimensional Hamiltonians with undecidable spectral gap](the-spectral-gap-of-two-dimensional-hamiltonians.md), and $H(\varphi)=\sum h(\varphi)^{(i,j)}$; $H(\varphi)$ is [gapped](gapped-and-gapless-families-of-hamiltonians.md) if the universal Turing machine encoded in the interactions halts on input $n$ and gapless if it never halts. The source's Theorem 9 writes $\varphi\in\mathbb Q$; the interactions it renormalizes are defined for each natural number $n$ (its Definition 5), so the page reads $\varphi$ as $\varphi(n)$, $n\in\mathbb N$.
 
 **Theorem (Watson, Onorati and Cubitt).** There is a real-space renormalization group map $\mathcal R$ acting on such Hamiltonians, with $k$-fold iterate $\mathcal R^{(k)}$, such that:
 
 1. $\mathcal R$ is computable;
 2. $\mathcal R^{(k)}(H(\varphi))$ is gapped if $H(\varphi)$ is gapped and gapless if $H(\varphi)$ is gapless, and the order parameter distinguishing the two phases has a renormalized counterpart that still distinguishes them;
 3. for every $k$, the renormalized local interactions $\mathcal R^{(k)}(h(\varphi))$ lie in an explicit family $\mathcal F(\varphi,\tau_1,\tau_2,\{\alpha_i\},\{\beta_i\})$ whose parameters at step $k$ are computable;
-4. if the universal machine does not halt on input $\varphi$, then $\tau_2(k)=-2^k$ for all $k>k_0(\varphi)$, with $k_0(\varphi)$ computable; if it halts, there is an uncomputable $k_h(\varphi)$ with $\tau_2(k)=-2^k$ for $k_0(\varphi)<k<k_h(\varphi)$ and $\tau_2(k)=-2^k+\Omega(4^{k-k_h(\varphi)})$ for all $k>k_h(\varphi)$.
+4. if the universal machine does not halt on input $n$, then $\tau_2(k)=-2^k$ for all $k>k_0(\varphi)$, with $k_0(\varphi)$ computable; if it halts, there is an uncomputable $k_h(\varphi)$ with $\tau_2(k)=-2^k$ for $k_0(\varphi)<k<k_h(\varphi)$ and $\tau_2(k)=-2^k+\Omega(4^{k-k_h(\varphi)})$ for all $k>k_h(\varphi)$.
 
 The Hamiltonian flows to one of two fixed points, a gapped one with low-energy properties like an Ising model in a field and a gapless one like the critical XY model, and determining which fixed point $H(\varphi)$ flows to under $\mathcal R$ is undecidable (Corollary 10).
 
@@ -32,5 +32,5 @@ The renormalization map combines a renormalization of the classical Robinson til
 
 ## Sources
 
-- J. D. Watson, E. Onorati and T. S. Cubitt, "Uncomputably complex renormalisation group flows", *Nature Communications* 13, 7618, 2022, doi:[10.1038/s41467-022-35179-4](https://doi.org/10.1038/s41467-022-35179-4); read in arXiv:2102.05145v1 ([arXiv](https://arxiv.org/abs/2102.05145v1)), whose numbering is used: Theorem 1 (informal statement), Theorems 8 and 9, Corollary 10, Definitions 2 and 3 (gapped and gapless) and Theorem 13 (renormalization of the Robinson tiling Hamiltonian).
+- J. D. Watson, E. Onorati and T. S. Cubitt, "Uncomputably complex renormalisation group flows", *Nature Communications* 13, 7618, 2022, doi:[10.1038/s41467-022-35179-4](https://doi.org/10.1038/s41467-022-35179-4); read in arXiv:2102.05145v1 ([arXiv](https://arxiv.org/abs/2102.05145v1)), whose numbering is used: Theorem 1 (informal statement), Theorems 8 and 9, Corollary 10, Definitions 2 and 3 (gapped and gapless), Definition 5 (the interactions for each natural number $n$) and Theorem 13 (renormalization of the Robinson tiling Hamiltonian).
 - T. Cubitt, D. Perez-Garcia and M. M. Wolf, "Undecidability of the spectral gap", *Forum of Mathematics, Pi* 10, e14, 2022, doi:[10.1017/fmp.2021.15](https://doi.org/10.1017/fmp.2021.15): the Hamiltonian $H(\varphi)$ being renormalized.
