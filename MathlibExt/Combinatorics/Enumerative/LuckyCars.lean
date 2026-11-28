@@ -24,6 +24,13 @@ import MathlibExt.Probability.BertrandBallot
 
 The greedy parking rule assigns spots in arrival order. It determines which cars are lucky
 and the counts of parking functions with a prescribed lucky car and spot.
+
+## References
+
+* Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and Marshall Moats,
+  *Lucky Cars and Lucky Spots in Parking Functions*, Journal of Integer Sequences 29 (2026),
+  Article 26.1.1, pp. 1–18, Section 4.2 and Lemma 21.
+* The proof of `nextFreeSpot_of_notMem` was moved from the ATLAS module `StirlingLuckyDisplacement`.
 -/
 
 @[expose] public section
@@ -39,6 +46,23 @@ def nextFreeSpot {n : ℕ} (occ : Finset (Fin n)) (a : Fin n) : Fin n :=
   if h : (Finset.univ.filter (fun s : Fin n => a ≤ s ∧ s ∉ occ)).Nonempty then
     (Finset.univ.filter (fun s : Fin n => a ≤ s ∧ s ∉ occ)).min' h
   else a
+
+/-- The greedy rule never assigns a spot before the car's preference, including when it falls
+back to the preference because every spot at or after it is occupied. -/
+theorem le_nextFreeSpot {n : ℕ} (occ : Finset (Fin n)) (a : Fin n) :
+    a ≤ nextFreeSpot occ a := by
+  unfold nextFreeSpot
+  split_ifs with h
+  · exact (Finset.mem_filter.mp (Finset.min'_mem _ h)).2.1
+  · exact le_rfl
+
+/-- An unoccupied preferred spot is the next free spot. -/
+theorem nextFreeSpot_of_notMem {m : ℕ} {occ : Finset (Fin m)} {a : Fin m}
+    (ha : a ∉ occ) : nextFreeSpot occ a = a := by
+  have hmem : a ∈ Finset.univ.filter (fun q : Fin m => a ≤ q ∧ q ∉ occ) := by simp [ha]
+  have h := Finset.min'_mem _ ⟨a, hmem⟩
+  rw [nextFreeSpot, dite_eq_left ⟨a, hmem⟩]
+  exact le_antisymm (Finset.min'_le _ _ hmem) (Finset.mem_filter.mp h).2.1
 
 /-- **Greedy parking from an occupied set.** Number the $n$ spots $0, \dots, n-1$. Given a list
 $a_1, \dots, a_m$ of preferred spots and a set $S$ of occupied spots, cars $1, \dots, m$ arrive in

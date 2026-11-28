@@ -14,12 +14,8 @@ import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.List.OfFn
 import Mathlib.Order.Fin.Basic
-import all MathlibExt.Combinatorics.Enumerative.DescendingNaplesDyckPath
-import all MathlibExt.Combinatorics.Enumerative.DescendingNaplesPaddedDyckWord
-import all MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
-import all MathlibExt.Combinatorics.Enumerative.LuckyCarsIncreasing
-import all MathlibExt.Combinatorics.Enumerative.PollakPartialParkingFunctions
-import all MathlibExt.Combinatorics.Enumerative.StirlingLuckyDisplacement
+import MathlibExt.Combinatorics.Enumerative.DescendingNaplesPaddedDyckWord
+import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 
 /-!
 # Lucky spots in weakly decreasing parking functions
@@ -37,22 +33,16 @@ an ordered pair of Dyck words; the column determines where to insert the removed
 * Richard P. Stanley, *Catalan Numbers*, Cambridge University Press (2015), and Catherine H. Yan,
   *Parking functions*, in *Handbook of Enumerative Combinatorics*, CRC Press (2015), pp. 835–893,
   cited in Section 4 for the Catalan enumeration.
-* ATLAS modules `DescendingNaplesDyckPath` (`encode`, `decode`, `word_iff`, `exists_word`)
-  and `DescendingNaplesPaddedDyckWord` (`toPaddedWord`, `exists_walk`, `stepHeight_steps`):
-  the positional encoding and its conversion to Dyck words, used here with bound zero.
-* ATLAS modules `LuckyCarsIncreasing` (`isParkingFunction_iff_le_id_of_monotone`),
-  `LuckyCarFactorialMoments` (`parkSpotsFrom_eq_parkAssign`),
-  `PollakPartialParkingFunctions` (`parkAssign_inj`), and
-  `StirlingLuckyDisplacement` (`nextFreeSpot_of_notMem`, `prefs_le_spots`): the parking criterion
-  and greedy assignments.
+* ATLAS modules `LuckyCars` (`le_nextFreeSpot`, `nextFreeSpot_of_notMem`),
+  `LuckyCarFactorialMoments` (`parkSpots_injective`), and `DescendingNaplesPaddedDyckWord`
+  (`decreasingParkingPreferenceEquivDyckWord`, `stepHeight`, `stepHeight_append`).
 -/
 
 set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 
-open MetaMathlibExt MetaMathlibExt.PollakPartialParking DyckStep
-open MetaMathlibExt.descendingNaplesCount_eq_card_kDyckPath
+open MetaMathlibExt DyckStep
 
 private lemma getD_parkSpotsFrom_of_lt_before {n : ℕ} (l : List (Fin n)) (i : ℕ)
     (hi : i < l.length) (occ : Finset (Fin n)) (d : Fin n) (hfree : l[i] ∉ occ)
@@ -62,32 +52,15 @@ private lemma getD_parkSpotsFrom_of_lt_before {n : ℕ} (l : List (Fin n)) (i : 
   | nil => simp at hi
   | cons a l ih =>
     cases i with
-    | zero => exact IsAdmissibleLuckySet.nextFreeSpot_of_notMem hfree
+    | zero => exact nextFreeSpot_of_notMem hfree
     | succ i =>
       have hit : i < l.length := by simpa using hi
       have ha : l[i] < a := hprev 0 (Nat.zero_lt_succ i)
-      have hpair := stirlingTotalDisplacement_eq.prefs_le_spots [a] occ
-      have hstep : a ≤ nextFreeSpot occ a :=
-        hpair.get (show 0 < [a].length by simp)
-          (show 0 < (parkSpotsFrom [a] occ).length by simp [parkSpotsFrom])
       rw [parkSpotsFrom, List.getD_cons_succ]
       exact ih i hit _ (by
         rw [Finset.mem_insert, not_or]
-        exact ⟨(ha.trans_le hstep).ne, hfree⟩)
+        exact ⟨(ha.trans_le (le_nextFreeSpot occ a)).ne, hfree⟩)
         (fun k hk => hprev (k + 1) (Nat.succ_lt_succ hk))
-
-private lemma parkSpots_injective {n : ℕ} {f : Fin n → Fin n}
-    (hf : IsParkingFunction n f) : Function.Injective (parkSpots f) := by
-  have hf' : LinSuccess n n f := (linSuccess_iff_isPartialParkingFunction n n f le_rfl).mpr hf
-  have hassign (i : Fin n) : emb n (parkSpots f i) =
-      parkAssign n n (lift n n f) le_rfl i.val i.isLt := by
-    simpa [parkSpots] using parkSpotsFrom_eq_parkAssign f hf' i 0 (Nat.zero_le _) ⟨∅, by simp⟩
-      (linOccAux_zero n n f) (by simp [parkOcc, parkOccAux])
-  intro i k h
-  apply Fin.ext
-  by_contra hne
-  exact parkAssign_inj n n (lift n n f) le_rfl i.val k.val i.isLt k.isLt hne
-    ((hassign i).symm.trans ((congrArg (emb n) h).trans (hassign k)))
 
 private lemma exists_lucky_of_preferred {n : ℕ} {f : Fin n → Fin n} (hf : Antitone f)
     {j : Fin n} (hj : ∃ i, f i = j) : ∃ i, f i = j ∧ IsLuckyCar f i := by
@@ -132,134 +105,9 @@ private noncomputable def luckySpotEquiv {n : ℕ} (j : Fin n) :
 
 private abbrev SizedDyck (n : ℕ) := {p : DyckWord // p.semilength = n}
 
-private lemma good_iff_parking {n : ℕ} (f : Fin n → Fin n) (hf : Antitone f) :
-    Good 0 (fun i => (f i).val + 1) ↔ IsParkingFunction n f := by
-  have hmono : Monotone (fun i : Fin n => f i.rev) :=
-    fun _ _ h => hf (Fin.rev_le_rev.mpr h)
-  have hcard (j : Fin n) :
-      (Finset.univ.filter (fun i : Fin n => f i.rev ≤ j)).card =
-        (Finset.univ.filter (fun i : Fin n => f i ≤ j)).card := by
-    refine Finset.card_bij' (fun i _ => i.rev) (fun i _ => i.rev) ?_ ?_ ?_ ?_
-    · simp
-    · simp
-    · simp
-    · simp
-  have hrev : IsParkingFunction n (fun i : Fin n => f i.rev) ↔ IsParkingFunction n f := by
-    simp only [isParkingFunction_iff_card_filter_le, hcard]
-  rw [← hrev, isParkingFunction_iff_le_id_of_monotone hmono]
-  constructor
-  · intro h i
-    have hb := h.bound i.rev
-    simp only [Fin.val_rev, Nat.add_zero] at hb
-    exact Fin.le_def.mpr (by omega)
-  · intro h
-    refine ⟨fun i => ⟨by omega, by have := (f i).isLt; omega⟩,
-      fun i k hik => Nat.succ_le_succ (Fin.le_def.mp (hf hik)), ?_⟩
-    intro i
-    have hb := Fin.le_def.mp (h i.rev)
-    simp only [Fin.rev_rev, Fin.val_rev] at hb
-    omega
-
-private def parkingToPath {n : ℕ} (f : Decreasing n) : SizedDyck n := by
-  have hg := (good_iff_parking f.1 f.2.2).mpr f.2.1
-  exact toPaddedWord (word_encode hg)
-
-private lemma parkingToPath_list {n : ℕ} (f : Decreasing n) :
-    (parkingToPath f).1.toList =
-      steps (word (encode ((good_iff_parking f.1 f.2.2).mpr f.2.1))) := by
-  simp [parkingToPath, toPaddedWord, pad]
-
-private noncomputable def parkingPathEquiv {n : ℕ} (hn : 1 ≤ n) : Decreasing n ≃ SizedDyck n := by
-  refine Equiv.ofBijective parkingToPath ⟨?_, ?_⟩
-  · intro f g h
-    have hl := congrArg (fun p : SizedDyck n => p.1.toList) h
-    rw [parkingToPath_list, parkingToPath_list] at hl
-    have hw := List.ofFn_injective hl
-    have he := word_injective (funext fun i => stepEquiv.injective (congrFun hw i))
-    have hd := congrArg decode he
-    rw [decode_encode, decode_encode] at hd
-    exact Subtype.ext (funext fun i => Fin.ext (by have := congrFun hd i; omega))
-  · rintro ⟨p, hp⟩
-    have hlen := p.two_mul_semilength_eq_length
-    rw [hp] at hlen
-    have hne : p.toList ≠ [] := by intro h; rw [h] at hlen; simp at hlen; omega
-    have hlast : p.toList.getLast? = some D := by
-      rw [List.getLast?_eq_some_getLast hne, p.getLast_eq_D]
-    obtain ⟨w, hw, hsteps⟩ := exists_walk (k := 0) p (by simp [pad]) hlen.symm hlast
-    obtain ⟨e, rfl⟩ := exists_word hw
-    have hg := good_decode hn e hw
-    let f (i : Fin n) : Fin n := ⟨downs e i.rev, by
-      have := (hg.valid i).2
-      simpa [decode] using this⟩
-    have hdec : (fun i => (f i).val + 1) = decode e := rfl
-    have hgood : Good 0 (fun i => (f i).val + 1) := hdec ▸ hg
-    have ha : Antitone f := fun i k h => by
-      have hh := hgood.anti h
-      change (f k).val + 1 ≤ (f i).val + 1 at hh
-      exact Fin.le_def.mpr (by omega)
-    refine ⟨⟨f, (good_iff_parking f ha).mp hgood, ha⟩, Subtype.ext (DyckWord.ext ?_)⟩
-    rw [parkingToPath_list]
-    have he : encode hgood = e := encode_decode e hg
-    exact (congrArg (steps ∘ word) he).trans hsteps
-
 /-- Column `j` contains an Up step, i.e. one preceded by exactly `j` Down steps. -/
 private def HasColumn (j : ℕ) (p : List DyckStep) : Prop :=
   ∃ a t, p = a ++ U :: t ∧ a.count D = j
-
-private lemma downs_before_up {n : ℕ} (e : Fin n ↪o Fin (2 * n)) (i : Fin n) :
-    ((steps (word e)).take (e i).val).count D = downs e i := by
-  have h := height_word e (e i).isLt.le
-  rw [before_up, Fin.card_Iio, ← stepHeight_steps] at h
-  let l := (steps (word e)).take (e i).val
-  have hlen : l.length = (e i).val := by simp [l]
-  have hc : l.length = l.count D + l.count U := by
-    have hcompl : (fun s : DyckStep => decide ((s == D) ≠ true)) = (· == U) := by
-      funext s
-      cases s <;> rfl
-    simpa only [List.count, hcompl] using l.length_eq_countP_add_countP (· == D)
-  change stepHeight l = _ at h
-  unfold stepHeight at h
-  have := index_le e i
-  change l.count D = (e i).val - i.val
-  omega
-
-private lemma column_steps_iff {n : ℕ} (e : Fin n ↪o Fin (2 * n)) (j : ℕ) :
-    HasColumn j (steps (word e)) ↔ ∃ i, downs e i = j := by
-  constructor
-  · rintro ⟨a, t, he, hj⟩
-    have hlen : a.length < 2 * n := by
-      have := congrArg List.length he
-      simp only [length_steps, List.length_append, List.length_cons] at this
-      omega
-    let k : Fin (2 * n) := ⟨a.length, hlen⟩
-    have hget : (steps (word e))[a.length]'(by simpa using hlen) = U := by
-      simp [he, List.getElem_append_right]
-    have hk : word e k = true := by
-      simpa [steps, stepEquiv, k, apply_dite, apply_ite] using hget
-    obtain ⟨i, hi⟩ := of_decide_eq_true hk
-    refine ⟨i, ?_⟩
-    rw [← downs_before_up e i, hi, he]
-    simpa [k] using hj
-  · rintro ⟨i, hi⟩
-    let l := steps (word e)
-    have hlt : (e i).val < l.length := by simp [l]
-    have hu : l[(e i).val] = U := by simp [l, steps, stepEquiv, word]
-    refine ⟨l.take (e i).val, l.drop ((e i).val + 1), ?_, (downs_before_up e i).trans hi⟩
-    calc
-      l = l.take (e i).val ++ l.drop (e i).val := (List.take_append_drop ..).symm
-      _ = _ := by rw [List.drop_eq_getElem_cons hlt, hu]
-
-private lemma column_parking_iff {n : ℕ} (f : Decreasing n) (j : Fin n) :
-    HasColumn j.val (parkingToPath f).1.toList ↔ Prefers f j := by
-  rw [parkingToPath_list, column_steps_iff]
-  let hg := (good_iff_parking f.1 f.2.2).mpr f.2.1
-  change (∃ i, downs (encode hg) i = j.val) ↔ ∃ i, f.1 i = j
-  have hd (i : Fin n) : downs (encode hg) i = (f.1 i.rev).val := by
-    change i.val + ((f.1 i.rev).val + 1 - 1) - i.val = (f.1 i.rev).val
-    omega
-  simp only [hd]
-  exact ⟨fun ⟨i, hi⟩ => ⟨i.rev, Fin.ext hi⟩,
-    fun ⟨i, hi⟩ => ⟨i.rev, by simp [hi]⟩⟩
 
 private lemma dyck_height (p : DyckWord) : stepHeight p.toList = 0 := by
   simp [stepHeight, p.count_U_eq_count_D]
@@ -522,8 +370,7 @@ public theorem card_dec_lucky_spot_eq_sum_catalan (n : ℕ)
       ∑ k ∈ Finset.range (n - j.val),
         ((catalan (n - 1 - k) * catalan k : ℕ) : ℚ) := by
   have h : {f : Decreasing n // Prefers f j} ≃ ColumnDyck n j.val :=
-    (parkingPathEquiv (Nat.one_le_of_lt j.isLt)).subtypeEquiv fun f =>
-      (column_parking_iff f j).symm
+    decreasingParkingPreferenceEquivDyckWord j
   have hcard : Nat.card {f : Decreasing n // Prefers f j} = Nat.card (CatalanPairs n j.val) :=
     Nat.card_congr (h.trans (spliceColumnEquiv n j.val).symm)
   have hdyck (m : ℕ) : Nat.card (SizedDyck m) = catalan m := by

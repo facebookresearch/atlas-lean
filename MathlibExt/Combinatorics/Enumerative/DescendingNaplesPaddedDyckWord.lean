@@ -18,6 +18,8 @@ import Mathlib.Data.List.OfFn
 
 Adding `k` Up steps and `k` Down steps raises a bounded walk to a Dyck word.
 The extra Down step in the required suffix is the last step of the original walk.
+With zero padding, the correspondence sends weakly decreasing ordinary parking functions of
+length `n` that contain preference `j : Fin n` to Dyck words with an Up step in column `j`.
 
 ## References
 
@@ -28,6 +30,9 @@ The extra Down step in the required suffix is the last step of the original walk
   and G. Rojas Kirby, *A Generalization of Parking Functions Allowing Backward Movement*,
   Electronic Journal of Combinatorics 27(1) (2020), Article P1.33, pp. 1–20, Theorem 1.3
   (the bounded-path correspondence cited in Proposition 2).
+* Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and Marshall Moats,
+  *Lucky Cars and Lucky Spots in Parking Functions*, Journal of Integer Sequences 29 (2026),
+  Article 26.1.1, pp. 1–18, Section 4, for the ordinary parking correspondence.
 -/
 
 namespace MetaMathlibExt
@@ -46,9 +51,12 @@ private def steps {m : ℕ} (p : Fin m → Bool) : List DyckStep :=
 @[simp] private theorem length_steps {m : ℕ} (p : Fin m → Bool) : (steps p).length = m :=
   List.length_ofFn
 
-private def stepHeight (l : List DyckStep) : ℤ := (l.count U : ℤ) - (l.count D : ℤ)
+/-- The signed change in height of a word of Up and Down steps: the number of Up steps minus
+the number of Down steps. -/
+@[expose] public def stepHeight (l : List DyckStep) : ℤ := (l.count U : ℤ) - (l.count D : ℤ)
 
-@[simp] private theorem stepHeight_append (l r : List DyckStep) :
+/-- The signed change in height of a concatenation is the sum of the two changes. -/
+@[simp] public theorem stepHeight_append (l r : List DyckStep) :
     stepHeight (l ++ r) = stepHeight l + stepHeight r := by
   simp only [stepHeight, List.count_append, Int.natCast_add]
   omega
@@ -212,5 +220,86 @@ public theorem descendingNaplesCount_eq_card_dyckPath {n k : ℕ} (hn : 1 ≤ n)
     apply DyckWord.ext
     change pad k (steps p) = w.1.1.toList
     rw [he, hpad]
+
+private lemma classical_toPaddedWord_list {n : ℕ} {p : Fin (2 * n) → Bool}
+    (hp : IsKDyckPath n 0 p) : (toPaddedWord hp).1.toList = steps p := by
+  simp [toPaddedWord, pad]
+
+private noncomputable def classicalPathEquivDyck {n : ℕ} (hn : 1 ≤ n) :
+    {p : Fin (2 * n) → Bool // IsKDyckPath n 0 p} ≃ {p : DyckWord // p.semilength = n} := by
+  refine Equiv.ofBijective (fun p => toPaddedWord p.2) ⟨?_, ?_⟩
+  · intro p q h
+    have hl := congrArg (fun w : {p : DyckWord // p.semilength = n} => w.1.toList) h
+    rw [classical_toPaddedWord_list, classical_toPaddedWord_list] at hl
+    have hw := List.ofFn_injective hl
+    exact Subtype.ext (funext fun i => stepEquiv.injective (congrFun hw i))
+  · rintro ⟨p, hp⟩
+    have hlen := p.two_mul_semilength_eq_length
+    rw [hp] at hlen
+    have hne : p.toList ≠ [] := by intro h; rw [h] at hlen; simp at hlen; omega
+    have hlast : p.toList.getLast? = some D := by
+      rw [List.getLast?_eq_some_getLast hne, p.getLast_eq_D]
+    obtain ⟨w, hw, hsteps⟩ := exists_walk (k := 0) p (by simp [pad]) hlen.symm hlast
+    exact ⟨⟨w, hw⟩, Subtype.ext (DyckWord.ext ((classical_toPaddedWord_list hw).trans hsteps))⟩
+
+private lemma twice_count_D_before {n : ℕ} (p : Fin (2 * n) → Bool) (t : Fin (2 * n)) :
+    (t.val : ℤ) - latticeHeight p t.val = 2 * (((steps p).take t.val).count D : ℤ) := by
+  rw [← stepHeight_steps]
+  let l := (steps p).take t.val
+  have hlen : l.length = t.val := by simp [l]
+  have hc : l.length = l.count D + l.count U := by
+    have hcompl : (fun s : DyckStep => decide ((s == D) ≠ true)) = (· == U) := by
+      funext s
+      cases s <;> rfl
+    simpa only [List.count, hcompl] using l.length_eq_countP_add_countP (· == D)
+  change (t.val : ℤ) - stepHeight l = 2 * (l.count D : ℤ)
+  unfold stepHeight
+  omega
+
+private lemma steps_column_iff {n : ℕ} (p : Fin (2 * n) → Bool) (j : ℕ) :
+    (∃ a t, steps p = a ++ U :: t ∧ a.count D = j) ↔
+      ∃ t : Fin (2 * n), p t = true ∧ (t.val : ℤ) - latticeHeight p t.val = 2 * (j : ℤ) := by
+  constructor
+  · rintro ⟨a, t, he, hj⟩
+    have hlen : a.length < 2 * n := by
+      have := congrArg List.length he
+      simp only [length_steps, List.length_append, List.length_cons] at this
+      omega
+    let k : Fin (2 * n) := ⟨a.length, hlen⟩
+    have hget : (steps p)[a.length]'(by simpa using hlen) = U := by
+      simp [he, List.getElem_append_right]
+    have hk : p k = true := by simpa [steps, stepEquiv, k, apply_dite, apply_ite] using hget
+    refine ⟨k, hk, ?_⟩
+    rw [twice_count_D_before, he]
+    simp [k, hj]
+  · rintro ⟨t, hu, hd⟩
+    let l := steps p
+    have hlt : t.val < l.length := by simp [l]
+    have hu' : l[t.val] = U := by simp [l, steps, stepEquiv, hu]
+    refine ⟨l.take t.val, l.drop (t.val + 1), ?_, ?_⟩
+    · calc
+        l = l.take t.val ++ l.drop t.val := (List.take_append_drop ..).symm
+        _ = _ := by rw [List.drop_eq_getElem_cons hlt, hu']
+    · rw [twice_count_D_before] at hd
+      change 2 * ((l.take t.val).count D : ℤ) = 2 * (j : ℤ) at hd
+      omega
+
+/-- **Dyck words of decreasing parking functions with a prescribed preference.** For every
+`j : Fin n`, weakly decreasing parking functions of length `n` that contain preference `j`
+are in bijection with Dyck words of semilength `n` having an Up step preceded by exactly `j.val`
+Down steps.
+
+Source: Steve Butler et al., *Lucky Cars and Lucky Spots in Parking Functions*,
+Journal of Integer Sequences 29 (2026), Article 26.1.1, Section 4. -/
+public noncomputable def decreasingParkingPreferenceEquivDyckWord {n : ℕ} (j : Fin n) :
+    {f : {f : Fin n → Fin n // IsParkingFunction n f ∧ Antitone f} // ∃ i, f.1 i = j} ≃
+      {w : {w : DyckWord // w.semilength = n} //
+        ∃ a t, w.1.toList = a ++ U :: t ∧ a.count D = j.val} := by
+  refine (decreasingParkingPreferenceEquivPath j).trans
+    ((classicalPathEquivDyck (Nat.one_le_of_lt j.isLt)).subtypeEquiv ?_)
+  intro p
+  change _ ↔ ∃ a t, (toPaddedWord p.2).1.toList = a ++ U :: t ∧ a.count D = j.val
+  rw [classical_toPaddedWord_list]
+  exact (steps_column_iff p.1 j.val).symm
 
 end MetaMathlibExt
