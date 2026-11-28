@@ -1,0 +1,42 @@
+# Decision problems of generalized arc consistency
+
+Five computational problems about generalized arc consistency on a constraint type, four decision problems and one function problem: whether one value has a support, whether a domain is already GAC, whether some nonempty GAC subdomain exists, whether a subdomain is the largest GAC one, and computing that largest GAC subdomain.
+
+**Constraint types and their encoding.** A **constraint type** $\mathcal C$ is given by a set of finite strings, the encodings of its instances, together with one evaluation algorithm. Each encoded instance $C$ determines a scope $\mathrm{var}(C)=(X_1,\dots,X_k)$ of $k\ge1$ distinct variables, a finite set of value labels written in the encoding, and the relation of allowed $k$-tuples. The evaluation algorithm takes an encoding of $C$ and a $k$-tuple of value labels and decides, in time polynomial in the total length of its input, whether the tuple is allowed. Bessiere, Hebrard, Hnich and Walsh insist on polynomial-time tests because otherwise checking one assignment can already be NP-hard or undecidable.
+
+A domain $D$ on $\mathrm{var}(C)$ assigns to each $X_i$ a finite set $D(X_i)$ of value labels, listed explicitly in the input; $D'\subseteq D$ is componentwise; supports, GAC and the GAC closure are as for [generalized arc consistency](generalized-arc-consistency.md); $D|_{X=v}$ is $D$ with $D(X)$ replaced by $\{v\}$.
+
+**Instances and validity.** An *instance* of one of the problems below is an encoding of some $C\in\mathcal C$ together with problem data satisfying the stated side conditions (domains over the value labels of $C$, $X\in\mathrm{var}(C)$ and $v\in D(X)$, $D\subseteq D_0$), written in a fixed format under which, given that the encoding of $C$ is valid, the side conditions are checked in polynomial time; some bitstring is not an instance. If the set of encodings of $\mathcal C$ is decidable in polynomial time, so is the set of instances, and each decision problem is the total decision problem on bitstrings that accepts the yes-instances and rejects every other string (GACDomain outputs a fixed symbol on non-instances). Otherwise each problem is a *promise problem*: an algorithm for it must answer correctly on instances and may do anything on other strings.
+
+- **GACSupport($\mathcal C$)** (decision). Instance: $C$, a domain $D$ on $\mathrm{var}(C)$, a variable $X\in\mathrm{var}(C)$ and $v\in D(X)$. Question: does $v$ have a support on $C$ in $D$?
+- **IsItGAC($\mathcal C$)** (decision). Instance: $C$ and $D$. Question: is $C$ GAC on $D$, i.e. does GACSupport answer yes for every $X$ and every $v\in D(X)$?
+- **NoGACWipeOut($\mathcal C$)** (decision). Instance: $C$ and $D$. Question: is there a domain $D'\subseteq D$, other than the totally empty domain, on which $C$ is GAC? Equivalently, does $C$ have an allowed tuple inside $D$?
+- **MaxGAC($\mathcal C$)** (decision). Instance: $C$, an initial domain $D_0$ and a current domain $D\subseteq D_0$. Question: is $D$ the GAC closure of $D_0$, i.e. is $C$ GAC on $D$ and there is no $D'$ with $D\subsetneq D'\subseteq D_0$ on which $C$ is GAC?
+- **GACDomain($\mathcal C$)** (function). Instance: $C$ and $D_0$. Output: the GAC closure of $D_0$, the unique $D$ for which MaxGAC$[C,D_0,D]$ answers yes.
+
+**Reductions between these problems.** A **polynomial-time Turing reduction** from a problem $Q_1$ to a problem $Q_2$ (each one of the problems above on some constraint type, or a decision problem on bitstrings) is a polynomial-time algorithm with an oracle for $Q_2$ that, on every input of $Q_1$, queries the oracle only on inputs of $Q_2$ and outputs the answer of $Q_1$, where the *inputs* of a total problem are all bitstrings and those of a promise problem are its instances; each oracle call costs one step and returns the answer of $Q_2$, for the function problem GACDomain its output, a subdomain of the listed input domain and hence of polynomial length. A **many-one reduction** is the special case of a single query whose answer is output unchanged: a polynomial-time map sending inputs of $Q_1$ to inputs of $Q_2$ with the same answer. Between total decision problems these are the [polynomial-time Turing (Cook) reduction](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/closure-of-ip-under-reductions/polynomial-time-turing-reduction.md) and the [polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md) on bitstrings; the definitions above extend them to promise problems and to the function problem GACDomain. A problem $Q$ is **Turing-NP-hard** if every problem in [NP](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md) has a polynomial-time Turing reduction to it, and **NP-hard** if every problem in NP has a polynomial-time many-one reduction to it; NP-hardness implies Turing-NP-hardness. If a Turing-NP-hard problem has a polynomial-time algorithm that is correct on its inputs, every problem in NP is in [P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md).
+
+The same questions can be asked for any local consistency that only removes values from domains (bounds consistency, singleton arc consistency); they do not apply to consistencies that record forbidden tuples of two or more variables.
+
+## Depends on
+
+- [Generalized arc consistency](generalized-arc-consistency.md): supports, GAC domains and the GAC closure used by MaxGAC and GACDomain.
+- [The complexity class NP](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md): the class in the hardness notions.
+- [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md): polynomial-time solvability.
+- [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md): many-one reductions and NP-hardness, for total decision problems.
+- [Polynomial-time Turing (Cook) reduction](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/closure-of-ip-under-reductions/polynomial-time-turing-reduction.md): Turing reductions, for total decision problems.
+
+## Proof depends on
+
+None.
+
+## Expansion
+
+The last sentence of the reductions paragraph: replacing each oracle call of the reduction of an NP problem by the polynomial-time algorithm gives a polynomial-time algorithm, since every query is an input, on which the algorithm is correct, and its answers have polynomial length. The validity requirement on queries is what makes reductions compose for promise problems: a query outside the promise could receive any answer.
+
+The equivalence stated for NoGACWipeOut: if $C$ is GAC on some $D'\subseteq D$ with a nonempty $D'(X)$, a value of $D'(X)$ has a support, which is an allowed tuple inside $D'\subseteq D$; conversely an allowed tuple $t$ inside $D$ gives the GAC domain $D'(X_i)=\{t_i\}$. The reformulation of MaxGAC as "$D$ is the GAC closure of $D_0$" is the uniqueness of the closure; it is the form in which Bessiere's handbook chapter states the question. The source papers treat constraints as given by polynomial-time functions $f_C$ without fixing an input encoding; the explicit encoding and the uniform evaluation algorithm above make the problems well-defined computational problems without changing their content.
+
+## Sources
+
+- C. Bessiere, E. Hebrard, B. Hnich and T. Walsh, "The complexity of reasoning with global constraints", *Constraints* 12(2) (2007), 239–259, doi:10.1007/s10601-006-9007-3. Constraints given by polynomial-time functions and constraint types in §2, the five questions in §3.1 and Lemma 1 in §3.3 of arXiv:0903.1139v1, [https://arxiv.org/abs/0903.1139v1](https://arxiv.org/abs/0903.1139v1).
+- C. Bessiere, "Constraint propagation", in F. Rossi, P. van Beek and T. Walsh (eds.), *Handbook of Constraint Programming*, Elsevier (2006), chapter 3, doi:10.1016/S1574-6526(06)80007-6; numbering from the author's version, Technical Report LIRMM 06020 (March 2006), [https://www.lirmm.fr/~bessiere/Site/stock/TR06020.pdf](https://www.lirmm.fr/~bessiere/Site/stock/TR06020.pdf), §4.1 (Complexity of arc consistency): the five questions with maxGAC phrased as "is $(X(c),D,\{c\})$ the arc consistent closure of $(X(c),D_0,\{c\})$?" and GACDomain described as not a decision problem.
