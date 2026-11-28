@@ -9,7 +9,7 @@ E_2^{pq} = H^p(G/H, H^q(H, A)) \Rightarrow H^{p+q}(G, A),
 $$
 
 the Hochschild–Serre spectral sequence, with $G/H$ acting on $H^q(H, A)$ as in
-[Inflation, restriction and corestriction for profinite groups](inflation-restriction-and-corestriction.md).
+[The action of the quotient on the cohomology of a normal subgroup](change-of-group/action-of-the-quotient-on-the-cohomology-of-a-normal-subgroup.md).
 
 ## Expansion
 
@@ -27,7 +27,7 @@ This node is still to be broken down. A good expansion states and links:
 
 - [Cohomology of a profinite group with discrete coefficients](cohomology-with-discrete-coefficients.md), for
   the cohomology groups
-- [Inflation, restriction and corestriction for profinite groups](inflation-restriction-and-corestriction.md),
+- [The action of the quotient on the cohomology of a normal subgroup](change-of-group/action-of-the-quotient-on-the-cohomology-of-a-normal-subgroup.md),
   for the action of $G/H$ on $H^q(H, A)$
 
 ## Proof depends on

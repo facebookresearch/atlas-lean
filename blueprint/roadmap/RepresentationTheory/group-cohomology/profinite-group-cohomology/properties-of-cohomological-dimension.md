@@ -35,7 +35,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Proof depends on
 
 - [Shapiro's lemma for profinite groups](discrete-coefficients/shapiro-s-lemma.md), for (3.3.5)
-- [Inflation, restriction and corestriction for profinite groups](discrete-coefficients/inflation-restriction-and-corestriction.md),
+- [Corestriction after restriction](discrete-coefficients/change-of-group/corestriction-after-restriction.md),
   for the injectivity of restriction to subgroups of index prime to $p$
 - [The Hochschild–Serre spectral sequence](discrete-coefficients/hochschild-serre-spectral-sequence.md), for (3.3.8)
 - [The long exact cohomology sequence](discrete-coefficients/long-exact-cohomology-sequence.md), for the dimension

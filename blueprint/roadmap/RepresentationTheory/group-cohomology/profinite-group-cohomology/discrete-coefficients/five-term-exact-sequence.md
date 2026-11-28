@@ -1,7 +1,8 @@
 # The five term exact sequence
 
 Let $G$ be a profinite group, $H$ a closed normal subgroup and $A$ a discrete $G$-module. With the
-[inflation, restriction and transgression](inflation-restriction-and-corestriction.md) maps, the sequence
+[inflation and restriction](change-of-group/inflation-restriction-and-conjugation.md) maps and the
+[transgression](change-of-group/transgression.md), the sequence
 
 $$
 0 \to H^1(G/H, A^H) \xrightarrow{\inf} H^1(G, A) \xrightarrow{\operatorname{res}} H^1(H, A)^{G/H}
@@ -24,15 +25,25 @@ For abstract groups and representations, Mathlib has the degree-one case, the ex
 
 ## Depends on
 
-- [Inflation, restriction and corestriction for profinite groups](inflation-restriction-and-corestriction.md),
-  for $\inf$, $\operatorname{res}$, the action of $G/H$ on $H^n(H, A)$ and the transgression
+- [Inflation, restriction and conjugation](change-of-group/inflation-restriction-and-conjugation.md), for $\inf$
+  and $\operatorname{res}$
+- [The action of the quotient on the cohomology of a normal subgroup](change-of-group/action-of-the-quotient-on-the-cohomology-of-a-normal-subgroup.md),
+  for the action of $G/H$ on $H^n(H, A)$
+- [The transgression](change-of-group/transgression.md), for $\operatorname{tg}$ in degree one, which the proof
+  extends to degree $n$
 - [Cohomology of a profinite group with discrete coefficients](cohomology-with-discrete-coefficients.md), for
   the cohomology groups
 
 ## Proof depends on
 
-- [Inflation, restriction and corestriction for profinite groups](inflation-restriction-and-corestriction.md),
-  for the cochain description of the transgression (Proposition (1.6.6)) used in the proof
+- [The transgression](change-of-group/transgression.md), for the cochain description of the transgression
+  (Proposition (1.6.6)) used in the proof
+- [The action of the quotient on the cohomology of a normal subgroup](change-of-group/action-of-the-quotient-on-the-cohomology-of-a-normal-subgroup.md),
+  for $H^1(G, A)^G = H^1(G, A)$, so that restriction lands in the $G/H$-invariants
+- [Functoriality and the connecting homomorphisms](change-of-group/functoriality-and-connecting-homomorphisms.md),
+  [the long exact cohomology sequence](long-exact-cohomology-sequence.md) and
+  [Induced modules are acyclic](induced-modules-are-acyclic.md), for the induction on $n$ by dimension shifting
+  along $0 \to A \to \operatorname{Ind}_G(A) \to A_1 \to 0$, which defines $\operatorname{tg}$ in degree $n$
 
 ## Sources
 

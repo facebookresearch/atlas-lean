@@ -22,9 +22,12 @@ discrete $G$-module $A$, the groups $H^n(G, A)$, $n \ge 1$, are torsion groups.
 
 ## Proof depends on
 
-- [Inflation, restriction and corestriction for profinite groups](inflation-restriction-and-corestriction.md),
-  for $\operatorname{cor} \circ \operatorname{res} = (G : U)$ (Corollary (1.5.7)), extended to Tate cohomology
-  for finite $G$
+- [Corestriction after restriction](change-of-group/corestriction-after-restriction.md), for
+  $\operatorname{cor} \circ \operatorname{res} = (G : U)$ on $H^n$ (Corollary (1.5.7)), for $n \ge 1$
+- [Corestriction after restriction on Tate cohomology](change-of-group/corestriction-after-restriction-on-tate-cohomology.md),
+  for the same formula on $\hat H^n$ for finite $G$ and every $n \in \mathbb{Z}$
+- [Cohomology of a finite group with discrete coefficients](cohomology-of-a-finite-group-with-discrete-coefficients.md),
+  for the identification of $H^n$ of a finite group with Tate cohomology for $n \ge 1$
 - [Cohomology as a direct limit over finite quotients](cohomology-as-a-direct-limit-over-finite-quotients.md),
   for the torsion of $H^n(G, A)$ from that of the finite levels
 

@@ -69,7 +69,7 @@ A good expansion has pages for:
 - [Finiteness and cohomological dimension of Galois groups with restricted ramification](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/finiteness-and-cohomological-dimension-of-g-s.md), for the finiteness of $H^1(G_S, A[m])$ when $S$ is finite (its item 2)
 - [Néron model of an abelian variety](../../../AlgebraicGeometry/abelian-varieties/neron-model.md), for the abelian scheme over the ring of $S$-integers extending $A$ and for the reduction of $A$ at the places outside $S$
 - [Isogenies of abelian schemes](../../../AlgebraicGeometry/abelian-varieties/isogenies-of-abelian-schemes.md), for multiplication by $m$ as a finite étale surjection over the ring of $S$-integers (its item 2)
-- [Inflation, restriction and corestriction for profinite groups](../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/inflation-restriction-and-corestriction.md), for inflation and restriction
+- [Inflation, restriction and conjugation](../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/change-of-group/inflation-restriction-and-conjugation.md), for inflation and restriction
 - [The five term exact sequence](../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/five-term-exact-sequence.md), for the inflation–restriction sequence
 - [Cohomology of torsion-free procyclic groups](../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-of-torsion-free-procyclic-groups.md), for the cohomology of $\hat{\mathbb{Z}}$
 

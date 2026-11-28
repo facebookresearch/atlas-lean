@@ -33,8 +33,9 @@ This node is still to be broken down. A good expansion states and links:
 
 - [The long exact cohomology sequence](long-exact-cohomology-sequence.md), for the compatibility with the
   connecting homomorphisms
-- [Inflation, restriction and corestriction for profinite groups](inflation-restriction-and-corestriction.md),
-  for the compatibilities with the change of group
+- [Inflation, restriction and conjugation](change-of-group/inflation-restriction-and-conjugation.md) and
+  [Corestriction for open subgroups](change-of-group/corestriction.md), for the maps in the compatibilities with the
+  change of group (Proposition (1.5.3))
 
 ## Sources
 

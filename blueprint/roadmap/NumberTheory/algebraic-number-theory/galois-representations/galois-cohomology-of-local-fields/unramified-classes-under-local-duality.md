@@ -25,7 +25,7 @@ pairing $H^i(k, A') \times H^{2-i}(k, A) \to \mathbb{Q}/\mathbb{Z}$.
 ## Depends on
 
 - [Local Tate duality](local-tate-duality.md), for the pairing
-- [Inflation, restriction and corestriction for profinite groups](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/inflation-restriction-and-corestriction.md), for inflation and restriction
+- [Inflation, restriction and conjugation](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/change-of-group/inflation-restriction-and-conjugation.md), for inflation and restriction
 
 ## Proof depends on
 

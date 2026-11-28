@@ -37,7 +37,7 @@ This node is still to be broken down. A good expansion states and links:
 - [Cohomological dimension of a profinite group](cohomological-dimension.md), for $\operatorname{scd} G$ and
   $\operatorname{cd}_P G$
 - [Cup products for profinite groups](discrete-coefficients/cup-products.md), for the duality pairings
-- [Inflation, restriction and corestriction for profinite groups](discrete-coefficients/inflation-restriction-and-corestriction.md),
+- [Corestriction for open subgroups](discrete-coefficients/change-of-group/corestriction.md),
   for the corestrictions in $D_i(A)$
 - [Tate cohomology of profinite groups](discrete-coefficients/tate-cohomology-of-profinite-groups.md), for the
   duality of class formations

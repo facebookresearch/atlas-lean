@@ -28,8 +28,11 @@ discrete modules.)
 
 ## Proof depends on
 
-- [Cohomology in positive degrees is torsion](cohomology-in-positive-degrees-is-torsion.md), for the
-  annihilation of $\hat H^i(G, A)$ by $\#G$, on which multiplication by $\#G$ is also an automorphism
+- [Corestriction after restriction on Tate cohomology](change-of-group/corestriction-after-restriction-on-tate-cohomology.md),
+  for the annihilation of $\hat H^i(G, A)$ by $\#G$ when $G$ is finite (Proposition (1.6.1) for finite $G$, the case
+  of the trivial subgroup), on which multiplication by $\#G$ is also an automorphism
+- [Cohomology of a finite group with discrete coefficients](cohomology-of-a-finite-group-with-discrete-coefficients.md),
+  for $H^i(G/U, A^U) = \hat H^i(G/U, A^U)$ for $i \ge 1$
 - [Cohomology as a direct limit over finite quotients](cohomology-as-a-direct-limit-over-finite-quotients.md),
   for the passage from the finite quotients $G/U$, acting on $A^U$, to the profinite group $G$
 
