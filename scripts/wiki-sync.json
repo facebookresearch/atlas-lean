@@ -57891,6 +57891,7 @@
 "MathlibExt.Biology.PopulationGenetics.MutationSelectionBalance.sum_pushStep": "c199df046038a03e",
 "MathlibExt.Biology.PopulationGenetics.MutationSelectionBalance.tendsto_linStep_iterate": "9405a9efc9010604",
 "MathlibExt.Biology.PopulationGenetics.MutationSelectionBalance.tendsto_meanFreq_law": "49f4266c17f6b3c0",
+"MathlibExt.Biology.PopulationGenetics.PartialSelfing.inbreeding_under_partial_selfing": "dc407ee097de5675",
 "MathlibExt.Biology.PopulationGenetics.QpGraph.IsConstrainedMaximizer": "41d7698f359b9159",
 "MathlibExt.Biology.PopulationGenetics.QpGraph.designMatrix": "efcb93323fe9ae4f",
 "MathlibExt.Biology.PopulationGenetics.QpGraph.eq_of_isConstrainedMaximizer_of_posDef_gram": "560f68fa24df1b33",

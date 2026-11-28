@@ -10663,6 +10663,7 @@
   "Domains/Biology/PopulationGenetics/Classical/LandeResponse": {"to": "Biology/quantitative-genetics", "title": "Lande's selection gradient"},
   "Domains/Biology/PopulationGenetics/Classical/MultiallelicLD": {"to": "Biology/population-genetics", "title": "Linkage disequilibrium and Haldane's map function"},
   "Domains/Biology/PopulationGenetics/Classical/MultilevelPrice": {"to": "Biology/population-genetics", "title": "Natural selection, Fisher's theorem and the Price equation"},
+  "Domains/Biology/PopulationGenetics/Classical/PartialSelfing": {"to": "Biology/population-genetics", "title": "Inbreeding and regular systems of mating"},
   "Domains/Biology/PopulationGenetics/Classical/PloidyBridge": {"to": "Biology/population-genetics", "title": "Haploid selection and multiplicative fitnesses"},
   "Domains/Biology/PopulationGenetics/Classical/QuantMutationSelection": {"to": "Biology/quantitative-genetics", "title": "Continuum-of-alleles model of mutation and stabilizing selection"},
   "Domains/Biology/PopulationGenetics/Classical/SexRatio": {"to": "Biology/population-genetics", "title": "Fisher's sex-ratio principle"},
