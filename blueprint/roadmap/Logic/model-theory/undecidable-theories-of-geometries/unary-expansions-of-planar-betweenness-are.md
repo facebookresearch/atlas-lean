@@ -10,6 +10,7 @@ This applies for instance to $(\mathbb R^2, \beta)$, $(\mathbb Q^2, \beta)$, the
 
 - [Affine betweenness structures](affine-betweenness-structures.md)
 - [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

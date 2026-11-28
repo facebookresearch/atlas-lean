@@ -11,6 +11,7 @@ The corollary takes $T$ to be (H*5), respectively (H*5) and (H*6), which hold in
 ## Depends on
 
 - [Metric Wu planes and ordered origami planes](metric-wu-planes-and-ordered-origami-planes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ Ordered metric Wu planes are bi-interpretable with ordered Pythagorean fields, s
 
 ## Sources
 
-- L. Beklemishev, A. Dmitrieva and J. A. Makowsky, "Axiomatizing origami planes", in *Larisa Maksimova on Implication, Interpolation, and Definability*, Outstanding Contributions to Logic 28, Springer, 2024, pp. 353–377, doi:10.1007/978-3-031-47921-2_12; read as arXiv:2012.03250v2, <https://arxiv.org/abs/2012.03250v2>: the ordered geometric version of Ziegler's theorem (labels o-G-Ziegler and OG-Ziegler) and the orderability proposition in the section "Ordered metric Wu planes and Pythagorean fields", and the statement after the main bi-interpretation theorem in the section "Background on geometry" that both theories are undecidable.
+- L. Beklemishev, A. Dmitrieva and J. A. Makowsky, "Axiomatizing origami planes", in *Larisa Maksimova on Implication, Interpolation, and Definability*, Outstanding Contributions to Logic 28, Springer, 2024, pp. 353–377, doi:10.1007/978-3-031-47921-2_12; read as arXiv:2012.03250v2, <https://arxiv.org/abs/2012.03250v2>: the ordered geometric version of Ziegler's theorem (labels o-G-Ziegler and OG-Ziegler) and the orderability proposition in the section "Ordered metric Wu planes and Pythagorean fields", and Corollaries 3 and 4 (the theories of Euclidean ordered Wu planes and of ordered Wu origami planes are undecidable).

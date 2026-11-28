@@ -10,6 +10,7 @@ The source notes that the argument adapts to other restricted expansion classes,
 
 - [Affine betweenness structures](affine-betweenness-structures.md)
 - [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

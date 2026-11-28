@@ -9,6 +9,7 @@ The extension to characteristic-$0$ axioms and to the ordered field is not state
 ## Depends on
 
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

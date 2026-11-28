@@ -9,6 +9,7 @@ A geometric form of Ziegler's theorem: adding to the axioms of metric Wu planes 
 ## Depends on
 
 - [Metric Wu planes and ordered origami planes](metric-wu-planes-and-ordered-origami-planes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
