@@ -14,7 +14,7 @@ where the remainder is second order,
 
 $$R_2(\bar P, P) = \iint h'\{\bar p_a(y)\}\Big\{\frac{\pi_a(x)}{\bar\pi_a(x)} - 1\Big\}\{\eta_a(y \mid x) - \bar\eta_a(y \mid x)\}\,dy\,dP(x) - \frac12\int h''\{p_a^*(y)\}\{\bar p_a(y) - p_a(y)\}^2\,dy,$$
 
-with $p_a^*(y)$ between $p_a(y)$ and $\bar p_a(y)$. The curvature term enters with a minus sign: with no covariates, unchanged propensity and $h(u) = u^2$, the left side minus the linear term is $\int\{\bar p_a^2 - p_a^2 - 2\bar p_a(\bar p_a - p_a)\} = -\int(\bar p_a - p_a)^2$. Hence $\psi$ is pathwise differentiable with efficient influence function $\varphi_a\{h'(p_a(Y)); P\}$.
+with $p_a^*(y)$ between $p_a(y)$ and $\bar p_a(y)$. The curvature term enters with a minus sign: with no covariates, unchanged propensity and $h(u) = u^2$, the left side minus the linear term is $\int\{\bar p_a^2 - p_a^2 - 2\bar p_a(\bar p_a - p_a)\} = -\int(\bar p_a - p_a)^2$. (The source's Lemma 1 and the last line of its proof print this term as $+\frac12\int h''\{p_a^*(y)\}\{\bar p_a(y) - p_a(y)\}^2\,dy$. The proof reduces the remainder to the first term plus $\int[h\{\bar p_a(y)\} - h\{p_a(y)\} + h'\{\bar p_a(y)\}\{p_a(y) - \bar p_a(y)\}]\,dy$, and Taylor's theorem around $\bar p_a$, $h(p_a) = h(\bar p_a) + h'(\bar p_a)(p_a - \bar p_a) + \frac12 h''(p_a^*)(p_a - \bar p_a)^2$, makes that integrand $-\frac12 h''(p_a^*)(\bar p_a - p_a)^2$, so the page writes $-\frac12$. The sign does not affect the second-order size of $R_2$ or the conclusions drawn from it.) Hence $\psi$ is pathwise differentiable with efficient influence function $\varphi_a\{h'(p_a(Y)); P\}$.
 
 **Theorem 1.** Assume $f$ is twice differentiable. In the nonparametric model, the efficient influence function of the moment $m(\beta)$ of Proposition 1 at fixed $\beta$ is $\varphi_a\{\gamma_f(Y;\beta)\}$, where
 
@@ -36,4 +36,4 @@ The first remainder term is a product of the propensity error and the outcome-de
 
 ## Sources
 
-- E. H. Kennedy, S. Balakrishnan and L. Wasserman, *Semiparametric counterfactual density estimation*, Biometrika (2023). <https://doi.org/10.1093/biomet/asad017>
+- E. H. Kennedy, S. Balakrishnan and L. Wasserman, *Semiparametric counterfactual density estimation*, Biometrika (2023). <https://doi.org/10.1093/biomet/asad017> (preprint arXiv:2102.12034), Lemma 1 with its proof, Theorem 1 and Corollary 4.
