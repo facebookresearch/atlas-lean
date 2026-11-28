@@ -43,6 +43,7 @@ public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.NumberTheory.FermatQuotient
 public import MathlibExt.NumberTheory.WilsonFermatQuotient
 public import MathlibExt.NumberTheory.WilsonFaulhaberHenselDigit
+public import MathlibExt.NumberTheory.WilsonGlaisherCongruence
 
 set_option autoImplicit false
 
@@ -77,17 +78,6 @@ theorem_wanted faulhaber_coeff_integral_and_wilson (p l : ℕ) (hp : p.Prime)
         (∀ i ∈ Finset.Icc 1 l, padicNorm p (F.coeff (i + 1)) ≤ 1) ∧
           padicNorm p ((Nat.factorial (p - 1) : ℚ) - (F.coeff 2 / 2 - p)) ≤
             (p : ℚ) ^ (-2 : ℤ)
-
-/-- **Corollary 1** (Glaisher): `(p - 1)! ≡ p B_{p-1} - p (mod p^2)`, read in `ℚ`
-through the `p`-adic norm (`p B_{p-1}` is `p`-integral by von Staudt–Clausen).
-Stated for every prime with Mathlib's `bernoulli` (`B₁ = -1/2`); at `p = 2` the
-paper's second-type `B₁ = 1/2` would give `1 ≢ -1 (mod 4)`.
-
-Source: Claire Levaillant, *Wilson's Theorem Modulo p^2 Derived from Faulhaber
-Polynomials*, INTEGERS 24 (2024), Article A87, Corollary 1 (after Glaisher). -/
-theorem_wanted wilson_mod_prime_sq_bernoulli (p : ℕ) (hp : p.Prime) :
-    padicNorm p ((Nat.factorial (p - 1) : ℚ) - (p * bernoulli (p - 1) - p)) ≤
-      (p : ℚ) ^ (-2 : ℤ)
 
 /-- **Theorem 3**: for an odd prime `p` let `δ₀(k)`, `δ₁(k)` be the second and
 third `p`-adic digits of `k^(p-1) ≡ 1 + p δ₀(k) + p^2 δ₁(k) (mod p^3)` (here
