@@ -15,3 +15,5 @@
 - [Lower bound for four-cycle-free subgraphs of the seven-dimensional hypercube](le-hypercube-turan-number-seven-cycle-gr.md)
 - [Upper bound for four-cycle-free subgraphs of the seven-dimensional hypercube](hypercube-turan-number-seven-cycle-graph.md)
 - [Lower bound for four-cycle-free subgraphs of the eight-dimensional hypercube](le-hypercube-turan-number-eight-cycle-gr.md)
+- [Erdős Problem 666 (hexagons in dense subgraphs of the hypercube)](dense-hypercube-subgraph-contains-hexago.md)
+- [Resolution of Erdős Problem 666](dense-hypercube-subgraph-contains-hexago-2.md)

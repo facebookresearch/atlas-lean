@@ -38,6 +38,7 @@ public import MathlibExt.NumberTheory.Recurrences.HigherFibonacciWalks
 public import MathlibExt.NumberTheory.Recurrences.HigherFibonacciWalksEvenFibWalkCountEvenLengthEqOddAddFib
 public import MathlibExt.NumberTheory.Recurrences.HigherFibonacciWalksOddLengthHalf
 public import MathlibExt.NumberTheory.Recurrences.HigherFibonacciWalksFibWalkCountsEvenLengthEq
+public import MathlibExt.NumberTheory.Recurrences.HigherFibonacciWalksSelfConvolution
 
 set_option autoImplicit false
 
@@ -97,47 +98,5 @@ theorem_wanted higherFibWalk_eq_weighted_sums
                 (((m : ℚ) + 1) / (2 * (m : ℚ))) -
             weightedHigherFibMomentSum F m ((n : ℤ) - 1)
               ((m : ℤ) - 1) (((m : ℚ) + 1) / (2 * (m : ℚ))))
-
-/-- **Self-convolution of higher-order Fibonacci numbers.** Let $m \ge 1$ and let
-$(F_n)_{n \in \mathbb{Z}}$ be a sequence of rational numbers with
-$F_n = F_{n-1} + \dots + F_{n-m}$ for every integer $n$, $F_i = 0$ for $0 \le i < m - 1$ and
-$F_{m-1} = 1$. For $p \ge 0$ let $w_p = \sum_{j=0}^{p} F_{j+m-1} F_{p-j+m-1}$; for integers
-$N$, $l$ and rational $q$ let $S(N, l, q) = \sum_{k=0}^{N} q^k F_{k+l}$ and
-$S_2(N, l, q) = \sum_{k=0}^{N} k q^k F_{k+l}$, both equal to $0$ when $N < 0$. Put
-$q = (m+1)/(2m)$. Then for every integer $n \ge 2m - 2$, writing $p = n - 2m + 2$,
-
-$$
-\sum_{i=0}^{n} F_i F_{n-i} = w_p = \left(\frac{2m}{m+1}\right)^{p} +
-\frac{(2m)^{p-1}}{(m+1)^{p}} \bigl((m+2) S(p-1, m, q) + S_2(p-1, m, q) -
-m S(p-1, m-1, q) - S_2(p-1, m-1, q)\bigr).
-$$
-
-The source states the formula for all $n \ge 0$, but for $m \ge 2$ it fails when
-$n < 2m - 2$: at $m = 2$ and $n = 0$ the left side is $0$ and the right side is $9/16$.
-
-Source: Jan Sedlák and Antonín Slavík, "Walks in Tiled Rectangles
-and Self-Convolutions of Higher-Order Fibonacci Numbers",
-Theorem 4. -/
-theorem_wanted higherFib_selfConvolution_eq_weighted_sums
-    (m : ℕ) (hm : 1 ≤ m) (F : ℤ → ℚ)
-    (hF : IsStandardHigherFib m F) (n : ℕ) (hn : 2 * m - 2 ≤ n) :
-    (∑ i ∈ Finset.range (n + 1), F (i : ℤ) * F ((n : ℤ) - (i : ℤ))) =
-        higherFibWalk F m (n - (2 * m - 2)) ∧
-      (∑ i ∈ Finset.range (n + 1), F (i : ℤ) * F ((n : ℤ) - (i : ℤ))) =
-        (2 * (m : ℚ) / ((m : ℚ) + 1)) ^ ((n : ℤ) - 2 * (m : ℤ) + 2) +
-          ((2 * (m : ℚ)) ^ ((n : ℤ) - 2 * (m : ℤ) + 1) /
-              ((m : ℚ) + 1) ^ ((n : ℤ) - 2 * (m : ℤ) + 2)) *
-            (((m : ℚ) + 2) *
-                weightedHigherFibSum F m ((n : ℤ) - 2 * (m : ℤ) + 1)
-                  (m : ℤ) (((m : ℚ) + 1) / (2 * (m : ℚ))) +
-              weightedHigherFibMomentSum F m
-                ((n : ℤ) - 2 * (m : ℤ) + 1) (m : ℤ)
-                (((m : ℚ) + 1) / (2 * (m : ℚ))) -
-              (m : ℚ) *
-                weightedHigherFibSum F m ((n : ℤ) - 2 * (m : ℤ) + 1)
-                  ((m : ℤ) - 1) (((m : ℚ) + 1) / (2 * (m : ℚ))) -
-              weightedHigherFibMomentSum F m
-                ((n : ℤ) - 2 * (m : ℤ) + 1) ((m : ℤ) - 1)
-                (((m : ℚ) + 1) / (2 * (m : ℚ))))
 
 end MathlibExt.NumberTheory.Recurrences.HigherFibonacciWalksWanted

@@ -26,6 +26,7 @@ public import MathlibExt.NumberTheory.RamanujanTauModNineteen
 public import MathlibExt.NumberTheory.RamanujanTauModSeventeen
 public import MathlibExt.NumberTheory.RamanujanTauModThree
 public import MathlibExt.NumberTheory.GeneralizedTauRegularPartitionCardPrimeRegularModEqGeneralizedTauPred
+public import MathlibExt.NumberTheory.GeneralizedTauCoprime
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -301,17 +302,6 @@ public theorem_wanted generalizedTau_two_mul_prime_add_one_succ_modEq (p : ℕ) 
           ((r + s + t).negOnePow : ℤ)
         else 0 [ZMOD p]
 
-/-- **A congruence for 9-regular partitions at $4n + 1$.** Let $R_9(m)$ denote the number of
-partitions of $m$ in which no part is divisible by $9$. For every positive integer $n$,
-$R_9(4n + 1) \equiv R_9(n) \pmod 3$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
-public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
-    ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
-    ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
-
 /-- **$\tau_{-k}$ and partition convolutions modulo a prime.** Let $l$ be an odd prime, let $k$ be a
 natural number with $2 \le k < l$, let $n$ be a natural number, and write $p(s)$ for the number of
 partitions of $s$. Then
@@ -382,20 +372,6 @@ public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 
     (hk : (k - 1).Prime)
     (h : ∀ t : ℤ, pentagonal t ≤ n - 1 → ¬ (k - 1) ∣ n - 1 - pentagonal t) :
     generalizedTau k n ≡ 0 [ZMOD ((k - 1 : ℕ) : ℤ)]
-
-/-- **Vanishing of the generalized tau function modulo $|k|/d$.** Let $\tau_k(n)$ be the
-generalized tau function, the coefficient of $q^n$ in $q \prod_{j \ge 1} (1 - q^j)^k$. Let $k$ be
-an integer with $|k| \ge 2$ and $d$ a natural number dividing $|k|$ with $d < |k|$. Then for all
-natural numbers $m$ and $r$ with $\gcd(r, |k|/d) = 1$,
-$\tau_k(|k| m + d r + 1) \equiv 0 \pmod{|k|/d}$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Proposition 3 (`integers-2024-A39-prop-3`). -/
-public theorem_wanted generalizedTau_modEq_zero_of_coprime (m : ℕ) (k : ℤ) (hk : 2 ≤ |k|) (d : ℕ)
-    (hd : d ∣ k.natAbs) (hdk : d < k.natAbs) (r : ℕ)
-    (hr : Nat.gcd r (k.natAbs / d) = 1) :
-    generalizedTau k (k.natAbs * m + d * r + 1) ≡ 0 [ZMOD ((k.natAbs / d : ℕ) : ℤ)]
 
 /-- **Ramanujan's tau function modulo divisors of $24$.** Let $\tau(n) = \tau_{24}(n)$ be
 Ramanujan's tau function, the generalized tau function with $k = 24$. For every integer
