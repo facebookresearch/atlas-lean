@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 is: definitions
-NP-complete
+# MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3:
+definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

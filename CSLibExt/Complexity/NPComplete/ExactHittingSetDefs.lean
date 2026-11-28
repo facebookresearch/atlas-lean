@@ -6,6 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+# Karp's HITTING SET (exact hitting set): definitions
+
+Source:
+Karp, *Reducibility among combinatorial problems*, in R. E. Miller and J. W. Thatcher (eds.),
+*Complexity of Computer Computations*, Plenum Press, 1972, 85–103, Main Theorem, problem 15
+(p. 95).
+-/
 module
 
 public import MathlibExt.Computability.BinaryNatEncoding
