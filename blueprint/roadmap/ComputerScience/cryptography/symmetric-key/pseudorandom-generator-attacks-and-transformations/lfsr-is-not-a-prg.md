@@ -10,7 +10,7 @@ The state after $n$ steps consists of the last $n$ outputs, so the next output i
 
 - [Linear feedback shift register](linear-feedback-shift-register.md)
 - [Asymptotic PRG security relative to a class of distinguishers](../pseudorandom-generators/prgsecure.md)
-
+- [Efficient adversaries](../../security-games/asymptotic-security/efficient-adversaries.md)
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.

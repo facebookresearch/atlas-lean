@@ -6,7 +6,8 @@ In an *authenticated key exchange* (AKE) protocol with a trusted third party (of
 
 - [Key-guessing security of anonymous key exchange](key-guessing-security-of-key-exchange.md)
 - [Key-exchange eavesdropping experiment](../../security-of-diffie-hellman-key-exchange/ke-game.md)
-
+- [Efficient adversaries](../../../security-games/asymptotic-security/efficient-adversaries.md)
+- [Negligible advantage](../../../security-games/asymptotic-security/negligible-adv.md)
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023, Section 21.9, Definition 21.1.
