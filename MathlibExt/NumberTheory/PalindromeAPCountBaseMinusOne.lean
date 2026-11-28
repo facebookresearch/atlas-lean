@@ -414,8 +414,8 @@ number with $r < q$. Write $m = (a_k a_{k-1} \cdots a_0)_b$ in base $b$. Write $
 the number of base-$b$ palindromes $n$ with $1 \le n \le m$ and $n \equiv r \pmod q$, $C_b(m)$
 for the palindromic half copy of $m$, $[P]$ for $1$ if $P$ holds and $0$ otherwise, and
 $t \bmod d$ for the least nonnegative residue of an integer $t$ modulo a positive integer $d$.
-For $j \ge 0$ define integers $s_j$ and $r_j$ as follows. If $q$ is even and $2j \ne k$, let
-$s_j = a_{k-j} \bmod (q/2)$ and
+For $0 \le j \le \lfloor k/2 \rfloor$, define integers $s_j$ and $r_j$ as follows.
+If $q$ is even and $2j \ne k$, let $s_j = a_{k-j} \bmod (q/2)$ and
 $r_j = \bigl(\lfloor r/2 \rfloor - \sum_{i=0}^{j-1} a_{k-i}\bigr) \bmod (q/2)$. If $q$ is odd
 and $2j \ne k$, let $s_j = a_{k-j} \bmod q$ and
 $r_j = \bigl(\frac{q+1}{2} r - \sum_{i=0}^{j-1} a_{k-i}\bigr) \bmod q$. If $2j = k$, let

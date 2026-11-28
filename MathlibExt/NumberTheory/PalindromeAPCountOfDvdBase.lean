@@ -123,7 +123,9 @@ private theorem reflectDigits_eq_self {l : List ℕ} (hp : l.Palindrome) : refle
 end palindromeAPCount_of_dvd_base
 
 open palindromeAPCount_of_dvd_base in
-/-- The palindromic half copy is the value of the leading half with its reflection appended
+/-- **Palindromic half copy as a reflected digit list.**
+
+The palindromic half copy is the value of the leading half with its reflection appended
 on the right, without repeating the center. The lists passed to `Nat.ofDigits` are little-endian. -/
 public theorem palindromicHalfCopy_eq_ofDigits (b m : ℕ) :
     palindromicHalfCopy b m = Nat.ofDigits b
@@ -452,7 +454,9 @@ private theorem count_by_leading_digit {b m k q r : ℕ} (hb : 2 ≤ b) (hq : q 
 end palindromeAPCount_of_dvd_base
 
 open palindromeAPCount_of_dvd_base in
-/-- If `b ≥ 2` and `m` has `k + 1` base-`b` digits, dividing `m` by `b ^ ((k + 1) / 2)`
+/-- **Value of the leading half of a base expansion.**
+
+If `b ≥ 2` and `m` has `k + 1` base-`b` digits, dividing `m` by `b ^ ((k + 1) / 2)`
 gives the value of the first `k / 2 + 1` digits. Counting from the most significant end,
 digit `k - i` contributes its value times `b ^ (k / 2 - i)`. -/
 public theorem div_pow_half_eq_sum_digits {b m k : ℕ} (hb : 2 ≤ b)

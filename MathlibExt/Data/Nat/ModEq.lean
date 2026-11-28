@@ -21,7 +21,9 @@ Multiplication by two has the inverse `(q + 1) / 2` modulo an odd natural `q`.
 * The proof comes from `double_iff` in `MathlibExt.NumberTheory.PalindromesArithmeticProgressions`.
 -/
 
-/-- For odd `q`, a natural number `x` satisfies `2 * x ≡ r [MOD q]` exactly when
+/-- **Inverting doubling modulo an odd modulus.**
+
+For odd `q`, a natural number `x` satisfies `2 * x ≡ r [MOD q]` exactly when
 `x ≡ ((q + 1) / 2) * r [MOD q]`.
 
 Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and

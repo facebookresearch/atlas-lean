@@ -21,7 +21,9 @@ Normalize the integer representative before counting natural numbers in its resi
   `MathlibExt.NumberTheory.DigitSumCongruenceCount`.
 -/
 
-/-- For `q > 0`, the number of naturals less than `n` congruent to the integer `r` modulo
+/-- **Counting natural numbers in an integer residue class.**
+
+For `q > 0`, the number of naturals less than `n` congruent to the integer `r` modulo
 `q` is `n / q` (natural division), plus one if the least nonnegative residue of `r` is less
 than `n % q`.
 

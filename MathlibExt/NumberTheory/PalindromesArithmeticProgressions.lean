@@ -535,7 +535,9 @@ public theorem abs_palindromeAPCount_sub_le {b q r : ℕ} (hb : 2 ≤ b) (hq : O
 end
 
 open abs_palindromeAPCount_sub_le Finset in
-/-- For a base `b ≥ 2`, a bound `m` with `k + 1` base-`b` digits, and a residue `r < q`
+/-- **Counting palindromes by leading halves.**
+
+For a base `b ≥ 2`, a bound `m` with `k + 1` base-`b` digits, and a residue `r < q`
 with `b ≡ 1 [MOD q]`, the palindrome count splits into two counts of leading halves.
 Write `P = b ^ ((k + 1) / 2)` and `H = m / P`. The upper bounds are exclusive: the prefixes
 for even digit length run below `H` if `k` is odd and below `P` otherwise; those for odd digit
