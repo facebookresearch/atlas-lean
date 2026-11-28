@@ -305,6 +305,94 @@ theorem recursiveCircuit_size_le_rpow {F : Type u} [Field F] {q : ℕ}
   rw [hident] at hdrop
   exact hdrop
 
+/-- **Existence bound from trilinear rank.** Padding up to a power of the base
+gives a circuit whose size is controlled by the rank. -/
+theorem exists_circuit_size_le_rpow_of_rank {F : Type u} [Field F] {q r : ℕ}
+    (hq : 2 ≤ q) (hqr : q ^ 2 < r)
+    (h : MatrixMultiplicationExponent.HasTrilinearRankAtMost
+      (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q) r)
+    {n : ℕ} (hn : 1 ≤ n) :
+    ∃ c : MatrixArithmeticCircuit F n n n, IsMatrixMultiplication c ∧
+      (c.size : ℝ) ≤ r * (1 + 6 * r * q ^ 2) * (n : ℝ) ^ Real.logb q r := by
+  have hq1 : 1 < q := by omega
+  have hn0 : n ≠ 0 := by omega
+  have hlt : n < q ^ (Nat.log q n).succ := Nat.lt_pow_succ_log_self hq1 n
+  have hlt1 : n < q ^ (Nat.log q n + 1) := by
+    rwa [Nat.succ_eq_add_one] at hlt
+  have hle : n ≤ q ^ (Nat.log q n + 1) := le_of_lt hlt1
+  have hlog : q ^ Nat.log q n ≤ n := Nat.pow_log_le_self q hn0
+  have hqk : q ^ (Nat.log q n + 1) ≤ q * n := by
+    rw [pow_succ]
+    calc q ^ Nat.log q n * q ≤ n * q :=
+        mul_le_mul_of_nonneg_right hlog (Nat.zero_le q)
+      _ = q * n := by ring
+  obtain ⟨terms, hlen, hcorr⟩ :=
+    exists_recursiveCircuit_isMatrixMultiplication h (Nat.log q n + 1)
+  obtain ⟨c, hc, hsize⟩ := IsMatrixMultiplication.exists_size_le_of_le hle hcorr
+  refine ⟨c, hc, ?_⟩
+  have hbound :=
+    recursiveCircuit_size_le_rpow terms hq hlen hqr (Nat.log q n + 1)
+  have hsizeR : (c.size : ℝ)
+      ≤ ((recursiveCircuit terms (Nat.log q n + 1)).size : ℝ) := by
+    exact_mod_cast hsize
+  have hqpos : (0 : ℝ) < (q : ℝ) := by exact_mod_cast (by omega : 0 < q)
+  have hqne : (q : ℝ) ≠ 1 := by exact_mod_cast (by omega : q ≠ 1)
+  have hrpos : (0 : ℝ) < (r : ℝ) :=
+    by exact_mod_cast lt_of_le_of_lt (Nat.zero_le _) hqr
+  have hq1R : (1 : ℝ) < (q : ℝ) := by exact_mod_cast hq1
+  have hr1R : (1 : ℝ) ≤ (r : ℝ) := by
+    have h4 : (2 : ℕ) ^ 2 ≤ q ^ 2 := Nat.pow_le_pow_left hq 2
+    norm_num at h4
+    have hr1 : 1 ≤ r := by omega
+    exact_mod_cast hr1
+  have hlognn : (0 : ℝ) ≤ Real.logb (q : ℝ) (r : ℝ) :=
+    Real.logb_nonneg hq1R hr1R
+  have hqkR : (((q ^ (Nat.log q n + 1) : ℕ)) : ℝ) ≤ (q : ℝ) * (n : ℝ) := by
+    have h2 : (((q ^ (Nat.log q n + 1) : ℕ)) : ℝ) ≤ (((q * n : ℕ)) : ℝ) := by
+      exact_mod_cast hqk
+    rwa [Nat.cast_mul] at h2
+  have hpow : (((q ^ (Nat.log q n + 1) : ℕ)) : ℝ) ^ Real.logb q r
+      ≤ (r : ℝ) * (n : ℝ) ^ Real.logb q r := by
+    calc (((q ^ (Nat.log q n + 1) : ℕ)) : ℝ) ^ Real.logb q r
+        ≤ ((q : ℝ) * (n : ℝ)) ^ Real.logb q r :=
+          Real.rpow_le_rpow (Nat.cast_nonneg _) hqkR hlognn
+      _ = (q : ℝ) ^ Real.logb q r * (n : ℝ) ^ Real.logb q r :=
+          Real.mul_rpow hqpos.le (Nat.cast_nonneg n)
+      _ = (r : ℝ) * (n : ℝ) ^ Real.logb q r := by
+          rw [Real.rpow_logb hqpos hqne hrpos]
+  have hnnA : (0 : ℝ) ≤ 1 + 6 * r * q ^ 2 := by positivity
+  have hfin : (1 + 6 * r * q ^ 2)
+        * (((q ^ (Nat.log q n + 1) : ℕ)) : ℝ) ^ Real.logb q r
+      ≤ (1 + 6 * r * q ^ 2) * ((r : ℝ) * (n : ℝ) ^ Real.logb q r) :=
+    mul_le_mul_of_nonneg_left hpow hnnA
+  have hcomb : (c.size : ℝ)
+      ≤ (1 + 6 * r * q ^ 2) * ((r : ℝ) * (n : ℝ) ^ Real.logb q r) :=
+    le_trans (le_trans hsizeR hbound) hfin
+  convert hcomb using 1
+  ring
+
+/-- **Strassen recursion.** The rank-seven decomposition yields recursive
+circuits with the classical size bound at every level. -/
+theorem exists_strassen_recursiveCircuit (F : Type u) [Field F] :
+    ∃ terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)),
+      terms.length ≤ 7 ∧
+      ∀ k, IsMatrixMultiplication (recursiveCircuit terms k) ∧
+        (recursiveCircuit terms k).size + 168 * 4 ^ k ≤ 169 * 7 ^ k := by
+  obtain ⟨terms, hlength, hterms⟩ :=
+    MatrixMultiplicationExponent.squareMatrixMultiplicationTensor_rank_le_seven F
+  refine ⟨terms, hlength, fun k => ?_⟩
+  refine ⟨recursiveCircuit_isMatrixMultiplication terms hterms k, ?_⟩
+  have h42 : (2 : ℕ) ^ (2 * k) = 4 ^ k := by
+    rw [pow_mul]
+    norm_num
+  have h := recursiveCircuit_size_le terms hlength (show 2 ^ 2 < 7 by decide) k
+  rw [h42] at h
+  norm_num at h
+  exact h
+
 end
 
 end Cslib.Complexity.Algebraic

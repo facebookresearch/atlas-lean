@@ -81,4 +81,25 @@ example {F : Type u} [Field F]
       (1 + 6 * 7 * 2 ^ 2) * ((2 ^ k : ℕ) : ℝ) ^ Real.logb 2 7 :=
   recursiveCircuit_size_le_rpow terms (by norm_num) hlen (by decide) k
 
+#check @exists_circuit_size_le_rpow_of_rank
+#check @exists_strassen_recursiveCircuit
+
+example {F : Type u} [Field F] {n : ℕ} (hn : 1 ≤ n) :
+    ∃ c : MatrixArithmeticCircuit F n n n, IsMatrixMultiplication c ∧
+      (c.size : ℝ) ≤ 7 * (1 + 6 * 7 * 2 ^ 2) * (n : ℝ) ^ Real.logb 2 7 :=
+  exists_circuit_size_le_rpow_of_rank (by norm_num) (by decide)
+    (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor_rank_le_seven F)
+    hn
+
+example {F : Type u} [Field F] :
+    ∃ terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)),
+      terms.length ≤ 7 ∧
+      IsMatrixMultiplication (recursiveCircuit terms 1) ∧
+        (recursiveCircuit terms 1).size + 168 * 4 ^ 1 ≤ 169 * 7 ^ 1 := by
+  obtain ⟨terms, hlength, h⟩ := exists_strassen_recursiveCircuit F
+  exact ⟨terms, hlength, h 1⟩
+
 end Cslib.Complexity.Algebraic
