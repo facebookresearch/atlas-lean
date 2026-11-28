@@ -10,6 +10,7 @@ module
 
 import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Hom
 import Mathlib.Algebra.Module.Opposite
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Matrix.Mul
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
@@ -30,7 +31,7 @@ open MulOpposite TensorProduct.Balanced
 namespace MathlibExtTest.BalancedHomMatrix
 
 private abbrev M := Matrix (Fin 2) (Fin 2) ℤ
-private abbrev Q := Balanced ℤ M M M
+private abbrev Q := TensorProduct.Balanced ℤ M M M
 
 private instance : SMulCommClass M Mᵐᵒᵖ M where
   smul_comm a b x := by
@@ -52,11 +53,13 @@ private def leftMul (a : M) : M →ₗ[Mᵐᵒᵖ] M where
 private def productCurry : M →ₗ[Mᵐᵒᵖ] CoefficientHom.Hom M M M where
   toFun := leftMul
   map_add' x y := by
-    ext z
+    apply LinearMap.ext
+    intro z
     change (x + y) * z = x * z + y * z
     exact add_mul x y z
   map_smul' r x := by
-    ext y
+    apply LinearMap.ext
+    intro y
     change leftMul (r • x) y = (r • leftMul x) y
     rw [CoefficientHom.homModule_smul_apply M M M M]
     change (x * r.unop) * y = x * (r.unop * y)
