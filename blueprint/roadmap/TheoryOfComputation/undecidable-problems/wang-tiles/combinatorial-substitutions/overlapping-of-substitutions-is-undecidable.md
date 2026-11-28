@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The proof again reduces the weak cycle tiling problem for Wang tiles (Kari). For a tile set $T$ and two tiles $a, b$ whose colors match when $b$ is placed to the right of $a$, a domino substitution $\sigma_{a,b}$ on $T \cup \{a_0, b_0\}$, with two new types $a_0, b_0$ and single-cell base patterns, is built so that it is consistent and an overlap can only occur between the images of a cell of type $a_0$ and a cell of type $b_0$. Such an overlap occurs if and only if $T$ has a valid tiling of a cycle containing the domino formed by $a$ and $b$, because the domino of $a_0$ and $b_0$ is not itself a starting pattern and its image is computed only around such a cycle. Computing $\sigma_{a,b}$ for every matching pair, some $\sigma_{a,b}$ is overlapping if and only if $T$ admits a tiling of a cycle.
+The proof again reduces the weak cycle tiling problem for Wang tiles (Kari). For a tile set $T$ and two tiles $a, b$ whose colors match when $b$ is placed to the right of $a$, a domino substitution $\sigma_{a,b}$ on $T \cup \{a_0, b_0\}$, with two new types $a_0, b_0$ and single-cell base patterns, is built so that it is consistent and an overlap can only occur between the images of a cell of type $a_0$ and a cell of type $b_0$. Such an overlap occurs if and only if $T$ has a valid tiling of a cycle containing the domino formed by $a$ and $b$, because the domino of $a_0$ and $b_0$ is not itself a starting pattern and its image is computed only around such a cycle. Computing $\sigma_{a,b}$ for every matching pair, some $\sigma_{a,b}$ is overlapping if and only if $T$ admits a tiling of a cycle. A good expansion links a page for Kari's undecidability of the weak cycle tiling problem.
 
 ## Sources
 

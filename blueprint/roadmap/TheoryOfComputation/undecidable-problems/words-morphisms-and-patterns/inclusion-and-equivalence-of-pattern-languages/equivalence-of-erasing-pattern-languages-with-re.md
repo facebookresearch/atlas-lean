@@ -24,8 +24,8 @@ The proof adapts the reduction of Freydenberger and Reidenbach for the inclusion
 nondeterministic two-counter automaton without input has an accepting computation, encoding a configuration $(q_i, m_1, m_2)$ as $0^{1+i} \# 0^{5+2m_1} \# 0^{5+2m_2}$ and
 a computation as the concatenation of its configurations separated by $\#\#$. For the binary alphabet $\{0, \#\}$ it builds terminal-free constrained patterns
 $\alpha$ and $\beta$ such that $L_E(\alpha, r_\alpha) \subseteq L_E(\beta, r_\beta)$ always fails at most on words $v 0 u 0 v$ in which $u$ encodes an accepting computation, while the reverse inclusion
-always holds; so the two languages are equal exactly when the automaton has no accepting computation. Larger alphabets reduce to the binary case by restricting
-the constraint languages to two letters.
+always holds; so the two languages are equal exactly when the automaton has no accepting computation. The binary case reduces to every larger alphabet, since
+the constraint languages use only two letters. A good expansion links a page for the undecidability of emptiness for nondeterministic two-counter automata, which follows from the linked universality theorem together with the undecidability of halting of Turing machines on the blank tape.
 
 ## Sources
 

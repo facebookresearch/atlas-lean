@@ -17,7 +17,7 @@ for every $w$. For example $|aab|_{ab} = 2$.
 The value of $SH$ in $w$ is written $|w|_{SH}$; it is an integer. For an integer $c$ and $e \ge 0$, the expressions
 $c(SH)$ and $\prod^e SH$ (the $e$-fold product, with $\prod^0 SH = \lambda$) are again subword histories, with values
 $c\,|w|_{SH}$ and $|w|_{SH}^e$. Two subword histories are *equivalent* if they take the same value in every word of
-$\Sigma^*$; for instance $a \times b$ and $ab + ba$ are equivalent. A subword history is *letter-restricted* if each of its
+$\Sigma^*$; for instance, for distinct letters $a \ne b$, $a \times b$ and $ab + ba$ are equivalent. A subword history is *letter-restricted* if each of its
 monomials is a single letter of $\Sigma$ or $\lambda$.
 
 ## Depends on

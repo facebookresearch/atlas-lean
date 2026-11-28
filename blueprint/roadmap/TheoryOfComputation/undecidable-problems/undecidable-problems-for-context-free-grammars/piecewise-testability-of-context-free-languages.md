@@ -26,13 +26,13 @@ containing $K$ and disjoint from $L$?) is decidable.
 
 Write $L_{ab} = \{a^n b^n : n \ge 0\}$ and $\mathcal{T}(L_{ab})$ for the full trio it generates, which is contained in the
 context-free languages. First, universality is undecidable for $\mathcal{T}(L_{ab})$: from an instance
-$\alpha, \beta : A^* \to \{0, 1\}^*$ of the Post correspondence problem one builds rational transductions $R_\alpha, R_\beta$
+$\alpha, \beta : A^* \to \{0, 1\}^*$ of the Post correspondence problem, with $A$ disjoint from $\{0, 1\}$ and $B = A \cup \{0, 1\}$, one builds rational transductions $R_\alpha, R_\beta$
 with $R_\gamma L_{ab} = \{u v : u \in A^+,\ v \in \{0,1\}^*,\ v \ne \gamma(u)\}$, using the input $a^n b^n$ to compare
 position $n$ of $v$ with position $n$ of $\gamma(u)$; then $R_\alpha L_{ab} \cup R_\beta L_{ab} \cup (B^* \setminus A^+\{0,1\}^*)$
-is universal exactly when the instance has no solution. Second, fix $K \in \mathcal{T}(L_{ab})$ that is not piecewise testable
+is universal exactly when the instance has no solution. Second, fix $K \in \mathcal{T}(L_{ab})$ over the same alphabet $A$ as $L$ that is not piecewise testable
 and a new letter $\#$; for $L \subseteq A^*$ in the trio, $K \# A^* \cup A^* \# L$ is piecewise testable if and only if $L$ is
 universal, because piecewise testable languages are closed under residuals and a word $w \notin L$ would give
-$K = (K \# A^* \cup A^* \# L)(\# w)^{-1}$.
+$K = (K \# A^* \cup A^* \# L)(\# w)^{-1}$. A good expansion links pages for the closure of piecewise testable languages under residuals and for a language of $\mathcal{T}(L_{ab})$ that is not piecewise testable.
 
 ## Sources
 

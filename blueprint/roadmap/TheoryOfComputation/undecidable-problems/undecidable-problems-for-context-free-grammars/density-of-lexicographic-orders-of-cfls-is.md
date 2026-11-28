@@ -20,7 +20,7 @@ The source derives that there is no algorithm that decides, for a context-free g
 
 ## Expansion
 
-From an instance $(\alpha, \beta)$ of the Post correspondence problem the proof builds a context-free prefix grammar $G_{\alpha,\beta}$ over $\{0,1\}$ whose language, under the lexicographic order, is dense if and only if $(\alpha, \beta)$ has no solution (Proposition 3.1 of the source); it is then a dense order of type $\eta$. Comparing with a right-linear prefix grammar for a regular language of order type $\eta$ gives Theorem 3.4.
+From an instance $(\alpha, \beta)$ of the Post correspondence problem the proof builds a context-free prefix grammar $G_{\alpha,\beta}$ over a larger alphabet whose language, under the lexicographic order, is dense if and only if $(\alpha, \beta)$ has no solution (Proposition 3.1 of the source), and the proof of Theorem 3.3 encodes its letters into $\{0,1\}$ by an order-preserving coding; it is then a dense order of type $\eta$. Comparing with a right-linear prefix grammar for a regular language of order type $\eta$ gives Theorem 3.4.
 
 ## Sources
 

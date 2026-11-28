@@ -1,6 +1,6 @@
 # Directed figures and decipherable directed figure codes
 
-A directed figure is a labeled polyomino with a start point and an end point; figures are catenated by gluing the start of one to
+A directed figure is a finite labeled subset of the grid $\mathbb{Z}^2$ (not necessarily connected) with a start point and an end point; figures are catenated by gluing the start of one to
 the end of the other, and a finite set of figures is a code of a given decipherability kind if equal catenations always come from
 equal sequences, multisets, sets or numbers of figures.
 
@@ -23,8 +23,8 @@ $x_1 \circ \cdots \circ x_k = y_1 \circ \cdots \circ y_l$ (both defined), $X$ is
 - *set decipherable* (SD) if it always forces $\{x_1, \dots, x_k\} = \{y_1, \dots, y_l\}$;
 - *numerically decipherable* (ND) if it always forces $k = l$.
 
-A code $X = \{x_1, \dots, x_n\}$ is *two-sided* if some nonnegative integers $\alpha_1, \dots, \alpha_n$, not all zero, satisfy
-$\sum_i \alpha_i (e_{x_i} - b_{x_i}) = (0, 0)$, that is, if the translation vectors do not fit in an open half-plane; otherwise it is
+A code $X = \{x_1, \dots, x_n\}$ is *two-sided* if some nonnegative integers $\alpha_1, \dots, \alpha_n$, not all zero (a nonzero nonnegative solution), satisfy
+$\sum_i \alpha_i (e_{x_i} - b_{x_i}) = (0, 0)$, that is, if the translation vectors do not all lie in one open half-plane bounded by a line through the origin; otherwise it is
 *one-sided*. Words are the special case of figures on a horizontal line with translation vector $(1, 0)$ per letter.
 
 ## Depends on

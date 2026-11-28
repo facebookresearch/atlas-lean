@@ -28,10 +28,10 @@ Yu).
 
 ## Expansion
 
-`SubwordEqSolvability` reduces to `SubwordIneqAbsoluteness` in polynomial time: for an instance $(SH_1, SH_2)$ put
+The complement of `SubwordEqSolvability` many-one reduces to `SubwordIneqAbsoluteness` in polynomial time (equivalently, a one-query reduction that negates the answer): for an instance $(SH_1, SH_2)$ put
 $SH = SH_1 - SH_2$. The equation has no solution exactly when $|w|_{SH \times SH} > 0$ for every word $w$, that is, when
 $SH \times SH - \lambda$ is nonnegative on all words. The construction maps letter-restricted instances over an alphabet to
-letter-restricted instances over the same alphabet, so the nine-letter bound transfers.
+letter-restricted instances over the same alphabet, so the nine-letter bound transfers. A good expansion links a page for the evaluation of products of subword histories ($|w|_{SH \times SH} = |w|_{SH}^2$).
 
 ## Sources
 

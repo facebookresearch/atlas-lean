@@ -18,6 +18,8 @@ system.
 ## Depends on
 
 - [Domino (Post correspondence problem)](domino.md)
+- [Top word of a sequence of dominoes](top.md)
+- [Bottom word of a domino sequence](bottom.md)
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 

@@ -42,7 +42,7 @@ Since $|w|_{a_j}$ is the number of occurrences of $a_j$ in $w$, the value $|w|_{
 Parikh vector of $w$, and every vector of natural numbers is the Parikh vector of some word. So the instance $(SH, 0 \cdot \lambda)$
 has a solution exactly when the equation has a solution in natural numbers (the letter counts may be zero, so the reduction
 is from solvability in natural numbers, which is undecidable as well). The construction keeps the number of variables, which
-gives the nine-letter bound from a nine-variable undecidable family of Diophantine equations.
+gives the nine-letter bound from a nine-variable undecidable family of Diophantine equations. A good expansion links a page for the undecidability of solvability in natural numbers of Diophantine equations in nine variables.
 
 ## Sources
 

@@ -8,7 +8,7 @@ with catenation without merging. It is undecidable whether $X$ is a UD code; lik
 whether it is an SD code, and whether it is an ND code.
 
 For one-sided codes all four kinds of decipherability are decidable, as they are for two-sided codes whose translation vectors are
-parallel; so the undecidability needs translation vectors that do not fit in a half-plane and are not all parallel. With
+parallel; so the undecidability needs translation vectors that do not all lie in one open half-plane bounded by a line through the origin (the source's constructions for uniquely, multiset and set decipherability use vectors from a closed half-plane) and are not all parallel. With
 $m$-catenation, two-sided codes are never ND, MSD or UD $m$-codes, so those cases are decidable trivially; whether a two-sided code is an SD $m$-code is left open by the source. Being two-sided is itself decidable, as it asks for a nonnegative integer solution of a homogeneous linear system.
 
 ## Depends on
@@ -27,7 +27,7 @@ squares whose sides carry hooks and dents of prescribed heights, so that two fig
 From a PCP instance it builds a two-sided code whose figures encode the letters of the words $u_i$ and $v_i$; a figure equal to two
 different catenations of codewords exists exactly when the instance has a solution. The argument for UD codes carries over to MSD and
 SD codes, and since the two factorizations built there have the same number of figures, an additional technique is needed for ND codes: each square is replaced by 25 squares with new labels, connected into one figure on one side and left separate on the other. The
-undecidability of unique decipherability for two-sided codes was known from earlier work, which the source cites.
+undecidability of unique decipherability for two-sided codes was known from earlier work, which the source cites. A good expansion links a page for the encoding of Post correspondence instances by directed hooked squares and its correctness.
 
 ## Sources
 

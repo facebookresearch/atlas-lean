@@ -31,8 +31,8 @@ None.
 The proofs go through Fractran, Conway's programming language of lists of fractions, whose halting problem on input $2$ is $\Sigma^0_1$-complete. Every Fractran program
 computing an infinite word is simulated by a non-erasing PD0L system whose word reveals the program's output; modifying a program so that it outputs $0$ while
 running and switches to $1$ forever when it halts reduces halting to the occurrence of the letter $1$, which in this construction occurs at all exactly when it occurs
-infinitely often. Equality reduces to occurrence by renaming $b$ to a fresh letter. For productivity, an erasing PD0L system simulates a Fractran program so that the
-generated word is infinite exactly when the program does not halt.
+infinitely often. Occurrence reduces to equality: $b$ occurs in the generated word exactly when that word differs from the word generated after renaming $b$ to a fresh letter. For productivity, an erasing PD0L system simulates a Fractran program so that the
+generated word is infinite exactly when the program does not halt. A good expansion links pages for the undecidability of halting of Fractran programs on input $2$ and for their simulation by PD0L systems.
 
 ## Sources
 

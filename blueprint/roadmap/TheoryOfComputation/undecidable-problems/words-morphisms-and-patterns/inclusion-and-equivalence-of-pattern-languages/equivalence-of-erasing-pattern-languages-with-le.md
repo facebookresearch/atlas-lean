@@ -11,7 +11,7 @@ The inequalities have integer coefficients and their unknowns, one for each vari
 
 **Theorem (Nowotka and Wiedenhöft).** For every alphabet $\Sigma$ with $|\Sigma| \ge 2$:
 
-1. it is undecidable, given patterns with length constraints $(\alpha, \ell_\alpha)$ and $(\beta, \ell_\beta)$, whether $L_E(\alpha, \ell_\alpha) = L_E(\beta, \ell_\beta)$, even when $\alpha$ and $\beta$ are terminal-free and $\ell_\alpha, \ell_\beta$ contain no disjunction (Theorem 8 of the source; the proof reduces emptiness of nondeterministic two-counter automata);
+1. it is undecidable, given patterns with length constraints $(\alpha, \ell_\alpha)$ and $(\beta, \ell_\beta)$, whether $L_E(\alpha, \ell_\alpha) = L_E(\beta, \ell_\beta)$, even when $\alpha$ and $\beta$ are terminal-free and $\ell_\alpha, \ell_\beta$ contain no disjunction (Theorem 8 of the published version; the proof reduces emptiness of nondeterministic two-counter automata);
 2. inclusion $L_{NE}(\alpha, \ell_\alpha) \subseteq L_{NE}(\beta, \ell_\beta)$ is undecidable for terminal-free patterns with length constraints, even without disjunctions (Theorem 12);
 3. it is undecidable, given patterns with regular and length constraints, whether their non-erasing languages are equal, even for terminal-free patterns (Theorem 19).
 
@@ -36,4 +36,4 @@ Bremer–Freydenberger inclusion theorem.
 
 ## Sources
 
-- D. Nowotka and M. Wiedenhöft, "The equivalence problem of E-pattern languages with length constraints is undecidable", in *36th Annual Symposium on Combinatorial Pattern Matching (CPM 2025)*, LIPIcs 331, paper 4, 2025, doi:10.4230/LIPIcs.CPM.2025.4; read in arXiv:2411.06904v2: the main theorem on erasing equivalence, the theorem on terminal-free non-erasing inclusion and the theorem on non-erasing equivalence with regular and length constraints, stated in Sections 3 and 4 and proved in the appendices, with the membership corollary of Section 3. Theorem numbers are not cited because the version read numbers its appendix first.
+- D. Nowotka and M. Wiedenhöft, "The equivalence problem of E-pattern languages with length constraints is undecidable", in *36th Annual Symposium on Combinatorial Pattern Matching (CPM 2025)*, LIPIcs 331, paper 4, 2025, doi:10.4230/LIPIcs.CPM.2025.4; read in arXiv:2411.06904v2: the main theorem on erasing equivalence, the theorem on terminal-free non-erasing inclusion and the theorem on non-erasing equivalence with regular and length constraints, stated in Sections 3 and 4 and proved in the appendices, with the membership corollary of Section 3. Theorems 8, 12 and 19 are numbered as in the published CPM version.
