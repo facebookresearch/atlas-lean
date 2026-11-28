@@ -1430,6 +1430,7 @@
   "CSLibExt/Coding/ReedSolomon": {"to": "InformationTheory/error-correcting-codes", "title": "Reed–Solomon codes"},
   "CSLibExt/Coding/ShorCode": {"to": "QuantumInformation/quantum-error-correction", "title": "Bit-flip and Shor codes"},
   "CSLibExt/Coding/ShorCodeDistance": {"to": "QuantumInformation/quantum-error-correction", "title": "Bit-flip and Shor codes"},
+  "CSLibExt/Combinatorics/BinaryChvatalSankoff": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Chvátal–Sankoff constant"},
   "CSLibExt/Combinatorics/RandomThreeSat": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Random 3-SAT threshold"},
   "CSLibExt/Complexity/Algebraic/ArithmeticCircuit": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Arithmetic circuits"},
   "CSLibExt/Complexity/Algebraic/DualMatrixMultiplicationBounds": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Matrix multiplication exponent"},
